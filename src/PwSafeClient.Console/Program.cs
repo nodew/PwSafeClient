@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.CommandLine;
+using System.CommandLine.Invocation;
+using PwSafeClient.Console.Commands;
 
 namespace PwSafeClient.Console
 {
@@ -6,7 +10,16 @@ namespace PwSafeClient.Console
     {
         static void Main(string[] args)
         {
-            System.Console.WriteLine("Hello World!");
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
+            RootCommand rootCommand = new RootCommand()
+            {
+                Description = "The best CLI tool for PasswordSafe"
+            };
+
+            rootCommand.AddCreateDbCommand();
+
+            rootCommand.Invoke(args);
         }
     }
 }
