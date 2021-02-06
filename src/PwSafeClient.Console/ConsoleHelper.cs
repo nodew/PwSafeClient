@@ -37,5 +37,15 @@ namespace PwSafeClient.Console
 
             return pwd;
         }
+
+        public static SecureString GetSecureString(string password)
+        {
+            SecureString secureString = new SecureString();
+            password.ToList().ForEach((char c) =>
+            {
+                secureString.AppendChar(c);
+            });
+            return secureString;
+        }
     }
 }

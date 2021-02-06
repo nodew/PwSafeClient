@@ -9,5 +9,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\deps\PwSafeLib\PwSafeLib\PwSafeLib.csproj" />
+    <ProjectReference Include="..\PwSafeClient.Core\PwSafeClient.Core.csproj" />
   </ItemGroup>
 </Project>

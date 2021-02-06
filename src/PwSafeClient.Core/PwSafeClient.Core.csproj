@@ -2,6 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\deps\PwSafeLib\PwSafeLib\PwSafeLib.csproj" />
+  </ItemGroup>
 
 </Project>

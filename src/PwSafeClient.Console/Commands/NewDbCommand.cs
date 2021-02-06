@@ -41,11 +41,7 @@ namespace PwSafeClient.Console.Commands
             } 
             else
             {
-                secureString = new SecureString();
-                PASSWORD.ToList().ForEach((char c) =>
-                {
-                    secureString.AppendChar(c);
-                });
+                secureString = ConsoleHelper.GetSecureString(PASSWORD);
             }
 
             if (string.IsNullOrEmpty(OUTPUT))
@@ -65,34 +61,21 @@ namespace PwSafeClient.Console.Commands
             try
             {
                 using MemoryStream stream = new MemoryStream();
-                using PwsFileV3 pwsFile = new PwsFileV3(stream, secureString, FileMode.Create);
+                
+                PwsFileV3 pwsFile = new PwsFileV3(stream, secureString, FileMode.Create);
+                
                 pwsFile.Header = new PwsFileHeader
                 {
                     WhenLastSaved = DateTime.Now,
                     WhatLastSaved = "Initialized",
                     DbName = FILENAME,
-                    DbDescription = DESCRIPTION ?? ""
+                    DbDescription = DESCRIPTION
                 };
-                pwsFile.PasswordPolicies["Default"] = new PwPolicy
-                {
-                    Flags = PwPolicyFlags.UseSymbols | PwPolicyFlags.UseDigits | PwPolicyFlags.UseUppercase | PwPolicyFlags.UseHexDigits,
-                    Length = 12,
-                    DigitMinLength = 2,
-                    LowerMinLength = 2,
-                    SymbolMinLength = 2,
-                    UpperMinLength = 2,
-                    Symbols = "/-*+=%@;,#{}"
-                };
+                
                 await pwsFile.OpenAsync();
-                await pwsFile.WriteRecordAsync(new ItemData()
-                {
-                    Uuid = Guid.NewGuid(),
-                    Title = "Sample",
-                    User = "user",
-                    Password = "password",
-                    Group = "Default",
-                    PolicyName = "Default"
-                });
+                
+                pwsFile.Dispose();
+
                 using FileStream fileStream = File.Create(fullpath);
                 stream.Position = 0;
                 stream.CopyTo(fileStream);
@@ -100,7 +83,7 @@ namespace PwSafeClient.Console.Commands
             } 
             catch (Exception e)
             {
-                System.Console.WriteLine($"Failed to create {fullpath}, errors: {e.Message}");
+                System.Console.Error.WriteLine($"Failed to create {fullpath}, errors: {e.Message}");
                 throw;
             }
         }

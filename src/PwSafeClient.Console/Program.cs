@@ -17,7 +17,9 @@ namespace PwSafeClient.Console
                 Description = "The best CLI tool for PasswordSafe"
             };
 
-            rootCommand.AddCreateDbCommand();
+            rootCommand
+                .AddCreateDbCommand()
+                .AddShowDbCommand();
 
             rootCommand.Invoke(args);
         }
