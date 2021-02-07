@@ -30,6 +30,8 @@ namespace PwSafeClient.Core
             this.parent = parent;
         }
 
+        #region public properties
+
         public List<Group> Groups
         {
             get { return groups; }
@@ -73,6 +75,10 @@ namespace PwSafeClient.Core
         {
             get { return string.IsNullOrEmpty(name); }
         }
+
+        #endregion
+
+        #region public methods
 
         public Group InsertGroup(string group)
         {
@@ -132,22 +138,9 @@ namespace PwSafeClient.Core
             groups.ForEach(group => group.Traverse(handle));
         }
 
-        public static async Task<Group> ReadFromPwsFileV3Async(PwsFileV3 pwsFile)
-        {
-            List<ItemData> _items = new List<ItemData>();
-            ItemData item;
+        #endregion
 
-            do
-            {
-                item = await pwsFile.ReadRecordAsync();
-                if (item is not null)
-                {
-                    _items.Add(item);
-                }
-            } while (item is not null);
-
-            return GroupItems(_items);
-        }
+        #region static methods
 
         public static Group GroupItems(List<ItemData> unGroupItems)
         {
@@ -190,5 +183,7 @@ namespace PwSafeClient.Core
             Group rootGroup = new Group();
             return rootGroup;
         }
+
+        #endregion
     }
 }

@@ -16,7 +16,7 @@ namespace PwSafeClient.Console.Commands
     {
         public static RootCommand AddShowDbCommand(this RootCommand rootCommand)
         {
-            Command command = new Command("show", "show the detail of PasswordSafe database");
+            Command command = new Command("show", "Show the detail of PasswordSafe database");
             command.AddArgument(new Argument("FILEPATH"));
             command.AddOption(new Option(new string[] { "--password", "-p" }, "The password") { Argument = new Argument("PASSWORD") });
 
@@ -28,21 +28,12 @@ namespace PwSafeClient.Console.Commands
 
         private static async void HandleShowCommand(string FILEPATH, string PASSWORD, IConsole console)
         {
-            SecureString secureString;
-
             if (string.IsNullOrEmpty(FILEPATH) || !File.Exists(FILEPATH)) {
                 System.Console.Error.WriteLine("File doesn't exist");
                 return;
             }
 
-            if (string.IsNullOrEmpty(PASSWORD))
-            {
-                secureString = ConsoleHelper.ReadPassword();
-            }
-            else
-            {
-                secureString = ConsoleHelper.GetSecureString(PASSWORD);
-            }
+            SecureString secureString = ConsoleHelper.GetSecureString(PASSWORD);
 
             try
             {
@@ -50,8 +41,8 @@ namespace PwSafeClient.Console.Commands
                 using MemoryStream ms = new MemoryStream();
                 stream.CopyTo(ms);
                 ms.Position = 0;
-                PwsFileV3 pwsFile = new PwsFileV3(ms, secureString, FileMode.Open);
-                await pwsFile.OpenAsync();
+                PwsFileV3 pwsFile = (PwsFileV3)await PwsFile.OpenAsync(ms, secureString);
+                
                 string polices = "";
                 pwsFile.PasswordPolicies.Keys.ToList().ForEach((string key) =>
                 {
@@ -59,10 +50,11 @@ namespace PwSafeClient.Console.Commands
                 });
 
                 if (polices.Length >= 2) {
-                    polices = polices.Substring(0, 2);
+                    polices = polices[..(polices.Length - 2)];
                 }
 
-                Group group = await Group.ReadFromPwsFileV3Async(pwsFile);
+                List<ItemData> items = await PwsFileHelper.ReadAllItemsFromPwsFileV3Async(pwsFile);
+                Group group = Group.GroupItems(items);
 
                 string format = "{0, -20}{1}";
                 System.Console.WriteLine(format, "Database format", pwsFile.Header.Version);

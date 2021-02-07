@@ -19,7 +19,7 @@ namespace PwSafeClient.Console.Commands
 
         public static RootCommand AddCreateDbCommand(this RootCommand rootCommand)
         {
-            Command command = new Command("create", "Create a empty new PasswordSafe v3 database file");
+            Command command = new Command("createdb", "Create a empty new PasswordSafe v3 database file");
             command.AddArgument(new Argument("FILENAME"));
             command.AddOption(new Option(new string[] { "--password", "-p" }, "The security password") { Argument = new Argument("PASSWORD") });
             command.AddOption(new Option(new string[] { "--output", "-o" }, "The output path") { Argument = new Argument("OUTPUT") });
@@ -33,17 +33,6 @@ namespace PwSafeClient.Console.Commands
 
         private static async void HandleCreate(string FILENAME, string PASSWORD, string OUTPUT, string DESCRIPTION, IConsole console)
         {
-            SecureString secureString;
-
-            if (string.IsNullOrEmpty(PASSWORD))
-            {
-                secureString = ConsoleHelper.ReadPassword();
-            } 
-            else
-            {
-                secureString = ConsoleHelper.GetSecureString(PASSWORD);
-            }
-
             if (string.IsNullOrEmpty(OUTPUT))
             {
                 OUTPUT = Directory.GetCurrentDirectory();
@@ -57,12 +46,14 @@ namespace PwSafeClient.Console.Commands
                 System.Console.Error.WriteLine($"File ${fullname} already exists in ${OUTPUT}");
                 return;
             }
+            
+            SecureString secureString = ConsoleHelper.GetSecureString(PASSWORD);
 
             try
             {
                 using MemoryStream stream = new MemoryStream();
                 
-                PwsFileV3 pwsFile = new PwsFileV3(stream, secureString, FileMode.Create);
+                PwsFile pwsFile = await PwsFile.CreateAsync(stream, secureString, PwsFileVersion.Version3);
                 
                 pwsFile.Header = new PwsFileHeader
                 {
