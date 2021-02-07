@@ -18,7 +18,7 @@ namespace PwSafeClient.Console.Commands
         {
             Command command = new Command("show", "show the detail of PasswordSafe database");
             command.AddArgument(new Argument("FILEPATH"));
-            command.AddOption(new Option(new string[] { "--password", "-p" }, "The security password") { Argument = new Argument("PASSWORD") });
+            command.AddOption(new Option(new string[] { "--password", "-p" }, "The password") { Argument = new Argument("PASSWORD") });
 
             command.Handler = CommandHandler.Create<string, string, IConsole>(HandleShowCommand);
 
@@ -64,16 +64,16 @@ namespace PwSafeClient.Console.Commands
 
                 Group group = await Group.ReadFromPwsFileV3Async(pwsFile);
 
-                string format = "{0, 20}{1}";
+                string format = "{0, -20}{1}";
                 System.Console.WriteLine(format, "Database format", pwsFile.Header.Version);
                 System.Console.WriteLine(format, "Database UUID:", pwsFile.Header.Uuid);
-                System.Console.WriteLine(format, "Name:", pwsFile.Header.DbName);
-                System.Console.WriteLine(format, "Description:", pwsFile.Header.DbDescription);
+                System.Console.WriteLine(format, "Name:", pwsFile.Header.DbName ?? "-");
+                System.Console.WriteLine(format, "Description:", pwsFile.Header.DbDescription ?? "-");
                 System.Console.WriteLine(format, "Version", pwsFile.Header.Version);
                 System.Console.WriteLine(format, "Last saved by:", pwsFile.Header.LastSavedBy);
                 System.Console.WriteLine(format, "Last saved on:", pwsFile.Header.LastSavedOn);
-                System.Console.WriteLine(format, "Has policies: ", polices);
-                System.Console.WriteLine(format, "Group count: ", group.GetGroupNames().Count - 2);
+                System.Console.WriteLine(format, "Has policies: ", polices.Length > 0 ? polices : "None" );
+                System.Console.WriteLine(format, "Group count: ", group.GetAllNestedGroups().ToList().Count);
                 System.Console.WriteLine(format, "Item count: ", group.ItemSize);
 
                 pwsFile.Dispose();
@@ -82,7 +82,6 @@ namespace PwSafeClient.Console.Commands
             {
                 System.Console.Error.WriteLine(e.Message);
             }
-
         }
     }
 }

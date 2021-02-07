@@ -54,8 +54,8 @@ namespace PwSafeClient.Console.Commands
 
             if (Directory.Exists(fullpath))
             {
-                System.Console.WriteLine($"File ${fullname} already exists in ${OUTPUT}");
-                throw new Exception($"File ${fullname} already exists in ${OUTPUT}");
+                System.Console.Error.WriteLine($"File ${fullname} already exists in ${OUTPUT}");
+                return;
             }
 
             try
@@ -83,7 +83,7 @@ namespace PwSafeClient.Console.Commands
             } 
             catch (Exception e)
             {
-                System.Console.Error.WriteLine($"Failed to create {fullpath}, errors: {e.Message}");
+                System.Console.Error.WriteLine($"Failed to create {fullpath}, error: {e.Message}");
                 throw;
             }
         }

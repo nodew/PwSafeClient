@@ -9,28 +9,25 @@ namespace PwSafeClient.Core
 {
     public class Group
     {
-        private readonly List<Group> groups;
-        private List<ItemData> items;
-        private readonly string displayName;
-        private readonly string id;
+        private readonly List<Group> groups = new List<Group>();
+        private List<ItemData> items = new List<ItemData>();
+        private readonly string name;
+        private readonly Group? parent;
+        private string? path;
 
-        private static readonly string rootID = "c4362666-5c42-4400-8bd3-266dd1138b4a";
-
-        public Group(string id)
+        private Group()
         {
-            this.id = id;
-            groups = new List<Group>();
-            items = new List<ItemData>();
+            this.name = "";
+        }
 
-            var idx = id.LastIndexOf('.');
-            if (idx >= 0)
+        public Group(string name, Group? parent = null)
+        {
+            if (string.IsNullOrWhiteSpace(name))
             {
-                displayName = id[(idx + 1)..];
+                throw new Exception("Invalid group name");
             }
-            else
-            {
-                displayName = id;
-            }
+            this.name = name;
+            this.parent = parent;
         }
 
         public List<Group> Groups
@@ -43,14 +40,25 @@ namespace PwSafeClient.Core
             get { return items; }
         }
 
-        public string Value
+        public string Name
         {
-            get { return displayName; }
+            get { return name; }
         }
 
-        public string ID
+        public string Path
         {
-            get { return id; }
+            get {
+                if (parent is null || parent.IsRoot)
+                {
+                    return name;
+                }
+                if (string.IsNullOrEmpty(path))
+                {
+                    path = $"{parent.Path}.{name}";
+                }
+
+                return path;
+            }
         }
 
         public int ItemSize
@@ -61,60 +69,61 @@ namespace PwSafeClient.Core
             }
         }
 
-        public Group InsertGroup(string groupId)
+        public bool IsRoot
         {
-            if (id == rootID || (groupId != id && groupId.StartsWith(id)))
+            get { return string.IsNullOrEmpty(name); }
+        }
+
+        public Group InsertGroup(string group)
+        {
+            if (string.IsNullOrEmpty(group))
             {
-                string _groupId = "";
-                string subGroupName = "";
+                throw new Exception("Invalid group name");
+            }
 
-                if (string.IsNullOrEmpty(groupId)) {
-                    if (id != rootID) {
-                        throw new Exception("Invalid group ID");
-                    }
-                    
-                }
+            string currentName = group.Split('.').First();
+            string subGroupId = "";
 
-                if (id == rootID) {
-                    _groupId = groupId.Split('.').First();
-                } 
-                else 
-                {
-                    subGroupName = groupId.Substring(id.Length + 1).Split(".").First();
-                }
+            if (currentName != group)
+            {
+                subGroupId = group[(currentName.Length + 1)..];
+            }
 
+            Group? item = groups.Find(item => item.name == currentName);
 
-                if (id != rootID) {
-                    _groupId = id + "." + subGroupName;
-                }
-
-                Group? item = groups.Find(item => item.id == _groupId);
-
-                if (item is null)
-                {
-                    var _group = new Group(_groupId);
-                    _group.InsertGroup(groupId);
-                    groups.Add(_group);
-                }
-                else if (item.id.Length < groupId.Length)
-                {
-                    item.InsertGroup(groupId);
-                }
+            if (item is null)
+            {
+                item = new Group(currentName, this);
+                groups.Add(item);
+            }
+            
+            if (!string.IsNullOrWhiteSpace(subGroupId))
+            {
+                item.InsertGroup(subGroupId);
             }
 
             return this;
         }
 
-        public List<string> GetGroupNames()
+        public IEnumerable<string> GetFirstLevelGroups()
         {
-            List<string> groupNames = new List<string>();
-            groupNames.Add(id);
+            IEnumerable<string> names = new List<string>();
+            groups.ForEach(item =>
+            {
+                names = names.Append(item.Path);
+            });
+            return names;
+        }
+
+        public IEnumerable<string> GetAllNestedGroups()
+        {
+            IEnumerable<string> names = new List<string>();
             groups.ForEach(group =>
             {
-                groupNames = groupNames.Concat(group.GetGroupNames()).ToList();
+                names = names.Append(group.Path).Concat(group.GetAllNestedGroups());
             });
 
-            return groupNames;
+            return names;
         }
 
         public void Traverse(Action<Group> handle)
@@ -142,38 +151,44 @@ namespace PwSafeClient.Core
 
         public static Group GroupItems(List<ItemData> unGroupItems)
         {
-            var query = unGroupItems.GroupBy(
-                item => item.Group,
-                (key, items) => Tuple.Create(key, items.ToList()));
+            var query = from item in unGroupItems
+                        group item by item.Group;
 
-            List<string> groupNames = query.Select((item) => item.Item1).ToList();
-            
+            List<string> groupNames = query.Select((item) => item.Key).ToList();
+
             Group rootGroup = FromList(groupNames);
-            
+
             rootGroup.Traverse((group) =>
             {
-                var _items = query.Where(item => item.Item1 == group.ID)
-                                .Select(item => item.Item2)
-                                .FirstOrDefault();
+                var _items = query.Where(item => item.Key == group.Path).FirstOrDefault();
                 if (_items is not null)
                 {
-                    group.items = _items;
+                    group.items = new List<ItemData>(_items);
                 }
             });
             return rootGroup;
         }
 
-        public static Group FromList(List<string> groups)
+        public static Group FromList(List<string> records)
         {
-            Group group = new Group(rootID);
-            group.groups.Add(new Group(""));
+            // root group
+            Group rootGroup = RootGroup();
 
-            groups.ForEach(record =>
+            records.ForEach(record =>
             {
-                group.InsertGroup(record);
+                if (!string.IsNullOrWhiteSpace(record))
+                {
+                    rootGroup.InsertGroup(record);
+                }
             });
 
-            return group;
+            return rootGroup;
+        }
+
+        public static Group RootGroup()
+        {
+            Group rootGroup = new Group();
+            return rootGroup;
         }
     }
 }

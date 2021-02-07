@@ -14,7 +14,7 @@ namespace PwSafeClient.Console
 
             RootCommand rootCommand = new RootCommand()
             {
-                Description = "The best CLI tool for PasswordSafe"
+                Description = "The best PasswordSafe CLI"
             };
 
             rootCommand
