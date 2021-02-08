@@ -63,31 +63,20 @@ namespace PwSafeClient.Console
                 : Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%");
         }
 
-        public static string GetPWSFilePath(string alias = "Default")
+        public static async Task<string> GetPWSFilePath(string alias = ConfigManager.DefaultAlias)
         {
+            Config config;
             string homeDir = GetHomePath() ?? string.Empty;
-            string configPath = Path.Combine(homeDir, ".pwsafe");
+            string configPath = Path.Combine(homeDir, "pwsafe.json");
             if (!File.Exists(configPath))
             {
+                config = new Config();
+                await ConfigManager.ToFile(config, configPath);
                 return string.Empty;
             }
-            string[] rows = File.ReadAllLines(configPath);
-            foreach (string row in rows)
-            {
-                string _row = row.Trim();
-                string[] config = _row.Split(' ');
-                if (config.Length == 2)
-                {
-                    string _alias = config[0].Trim();
-                    string filepath = _row[(_alias.Length)..].Trim();
 
-                    if (alias == _alias)
-                    {
-                        return filepath;
-                    }
-                }
-            }
-            return string.Empty;
+            config = await ConfigManager.FromFile(configPath);
+            return ConfigManager.GetDbPath(config, alias) ?? string.Empty;
         }
     }
 }

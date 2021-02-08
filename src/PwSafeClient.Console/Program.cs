@@ -61,12 +61,12 @@ namespace PwSafeClient.Console
             }
             else
             {
-                filepath = ConsoleHelper.GetPWSFilePath(ALIAS ?? "Default");
+                filepath = await ConsoleHelper.GetPWSFilePath(ALIAS ?? ConfigManager.DefaultAlias);
             }
 
             if (!File.Exists(filepath))
             {
-                System.Console.Error.WriteLine($"File {filepath} doesn't exist");
+                System.Console.Error.WriteLine($"Can't locate a valid file, please check your parameters or configuration");
                 return;
             }
 
