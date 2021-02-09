@@ -26,7 +26,7 @@ namespace PwSafeClient.Console.Commands
             return rootCommand;
         }
 
-        private static async void HandleShowCommand(string FILEPATH, string PASSWORD, IConsole console)
+        private static async Task HandleShowCommand(string FILEPATH, string PASSWORD, IConsole console)
         {
             if (string.IsNullOrEmpty(FILEPATH) || !File.Exists(FILEPATH)) {
                 System.Console.Error.WriteLine("File doesn't exist");

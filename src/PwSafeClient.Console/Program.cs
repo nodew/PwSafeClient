@@ -5,6 +5,7 @@ using System.CommandLine.Invocation;
 using System.IO;
 using System.Linq;
 using System.Security;
+using System.Threading.Tasks;
 using PwSafeClient.Console.Commands;
 using PwSafeClient.Core;
 using PwSafeLib.Filesystem;
@@ -38,8 +39,7 @@ namespace PwSafeClient.Console
 
             rootCommand.AddOption(new Option(new string[] { "--title", "-t" }, "Title of your password")
             {
-                Argument = new Argument("Title"),
-                IsRequired = true
+                Argument = new Argument("Title")
             });
 
             rootCommand.AddOption(new Option(new string[] { "--password", "-p" }, "Password of your PasswordSafe file")
@@ -52,7 +52,7 @@ namespace PwSafeClient.Console
             rootCommand.Invoke(args);
         }
 
-        private static async void HandleRootCommand(string ALIAS, string FILE, string TITLE, string PASSWORD, IConsole console)
+        private static async Task HandleRootCommand(string ALIAS, string FILE, string TITLE, string PASSWORD, IConsole console)
         {
             string filepath;
             if (!string.IsNullOrEmpty(FILE))
@@ -72,11 +72,12 @@ namespace PwSafeClient.Console
 
             if (string.IsNullOrWhiteSpace(TITLE))
             {
-                System.Console.Error.WriteLine($"Title is required");
-                return;
+                TITLE = ConsoleHelper.ReadString("Title:");
+                if (string.IsNullOrWhiteSpace(TITLE)) {
+                    System.Console.Error.WriteLine($"Title is required");
+                    return;
+                }
             }
-
-            System.Console.Write(filepath);
 
             SecureString secureString = ConsoleHelper.GetSecureString(PASSWORD);
 

@@ -21,7 +21,7 @@ namespace PwSafeClient.Console
 
         private static readonly JsonSerializerOptions options = new JsonSerializerOptions
         {
-            //PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             WriteIndented = true
         };
 
@@ -52,7 +52,7 @@ namespace PwSafeClient.Console
             try
             {
                 Config? config = JsonSerializer.Deserialize<Config>(json, options);
-                return new Config();
+                return config ?? new Config();
             }
             catch (Exception e)
             {

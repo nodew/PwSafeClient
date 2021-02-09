@@ -31,7 +31,7 @@ namespace PwSafeClient.Console.Commands
             return rootCommand;
         }
 
-        private static async void HandleCreate(string FILENAME, string PASSWORD, string OUTPUT, string DESCRIPTION, IConsole console)
+        private static async Task HandleCreate(string FILENAME, string PASSWORD, string OUTPUT, string DESCRIPTION, IConsole console)
         {
             if (string.IsNullOrEmpty(OUTPUT))
             {

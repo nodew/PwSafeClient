@@ -40,6 +40,12 @@ namespace PwSafeClient.Console
             return pwd;
         }
 
+        public static string ReadString(string question) {
+            System.Console.Write($"{question} ");
+            string? answer = System.Console.ReadLine();
+            return answer ?? string.Empty;
+        }
+
         public static SecureString GetSecureString(string password)
         {
             if (string.IsNullOrWhiteSpace(password))
