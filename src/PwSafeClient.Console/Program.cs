@@ -25,7 +25,8 @@ namespace PwSafeClient.Console
 
             rootCommand
                 .AddCreateDbCommand()
-                .AddShowDbCommand();
+                .AddShowDbCommand()
+                .AddListCommand();
 
             rootCommand.AddOption(new Option(new string[] { "--alias", "-a" }, "Alias to the database, config at $HOME/.pwsafe")
             {
@@ -90,7 +91,7 @@ namespace PwSafeClient.Console
                 }
 
                 TextCopy.ClipboardService.SetText(item.Password);
-                System.Console.WriteLine("Successfuly copy password to clipboard");
+                System.Console.WriteLine("Successfully copy password to clipboard");
                 pwsFile.Dispose();
             }
             catch (Exception e)

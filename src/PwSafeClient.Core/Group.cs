@@ -138,6 +138,25 @@ namespace PwSafeClient.Core
             groups.ForEach(group => group.Traverse(handle));
         }
 
+        public Group? FindSubGroup(Func<Group, bool> predicate)
+        {
+            foreach (Group group in Groups)
+            {
+                if (predicate(group))
+                {
+                    return group;
+                }
+                Group? _group = group.FindSubGroup(predicate);
+
+                if (_group is not null)
+                {
+                    return _group;
+                }
+            }
+
+            return null;
+        }
+
         #endregion
 
         #region static methods
