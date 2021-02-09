@@ -1,6 +1,6 @@
 # Password Safe Client in modern C#
 
-For Password Safe, visit [https://www.pwsafe.org/](https://www.pwsafe.org/) for more details.
+For Password Safe, visit [https://www.pwsafe.org/](https://www.pwsafe.org/) for details.
 
 ## CLI for PasswordSafe
 
