@@ -16,20 +16,31 @@ namespace PwSafeClient.Console.Commands
     {
         public static RootCommand AddShowDbCommand(this RootCommand rootCommand)
         {
-            Command command = new Command("show", "Show the detail of PasswordSafe database");
-            command.AddArgument(new Argument("FILEPATH"));
-            command.AddOption(new Option(new string[] { "--password", "-p" }, "The password") { Argument = new Argument("PASSWORD") });
+            Command command = new Command("showdb", "Show the detail of PasswordSafe database");
+            command.AddOption(new Option(new string[] { "--alias", "-a" }, "Alias to the database, config at $HOME/.pwsafe")
+            {
+                Argument = new Argument("ALIAS")
+            });
+            command.AddOption(new Option(new string[] { "--file", "-f" }, "Path to your PasswordSafe file")
+            {
+                Argument = new Argument("FILE")
+            });
+            command.AddOption(new Option(new string[] { "--password", "-p" }, "Password for current database") {
+                Argument = new Argument("PASSWORD")
+            });
 
-            command.Handler = CommandHandler.Create<string, string, IConsole>(HandleShowCommand);
+            command.Handler = CommandHandler.Create<string, string, string, IConsole>(HandleShowCommand);
 
             rootCommand.AddCommand(command);
             return rootCommand;
         }
 
-        private static async Task HandleShowCommand(string FILEPATH, string PASSWORD, IConsole console)
+        private static async Task HandleShowCommand(string ALIAS, string FILE, string PASSWORD, IConsole console)
         {
-            if (string.IsNullOrEmpty(FILEPATH) || !File.Exists(FILEPATH)) {
-                System.Console.Error.WriteLine("File doesn't exist");
+            string filepath = await ConsoleHelper.GetPwsFilePath(FILE, ALIAS);
+
+            if (!File.Exists(filepath)) {
+                System.Console.Error.WriteLine($"Can't locate a valid file, please check your command parameters or configuration in ~/pwsafe.json");
                 return;
             }
 
@@ -37,12 +48,12 @@ namespace PwSafeClient.Console.Commands
 
             try
             {
-                using FileStream stream = File.OpenRead(FILEPATH);
+                using FileStream stream = File.OpenRead(filepath);
                 using MemoryStream ms = new MemoryStream();
                 stream.CopyTo(ms);
                 ms.Position = 0;
                 PwsFileV3 pwsFile = (PwsFileV3)await PwsFile.OpenAsync(ms, secureString);
-                
+
                 string polices = "";
                 pwsFile.PasswordPolicies.Keys.ToList().ForEach((string key) =>
                 {

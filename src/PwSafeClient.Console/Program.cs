@@ -42,7 +42,7 @@ namespace PwSafeClient.Console
                 Argument = new Argument("Title")
             });
 
-            rootCommand.AddOption(new Option(new string[] { "--password", "-p" }, "Password of your PasswordSafe file")
+            rootCommand.AddOption(new Option(new string[] { "--password", "-p" }, "Password for current database")
             {
                 Argument = new Argument("PASSWORD")
             });
@@ -54,19 +54,11 @@ namespace PwSafeClient.Console
 
         private static async Task HandleRootCommand(string ALIAS, string FILE, string TITLE, string PASSWORD, IConsole console)
         {
-            string filepath;
-            if (!string.IsNullOrEmpty(FILE))
-            {
-                filepath = FILE;
-            }
-            else
-            {
-                filepath = await ConsoleHelper.GetPWSFilePath(ALIAS ?? ConfigManager.DefaultAlias);
-            }
+            string filepath = await ConsoleHelper.GetPwsFilePath(FILE, ALIAS);
 
             if (!File.Exists(filepath))
             {
-                System.Console.Error.WriteLine($"Can't locate a valid file, please check your parameters or configuration");
+                System.Console.Error.WriteLine($"Can't locate a valid file, please check your command parameters or configuration in ~/pwsafe.json");
                 return;
             }
 

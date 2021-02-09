@@ -21,7 +21,7 @@ namespace PwSafeClient.Console.Commands
         {
             Command command = new Command("createdb", "Create a empty new PasswordSafe v3 database file");
             command.AddArgument(new Argument("FILENAME"));
-            command.AddOption(new Option(new string[] { "--password", "-p" }, "The security password") { Argument = new Argument("PASSWORD") });
+            command.AddOption(new Option(new string[] { "--password", "-p" }, "Password for current database") { Argument = new Argument("PASSWORD") });
             command.AddOption(new Option(new string[] { "--output", "-o" }, "The output path") { Argument = new Argument("OUTPUT") });
             command.AddOption(new Option("--description", "The description for current database") { Argument = new Argument("DESCRIPTION") });
 
@@ -46,15 +46,15 @@ namespace PwSafeClient.Console.Commands
                 System.Console.Error.WriteLine($"File ${fullname} already exists in ${OUTPUT}");
                 return;
             }
-            
+
             SecureString secureString = ConsoleHelper.GetSecureString(PASSWORD);
 
             try
             {
                 using MemoryStream stream = new MemoryStream();
-                
+
                 PwsFile pwsFile = await PwsFile.CreateAsync(stream, secureString, PwsFileVersion.Version3);
-                
+
                 pwsFile.Header = new PwsFileHeader
                 {
                     WhenLastSaved = DateTime.Now,
@@ -62,16 +62,16 @@ namespace PwSafeClient.Console.Commands
                     DbName = FILENAME,
                     DbDescription = DESCRIPTION
                 };
-                
+
                 await pwsFile.OpenAsync();
-                
+
                 pwsFile.Dispose();
 
                 using FileStream fileStream = File.Create(fullpath);
                 stream.Position = 0;
                 stream.CopyTo(fileStream);
                 System.Console.WriteLine($"Successfully created {fullpath}");
-            } 
+            }
             catch (Exception e)
             {
                 System.Console.Error.WriteLine($"Failed to create {fullpath}, error: {e.Message}");

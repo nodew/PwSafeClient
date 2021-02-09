@@ -17,7 +17,7 @@ namespace PwSafeClient.Console
 
     public static class ConfigManager
     {
-        public const string DefaultAlias = "Default";
+        public const string DefaultAlias = "default";
 
         private static readonly JsonSerializerOptions options = new JsonSerializerOptions
         {

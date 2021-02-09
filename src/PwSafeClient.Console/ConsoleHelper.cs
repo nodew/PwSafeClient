@@ -69,7 +69,7 @@ namespace PwSafeClient.Console
                 : Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%");
         }
 
-        public static async Task<string> GetPWSFilePath(string alias = ConfigManager.DefaultAlias)
+        public static async Task<string> GetPWSFilePathFromAlias(string alias = ConfigManager.DefaultAlias)
         {
             Config config;
             string homeDir = GetHomePath() ?? string.Empty;
@@ -83,6 +83,15 @@ namespace PwSafeClient.Console
 
             config = await ConfigManager.FromFile(configPath);
             return ConfigManager.GetDbPath(config, alias) ?? string.Empty;
+        }
+
+        public static async Task<string> GetPwsFilePath(string filepath, string alias) {
+            if (!string.IsNullOrEmpty(filepath))
+            {
+                return filepath;
+            }
+
+            return await ConsoleHelper.GetPWSFilePathFromAlias(alias ?? ConfigManager.DefaultAlias);
         }
     }
 }
