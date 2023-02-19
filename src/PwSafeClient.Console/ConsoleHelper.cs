@@ -8,6 +8,8 @@ namespace PwSafeClient.Console
 {
     public static class ConsoleHelper
     {
+        private const string _configFileName = "pwsafe.json";
+
         public static SecureString ReadPassword()
         {
             var pwd = new SecureString();
@@ -67,29 +69,24 @@ namespace PwSafeClient.Console
                 : Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%");
         }
 
-        public static async Task<string> GetPWSFilePathFromAlias(string alias = ConfigManager.DefaultAlias)
+        public static async Task<string> GetPWSFilePath(string alias = ConfigManager.DefaultAlias)
         {
-            Config config;
-            string homeDir = GetHomePath() ?? string.Empty;
-            string configPath = Path.Combine(homeDir, "pwsafe.json");
-            if (!File.Exists(configPath))
-            {
-                config = new Config();
-                await ConfigManager.ToFile(config, configPath);
-                return string.Empty;
-            }
-
-            config = await ConfigManager.FromFile(configPath);
+            var config = await LoadConfigAsync();
             return ConfigManager.GetDbPath(config, alias) ?? string.Empty;
         }
 
-        public static async Task<string> GetPwsFilePath(string filepath, string alias) {
-            if (!string.IsNullOrEmpty(filepath))
+        public static async Task<Config> LoadConfigAsync()
+        {
+            string homeDir = GetHomePath() ?? string.Empty;
+            string configPath = Path.Combine(homeDir, _configFileName);
+            if (!File.Exists(configPath))
             {
-                return filepath;
+                Config config = new Config();
+                await ConfigManager.ToFile(config, configPath);
+                return config;
             }
 
-            return await ConsoleHelper.GetPWSFilePathFromAlias(alias ?? ConfigManager.DefaultAlias);
+            return await ConfigManager.FromFile(configPath);
         }
     }
 }

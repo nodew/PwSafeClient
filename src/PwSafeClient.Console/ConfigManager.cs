@@ -9,6 +9,9 @@ namespace PwSafeClient.Console
 {
     public class Config
     {
+        [JsonPropertyName("defaultDb")]
+        public string? DefaultDatabase { get; set; }
+
         [JsonPropertyName("databases")]
         public Dictionary<string, string> Databases { get; set; } = new Dictionary<string, string>();
     }
@@ -23,11 +26,13 @@ namespace PwSafeClient.Console
             WriteIndented = true
         };
 
-        public static string? GetDbPath(Config config, string alias)
+        public static string GetDbPath(Config config, string? alias)
         {
+            alias = alias ?? config.DefaultDatabase ?? DefaultAlias;
             if (config.Databases.TryGetValue(alias, out string? filePath)) {
-                return filePath;
+                return filePath ?? string.Empty;
             }
+
             return string.Empty;
         }
 

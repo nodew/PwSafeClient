@@ -10,12 +10,14 @@ namespace PwSafeClient.Console.Commands
         public static RootCommand AddCreateDbCommand(this RootCommand rootCommand)
         {
             Command command = new Command("createdb", "Create an empty new PasswordSafe v3 database file");
+            command.SetHandler(HandleCreateDbAsync);
             rootCommand.AddCommand(command);
             return rootCommand;
         }
 
-        private static async Task HandleCreate(string FILENAME, string PASSWORD, string OUTPUT, string DESCRIPTION, IConsole console)
+        private static async Task HandleCreateDbAsync()
         {
+            await Task.CompletedTask;
         }
     }
 }

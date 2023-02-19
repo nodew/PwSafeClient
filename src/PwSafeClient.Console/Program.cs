@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.CommandLine;
-using System.IO;
-using System.Linq;
-using System.Security;
-using System.Threading.Tasks;
+﻿using System.CommandLine;
 using PwSafeClient.Console.Commands;
 
 namespace PwSafeClient.Console
@@ -23,79 +17,10 @@ namespace PwSafeClient.Console
             rootCommand
                 .AddCreateDbCommand()
                 .AddShowDbCommand()
-                .AddListCommand();
-
-            rootCommand.AddOption(new Option(new string[] { "--alias", "-a" }, "Alias to the database, config at $HOME/.pwsafe")
-            {
-                Argument = new Argument("ALIAS")
-            });
-
-            rootCommand.AddOption(new Option(new string[] { "--file", "-f" }, "Path to your PasswordSafe file")
-            {
-                Argument = new Argument("FILE")
-            });
-
-            rootCommand.AddOption(new Option(new string[] { "--title", "-t" }, "Title of your password")
-            {
-                Argument = new Argument("Title")
-            });
-
-            rootCommand.AddOption(new Option(new string[] { "--password", "-p" }, "Password for current database")
-            {
-                Argument = new Argument("PASSWORD")
-            });
-
-            rootCommand.Handler = CommandHandler.Create<string, string, string, string, IConsole>(HandleRootCommand);
+                .AddListDbCommand()
+                .AddListEntriesCommand();
 
             rootCommand.Invoke(args);
-        }
-
-        private static async Task HandleRootCommand(string ALIAS, string FILE, string TITLE, string PASSWORD, IConsole console)
-        {
-            string filepath = await ConsoleHelper.GetPwsFilePath(FILE, ALIAS);
-
-            if (!File.Exists(filepath))
-            {
-                System.Console.Error.WriteLine($"Can't locate a valid file, please check your command parameters or configuration in ~/pwsafe.json");
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(TITLE))
-            {
-                TITLE = ConsoleHelper.ReadString("Title:");
-                if (string.IsNullOrWhiteSpace(TITLE)) {
-                    System.Console.Error.WriteLine($"Title is required");
-                    return;
-                }
-            }
-
-            SecureString secureString = ConsoleHelper.GetSecureString(PASSWORD);
-
-            try
-            {
-                using FileStream stream = File.OpenRead(filepath);
-                using MemoryStream ms = new MemoryStream();
-                stream.CopyTo(ms);
-                ms.Position = 0;
-                PwsFileV3 pwsFile = (PwsFileV3)await PwsFile.OpenAsync(ms, secureString);
-                List<ItemData> items = await PwsFileHelper.ReadAllItemsFromPwsFileV3Async(pwsFile);
-
-                ItemData? item = items.Where(item => item.Title == TITLE).FirstOrDefault();
-                if (item is null)
-                {
-                    System.Console.Error.WriteLine($"Can't find the password of {TITLE}");
-                    return;
-                }
-
-                TextCopy.ClipboardService.SetText(item.Password);
-                System.Console.WriteLine("Successfully copy password to clipboard");
-                pwsFile.Dispose();
-            }
-            catch (Exception e)
-            {
-                System.Console.Error.WriteLine("Unexpected error: {0}", e.Message);
-                throw;
-            }
         }
     }
 }
