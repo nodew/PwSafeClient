@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.CommandLine;
-using System.CommandLine.Invocation;
 using System.IO;
 using System.Linq;
 using System.Security;
 using System.Threading.Tasks;
 using PwSafeClient.Console.Commands;
-using PwSafeClient.Core;
-using PwSafeLib.Filesystem;
 
 namespace PwSafeClient.Console
 {

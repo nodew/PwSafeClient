@@ -1,3 +1,0 @@
-[submodule "deps/PwSafeLib"]
-	path = deps/PwSafeLib
-	url = git@github.com:nodew/PwSafeLib.git
