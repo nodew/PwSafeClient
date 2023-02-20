@@ -1,3 +1,4 @@
+using System;
 using System.CommandLine;
 using System.Threading.Tasks;
 
@@ -18,15 +19,15 @@ public static class ListDbCommand
         var config = await ConsoleHelper.LoadConfigAsync();
         if (config.Databases.Count == 0)
         {
-            System.Console.WriteLine("No database configured, you can use 'createdb' command to create a new one.");
+            Console.WriteLine("No database configured, you can use 'createdb' command to create a new one.");
             return;
         }
 
         foreach (var db in config.Databases)
         {
-            System.Console.WriteLine($"{db.Key}: {db.Value}");
+            Console.WriteLine($"{db.Key}: {db.Value}");
         }
 
-        System.Console.WriteLine(string.Format("Default database: {0}", config.DefaultDatabase ?? "Unknown"));
+        Console.WriteLine(string.Format("Default database: {0}", config.DefaultDatabase ?? "Unknown"));
     }
 }

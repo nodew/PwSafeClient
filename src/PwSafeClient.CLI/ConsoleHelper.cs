@@ -1,7 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Security;
 using System.Threading.Tasks;
 
 namespace PwSafeClient.CLI;
@@ -10,34 +9,35 @@ public static class ConsoleHelper
 {
     private const string _configFileName = "pwsafe.json";
 
-    public static SecureString ReadPassword()
+    public static string ReadPassword()
     {
-        var pwd = new SecureString();
-        System.Console.Write("Enter your password: ");
+        List<char> password = new List<char> { };
+        Console.Write("Enter your password: ");
         while (true)
         {
-            ConsoleKeyInfo i = System.Console.ReadKey(true);
+            ConsoleKeyInfo i = Console.ReadKey(true);
             if (i.Key == ConsoleKey.Enter)
             {
                 break;
             }
             else if (i.Key == ConsoleKey.Backspace)
             {
-                if (pwd.Length > 0)
+                if (password.Count > 0)
                 {
-                    pwd.RemoveAt(pwd.Length - 1);
-                    System.Console.Write("\b \b");
+                    password.RemoveAt(password.Count - 1);
+                    Console.Write("\b \b");
                 }
             }
             else if (i.KeyChar != '\u0000')
             {
-                pwd.AppendChar(i.KeyChar);
-                System.Console.Write("*");
+                password.Add(i.KeyChar);
+                Console.Write("*");
             }
         }
-        System.Console.WriteLine("");
 
-        return pwd;
+        Console.WriteLine("");
+
+        return string.Join("", password);
     }
 
     public static string ReadString(string question)
@@ -45,21 +45,6 @@ public static class ConsoleHelper
         System.Console.Write($"{question} ");
         string? answer = System.Console.ReadLine();
         return answer ?? string.Empty;
-    }
-
-    public static SecureString GetSecureString(string password)
-    {
-        if (string.IsNullOrWhiteSpace(password))
-        {
-            return ReadPassword();
-        }
-
-        SecureString secureString = new SecureString();
-        password.ToList().ForEach((char c) =>
-        {
-            secureString.AppendChar(c);
-        });
-        return secureString;
     }
 
     public static string? GetHomePath()
@@ -70,7 +55,7 @@ public static class ConsoleHelper
             : Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%");
     }
 
-    public static async Task<string> GetPWSFilePath(string alias = ConfigManager.DefaultAlias)
+    public static async Task<string> GetPWSFilePathAsync(string alias = ConfigManager.DefaultAlias)
     {
         var config = await LoadConfigAsync();
         return ConfigManager.GetDbPath(config, alias) ?? string.Empty;
@@ -88,5 +73,13 @@ public static class ConsoleHelper
         }
 
         return await ConfigManager.FromFile(configPath);
+    }
+
+    public static void LogError(string message)
+    {
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine(message);
+        Console.ResetColor();
+        Environment.Exit(1);
     }
 }

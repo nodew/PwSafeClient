@@ -5,7 +5,7 @@ VisualStudioVersion = 17.4.33403.182
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1B2039DC-9BFD-4FFE-93EF-F5BCA8A0827B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PwSafeClient.CLI", "src\PwSafeClient.Console\PwSafeClient.CLI.csproj", "{011D9C56-5DD1-4787-BF7F-2833E28C00C4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PwSafeClient.CLI", "src\PwSafeClient.CLI\PwSafeClient.CLI.csproj", "{011D9C56-5DD1-4787-BF7F-2833E28C00C4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PwSafeClient.Core", "src\PwSafeClient.Core\PwSafeClient.Core.csproj", "{D600D79E-1E94-4A40-9AD1-22245901F423}"
 EndProject
