@@ -12,8 +12,8 @@ public static class ShowDbCommand
     {
         Command command = new Command("showdb", "Show the detail of PasswordSafe database");
 
-        var aliasOption = new Option<string>("--name", "The alias of the database");
-        aliasOption.AddAlias("-d");
+        var aliasOption = new Option<string>("--alias", "The alias of the database");
+        aliasOption.AddAlias("-a");
 
         var fileOption = new Option<FileInfo>("--file", "The file path of your psafe3 file");
         fileOption.AddAlias("-f");

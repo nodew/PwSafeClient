@@ -43,7 +43,7 @@ public static class ConfigManager
         return json;
     }
 
-    public static async Task ToFile(Config config, string filepath)
+    public static async Task ToFileAsync(Config config, string filepath)
     {
         using FileStream fileStream = File.Open(filepath, FileMode.Create);
         using StreamWriter writer = new StreamWriter(fileStream);
@@ -65,7 +65,7 @@ public static class ConfigManager
         }
     }
 
-    public static async Task<Config> FromFile(string filepath)
+    public static async Task<Config> FromFileAsync(string filepath)
     {
         using FileStream fileStream = File.Open(filepath, FileMode.Open);
         using StreamReader reader = new StreamReader(fileStream);

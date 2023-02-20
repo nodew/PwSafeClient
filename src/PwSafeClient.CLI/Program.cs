@@ -15,6 +15,8 @@ class Program
         };
 
         rootCommand
+            .AddConfigCommand()
+            .AddChooseDbCommand()
             .AddCreateDbCommand()
             .AddShowDbCommand()
             .AddListDbCommand()

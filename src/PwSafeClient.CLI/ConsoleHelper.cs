@@ -61,18 +61,29 @@ public static class ConsoleHelper
         return ConfigManager.GetDbPath(config, alias) ?? string.Empty;
     }
 
-    public static async Task<Config> LoadConfigAsync()
+    public static string GetConfigPath()
     {
         string homeDir = GetHomePath() ?? string.Empty;
-        string configPath = Path.Combine(homeDir, _configFileName);
+        return Path.Combine(homeDir, _configFileName);
+    }
+
+    public static async Task<Config> LoadConfigAsync()
+    {
+        string configPath = GetConfigPath();
         if (!File.Exists(configPath))
         {
             Config config = new Config();
-            await ConfigManager.ToFile(config, configPath);
+            await ConfigManager.ToFileAsync(config, configPath);
             return config;
         }
 
-        return await ConfigManager.FromFile(configPath);
+        return await ConfigManager.FromFileAsync(configPath);
+    }
+
+    public static async Task UpdateConfigAsync(Config config)
+    {
+        string configPath = GetConfigPath();
+        await ConfigManager.ToFileAsync(config, configPath);
     }
 
     public static void LogError(string message)
