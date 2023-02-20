@@ -1,26 +1,25 @@
-﻿using System.CommandLine;
-using PwSafeClient.Console.Commands;
+﻿using PwSafeClient.CLI.Commands;
+using System.CommandLine;
 
-namespace PwSafeClient.Console
+namespace PwSafeClient.CLI;
+
+class Program
 {
-    class Program
+    static void Main(string[] args)
     {
-        static void Main(string[] args)
+        System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
+        RootCommand rootCommand = new RootCommand()
         {
-            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+            Description = "The best PasswordSafe CLI"
+        };
 
-            RootCommand rootCommand = new RootCommand()
-            {
-                Description = "The best PasswordSafe CLI"
-            };
+        rootCommand
+            .AddCreateDbCommand()
+            .AddShowDbCommand()
+            .AddListDbCommand()
+            .AddListEntriesCommand();
 
-            rootCommand
-                .AddCreateDbCommand()
-                .AddShowDbCommand()
-                .AddListDbCommand()
-                .AddListEntriesCommand();
-
-            rootCommand.Invoke(args);
-        }
+        rootCommand.Invoke(args);
     }
 }

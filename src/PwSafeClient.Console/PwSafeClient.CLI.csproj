@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
+    <AssemblyName>pwsafe</AssemblyName>
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <AssemblyName>pwsafe</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="PasswordSafe" Version="6.1.0" />
