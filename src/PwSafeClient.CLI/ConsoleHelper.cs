@@ -9,6 +9,8 @@ public static class ConsoleHelper
 {
     private const string _configFileName = "pwsafe.json";
 
+    public const string ApplicationName = "PasswordSafe CLI V1.0";
+
     public static string ReadPassword()
     {
         List<char> password = new List<char> { };

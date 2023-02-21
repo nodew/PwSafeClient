@@ -11,7 +11,7 @@ class Program
 
         RootCommand rootCommand = new RootCommand()
         {
-            Description = "The best PasswordSafe CLI"
+            Description = "PasswordSafe CLI"
         };
 
         rootCommand

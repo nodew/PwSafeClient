@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "PwSafeClient.CLI": {
+      "commandName": "Project",
+      "commandLineArgs": "createdb test.psafe3 --isDefault --force",
+      "workingDirectory": "C:\\Users\\wangq"
+    }
+  }
+}

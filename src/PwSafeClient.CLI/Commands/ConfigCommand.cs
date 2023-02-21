@@ -16,8 +16,8 @@ public static class ConfigCommand
         fileOption.AddAlias("-f");
         fileOption.IsRequired = true;
 
-        var IsDefaultOption = new Option<bool>("--isDefault", "If default database");
-        IsDefaultOption.SetDefaultValue(false);
+        var isDefaultOption = new Option<bool>("--isDefault", "If default database");
+        isDefaultOption.SetDefaultValue(false);
 
         Command configCommand = new Command("config", "Manage your pwsafe config file");
 
@@ -27,8 +27,8 @@ public static class ConfigCommand
         Command setConfigCommand = new Command("set", "Set alias for your psafe3 files");
         setConfigCommand.AddOption(aliasOption);
         setConfigCommand.AddOption(fileOption);
-        setConfigCommand.AddOption(IsDefaultOption);
-        setConfigCommand.SetHandler(SetConfig, aliasOption, fileOption, IsDefaultOption);
+        setConfigCommand.AddOption(isDefaultOption);
+        setConfigCommand.SetHandler(SetConfig, aliasOption, fileOption, isDefaultOption);
 
         Command removeConfigCommand = new Command("rm", "Set alias for your psafe3 files");
         var aliasArgument = new Argument<string>("ALIAS", "The alias of database");

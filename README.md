@@ -4,6 +4,6 @@ For Password Safe, visit [https://www.pwsafe.org/](https://www.pwsafe.org/) for 
 
 ## CLI for PasswordSafe
 
-See [PwSafeClient.Console](./src/PwSafeClient.CLI/README.md) for details.
+See [PwSafeClient.CLI](./src/PwSafeClient.CLI/README.md) for details.
 
 ## [TODO] Cross platform PasswordSafe Mobile / Desktop application

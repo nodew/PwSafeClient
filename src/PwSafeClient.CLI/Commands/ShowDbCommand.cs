@@ -51,8 +51,9 @@ public static class ShowDbCommand
         try
         {
             var doc = Document.Load(filepath, password);
+            doc.IsReadOnly = true;
 
-            string format = "{0, -20}{1}";
+            string format = "{0, -30}{1}";
             Console.WriteLine(format, "Database UUID:", doc.Uuid);
             Console.WriteLine(format, "Name:", doc.Name ?? "-");
             Console.WriteLine(format, "Description:", doc.Description ?? "-");
@@ -61,6 +62,7 @@ public static class ShowDbCommand
             Console.WriteLine(format, "Last saved on:", doc.LastSaveTime);
             Console.WriteLine(format, "Last saved application: ", doc.LastSaveApplication);
             Console.WriteLine(format, "Last saved machine: ", doc.LastSaveHost);
+            Console.WriteLine(format, "Last saved user: ", doc.LastSaveUser);
             Console.WriteLine(format, "Item count: ", doc.Entries.Count);
         }
         catch (Exception ex)
