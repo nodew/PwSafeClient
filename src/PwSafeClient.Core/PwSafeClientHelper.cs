@@ -1,21 +1,32 @@
 ﻿using Medo.Security.Cryptography.PasswordSafe;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PwSafeClient.Core;
 
 public static class PwSafeClientHelper
 {
-    public static List<string> ListGroupInfo(Document document)
+    public static Group GetGroupInfo(List<Entry> entries)
     {
-        var list = new List<string>();
-        foreach (Entry entry in document.Entries)
+        var groupList = new List<GroupPath>();
+
+        foreach (Entry entry in entries)
         {
-            if (!string.IsNullOrEmpty(entry.Group) && !list.Contains(entry.Group))
+            if (!string.IsNullOrEmpty(entry.Group) && !groupList.Contains(entry.Group))
             {
-                list.Add(entry.Group);
+                groupList.Add(entry.Group);
             }
         }
 
-        return list;
+        var oderedGroupList = groupList.OrderBy(item => item.ToString());
+
+        var group = new Group(string.Empty);
+
+        foreach (GroupPath path in oderedGroupList)
+        {
+            group.InsertByGroupPath(path);
+        }
+
+        return group;
     }
 }
