@@ -1,4 +1,5 @@
 ﻿using Medo.Security.Cryptography.PasswordSafe;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -28,5 +29,10 @@ public static class PwSafeClientHelper
         }
 
         return group;
+    }
+
+    public static string GeneratePassword(PasswordPolicy policy)
+    {
+        throw new NotImplementedException();
     }
 }

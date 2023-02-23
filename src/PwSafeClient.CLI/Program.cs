@@ -20,7 +20,11 @@ class Program
             .AddCreateDbCommand()
             .AddShowDbCommand()
             .AddListDbCommand()
-            .AddListEntriesCommand();
+            .AddListEntriesCommand()
+            .AddNewEntryCommand()
+            .AddUpdateEntryCommand()
+            .AddRemoveEntryCommand()
+            .AddGetPasswordCommand();
 
         rootCommand.Invoke(args);
     }
