@@ -1,9 +1,0 @@
-{
-  "profiles": {
-    "PwSafeClient.CLI": {
-      "commandName": "Project",
-      "commandLineArgs": "",
-      "workingDirectory": ""
-    }
-  }
-}
