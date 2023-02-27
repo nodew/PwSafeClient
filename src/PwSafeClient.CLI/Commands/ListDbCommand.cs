@@ -1,20 +1,18 @@
 using System;
 using System.CommandLine;
+using System.CommandLine.NamingConventionBinder;
 using System.Threading.Tasks;
 
 namespace PwSafeClient.CLI.Commands;
 
-public static class ListDbCommand
+public class ListDbCommand : Command
 {
-    public static RootCommand AddListDbCommand(this RootCommand rootCommand)
+    public ListDbCommand() : base("listdb", "List all databases")
     {
-        Command command = new Command("listdb", "List all databases");
-        command.SetHandler(HandleListDbAsync);
-        rootCommand.AddCommand(command);
-        return rootCommand;
+        Handler = CommandHandler.Create(Run);
     }
 
-    private static async Task HandleListDbAsync()
+    private static async Task Run()
     {
         var config = await ConsoleHelper.LoadConfigAsync();
         if (config.Databases.Count == 0)

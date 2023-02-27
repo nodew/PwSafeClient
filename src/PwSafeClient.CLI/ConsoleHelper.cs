@@ -57,10 +57,10 @@ public static class ConsoleHelper
             : Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%");
     }
 
-    public static async Task<string> GetPWSFilePathAsync(string alias = ConfigManager.DefaultAlias)
+    public static async Task<string> GetPWSFilePathAsync(string? alias)
     {
         var config = await LoadConfigAsync();
-        return ConfigManager.GetDbPath(config, alias) ?? string.Empty;
+        return ConfigManager.GetDbPath(config, alias ?? ConfigManager.DefaultAlias) ?? string.Empty;
     }
 
     public static string GetConfigPath()
@@ -93,6 +93,5 @@ public static class ConsoleHelper
         Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine(message);
         Console.ResetColor();
-        Environment.Exit(1);
     }
 }

@@ -1,87 +1,91 @@
 ﻿using Medo.Security.Cryptography.PasswordSafe;
+using Microsoft.Extensions.Hosting;
 using PwSafeClient.Core;
 using System;
 using System.CommandLine;
+using System.CommandLine.NamingConventionBinder;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace PwSafeClient.CLI.Commands;
 
-public static class UpdateEntryCommand
+public class UpdateEntryOption
 {
-    public static RootCommand AddUpdateEntryCommand(this RootCommand rootCommand)
+    public Guid Guid { get; set; }
+
+    public string? Alias { get; set; }
+
+    public FileInfo? File { get; set; }
+
+    public string? Title { get; set; }
+
+    public string? Username { get; set; }
+
+    public GroupPath? Group { get; set; }
+
+    public bool NewPass { get; set; }
+
+    public string? Policy { get; set; }
+}
+
+public class UpdateEntryCommand : Command
+{
+    public UpdateEntryCommand() : base("update", "Update the entry")
     {
-        var command = new Command("update", "Update an entry");
+        AddArgument(new Argument<Guid>("GUID", "The ID of an entry"));
 
-        var entryIdArgument = new Argument<Guid>("GUID", "The ID of an entry");
+        AddOption(new Option<string>(
+            aliases: new string[] { "--alias", "-a" },
+            description: "The alias of the database"
+        ));
 
-        var aliasOption = new Option<string>("--alias", "The alias of the database");
-        aliasOption.AddAlias("-a");
+        AddOption(new Option<FileInfo>(
+            aliases: new string[] { "--file", "-f" },
+            description: "The file path of your database file"
+        ));
 
-        var fileOption = new Option<FileInfo>("--file", "The file path of your psafe3 file");
-        fileOption.AddAlias("-f");
+        AddOption(new Option<string>(
+            aliases: new string[] { "--title", "-t" },
+            description: "The title of the entry"
+        ));
 
-        var titleOption = new Option<string>("--title", "The title of the entry");
-        titleOption.AddAlias("-t");
+        AddOption(new Option<string>(
+            aliases: new string[] { "--username", "-u" },
+            description: "The username of the entry"
+        ));
 
-        var usernameOption = new Option<string>("--username", "The username of the entry");
-        usernameOption.AddAlias("-u");
+        AddOption(new Option<string>(
+            aliases: new string[] { "--group", "-g" },
+            description: "The group path of the entry"
+        ));
 
-        var groupOption = new Option<GroupPath>("--group", "The group of the entry");
-        groupOption.AddAlias("-g");
+        AddOption(new Option<bool>(
+            aliases: new string[] { "--newpass", "-n" },
+            description: "Whether to renew the password",
+            getDefaultValue: () => false
+        ));
 
-        var renewPasswordOption = new Option<bool>("--newpass", "Whether to renew the password");
-        renewPasswordOption.SetDefaultValue(false);
-        renewPasswordOption.AddAlias("-n");
+        AddOption(new Option<string>(
+            aliases: new string[] { "--policy", "-p" },
+            description: "The name of password policy"
+        ));
 
-        var policyOption = new Option<string>("--policy", "The policy of the entry");
-        policyOption.AddAlias("-p");
-
-        command.AddOption(aliasOption);
-        command.AddOption(fileOption);
-        command.AddOption(titleOption);
-        command.AddOption(usernameOption);
-        command.AddOption(groupOption);
-        command.AddOption(renewPasswordOption);
-        command.AddOption(policyOption);
-
-        command.AddArgument(entryIdArgument);
-        command.SetHandler(
-            HandleUpdateEntry,
-            entryIdArgument,
-            aliasOption,
-            fileOption,
-            titleOption,
-            usernameOption,
-            groupOption,
-            renewPasswordOption,
-            policyOption
-        );
-
-        rootCommand.Add(command);
-
-        return rootCommand;
+        Handler = CommandHandler.Create<UpdateEntryOption, IHost>(Run);
     }
 
-    public static async Task HandleUpdateEntry(
-        Guid id,
-        string alias,
-        FileInfo? file,
-        string title,
-        string username,
-        GroupPath group,
-        bool renewPassword,
-        string policyName)
+    public static async Task Run(
+        UpdateEntryOption option,
+        IHost host)
     {
         string filepath;
-        if (file != null)
+        if (option.File != null)
         {
-            filepath = file.FullName;
+            filepath = option.File.FullName;
         }
         else
         {
-            filepath = await ConsoleHelper.GetPWSFilePathAsync(alias);
+            filepath = await ConsoleHelper.GetPWSFilePathAsync(option.Alias);
         }
 
         if (!File.Exists(filepath))
@@ -96,7 +100,7 @@ public static class UpdateEntryCommand
         {
             var doc = Document.Load(filepath, password);
 
-            var entry = doc.Entries.Where(entry => entry.Uuid == id).FirstOrDefault();
+            var entry = doc.Entries.Where(entry => entry.Uuid == option.Guid).FirstOrDefault();
 
             if (entry == null)
             {
@@ -104,30 +108,30 @@ public static class UpdateEntryCommand
                 return;
             }
 
-            if (!string.IsNullOrEmpty(title))
+            if (!string.IsNullOrEmpty(option.Title))
             {
-                entry.Title = title;
+                entry.Title = option.Title;
             }
 
-            if (!string.IsNullOrEmpty(username))
+            if (!string.IsNullOrEmpty(option.Username))
             {
-                entry.UserName = username;
+                entry.UserName = option.Username;
             }
 
-            if (!string.IsNullOrEmpty(group))
+            if (option.Group != null && !string.IsNullOrEmpty(option.Group))
             {
-                entry.Group = group;
+                entry.Group = option.Group;
             }
 
-            if (renewPassword)
+            if (option.NewPass)
             {
                 string newPassword;
-                if (!string.IsNullOrEmpty(policyName))
+                if (!string.IsNullOrEmpty(option.Policy))
                 {
-                    var namedPolicy = doc.NamedPasswordPolicies.Where(policy => policy.Name == policyName).FirstOrDefault();
+                    var namedPolicy = doc.NamedPasswordPolicies.Where(policy => policy.Name == option.Policy).FirstOrDefault();
                     if (namedPolicy == null)
                     {
-                        ConsoleHelper.LogError($"There's no a password policy named as '{policyName}'");
+                        ConsoleHelper.LogError($"There's no a password policy named as '{option.Policy}'");
                         return;
                     }
 
@@ -151,7 +155,7 @@ public static class UpdateEntryCommand
 
             doc.Save(filepath);
 
-            if (renewPassword)
+            if (option.NewPass)
             {
                 Console.WriteLine("Copied password to your clipboard");
                 await TextCopy.ClipboardService.SetTextAsync(entry.Password);

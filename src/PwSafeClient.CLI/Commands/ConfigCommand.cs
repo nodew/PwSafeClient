@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 
 namespace PwSafeClient.CLI.Commands;
 
-public static class ConfigCommand
+public class ConfigCommand : Command
 {
-    public static RootCommand AddConfigCommand(this RootCommand rootCommand)
+    public ConfigCommand() : base("config", "Manage your pwsafe config file")
     {
         var aliasOption = new Option<string>("--alias", "The alias of the database");
         aliasOption.AddAlias("-a");
@@ -18,8 +18,6 @@ public static class ConfigCommand
 
         var isDefaultOption = new Option<bool>("--isDefault", "If default database");
         isDefaultOption.SetDefaultValue(false);
-
-        Command configCommand = new Command("config", "Manage your pwsafe config file");
 
         Command initConfigCommand = new Command("init", "Init your pwsafe config if it doesn't exist");
         initConfigCommand.SetHandler(InitConfigAsync);
@@ -35,13 +33,9 @@ public static class ConfigCommand
         removeConfigCommand.AddArgument(aliasArgument);
         removeConfigCommand.SetHandler(RemoveConfig, aliasArgument);
 
-        configCommand.AddCommand(initConfigCommand);
-        configCommand.AddCommand(setConfigCommand);
-        configCommand.AddCommand(removeConfigCommand);
-
-        rootCommand.AddCommand(configCommand);
-
-        return rootCommand;
+        AddCommand(initConfigCommand);
+        AddCommand(setConfigCommand);
+        AddCommand(removeConfigCommand);
     }
 
     public static async Task InitConfigAsync()

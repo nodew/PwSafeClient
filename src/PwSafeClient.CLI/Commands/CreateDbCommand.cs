@@ -1,40 +1,37 @@
 ﻿using Medo.Security.Cryptography.PasswordSafe;
+using System;
 using System.CommandLine;
+using System.CommandLine.NamingConventionBinder;
 using System.IO;
 using System.Threading.Tasks;
 
 namespace PwSafeClient.CLI.Commands;
 
-public static class CreateDbCommand
+public class CreateDbCommand : Command
 {
-    private static readonly string ext = "psafe3";
-
-    public static RootCommand AddCreateDbCommand(this RootCommand rootCommand)
+    public CreateDbCommand() : base("createdb", "Create an empty new PasswordSafe v3 database file")
     {
-        Command command = new Command("createdb", "Create an empty new PasswordSafe v3 database file");
+        AddArgument(new Argument<Guid>("FILE", "The file path of your psafe3 file"));
 
-        var aliasOption = new Option<string>("--alias", "The alias of the database");
-        aliasOption.AddAlias("-a");
+        AddOption(new Option<string>(
+            aliases: new string[] { "--alias", "-a" },
+            description: "The alias of the database"
+        ));
 
-        var isDefaultOption = new Option<bool>("--isDefault", "The alias of the database");
-        isDefaultOption.SetDefaultValue(false);
+        AddOption(new Option<FileInfo>(
+            aliases: new string[] { "--file", "-f" },
+            description: "The file path of your database file"
+        ));
 
-        var forceOption = new Option<bool>("--force", "The alias of the database");
-        forceOption.SetDefaultValue(false);
+        AddOption(new Option<FileInfo>(
+            name: "--force",
+            description: "Force to create new database if file exists"
+        ));
 
-        var fileArg = new Argument<FileInfo>("FILE", "The file path of your psafe3 file");
-
-        command.AddArgument(fileArg);
-        command.AddOption(aliasOption);
-        command.AddOption(isDefaultOption);
-        command.AddOption(forceOption);
-        command.SetHandler(HandleCreateDbAsync, fileArg, aliasOption, isDefaultOption, forceOption);
-
-        rootCommand.AddCommand(command);
-        return rootCommand;
+        CommandHandler.Create(Run);
     }
 
-    private static async Task HandleCreateDbAsync(FileInfo file, string alias, bool isDefault, bool force)
+    public static async Task Run(FileInfo file, string alias, bool isDefault, bool force)
     {
         if (file.Exists && !force)
         {

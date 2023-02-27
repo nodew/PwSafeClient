@@ -2,8 +2,8 @@
   "profiles": {
     "PwSafeClient.CLI": {
       "commandName": "Project",
-      "commandLineArgs": "list --alias personal -m tree",
-      "workingDirectory": "C:\\Users\\wangq"
+      "commandLineArgs": "",
+      "workingDirectory": ""
     }
   }
 }

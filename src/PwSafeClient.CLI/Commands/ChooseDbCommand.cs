@@ -1,22 +1,20 @@
-﻿using System.CommandLine;
+﻿using System;
+using System.CommandLine;
+using System.CommandLine.NamingConventionBinder;
 using System.Threading.Tasks;
 
 namespace PwSafeClient.CLI.Commands;
 
-public static class ChooseDbCommand
+public class ChooseDbCommand : Command
 {
-    public static RootCommand AddChooseDbCommand(this RootCommand rootCommand)
+    public ChooseDbCommand() : base("choose", "Choose a database to operate")
     {
-        Command chooseDbCommand = new Command("choose", "Choose a database to operate");
-        var aliasArgument = new Argument<string>("ALIAS", "The alias of database");
-        chooseDbCommand.AddArgument(aliasArgument);
-        chooseDbCommand.SetHandler(ChooseDbAsync, aliasArgument);
+        AddArgument(new Argument<string>("ALIAS", "The alias of the database"));
 
-        rootCommand.AddCommand(chooseDbCommand);
-        return rootCommand;
+        Handler = CommandHandler.Create(Run);
     }
 
-    public static async Task ChooseDbAsync(string alias)
+    public static async Task Run(string alias)
     {
         if (string.IsNullOrEmpty(alias))
         {
@@ -31,6 +29,7 @@ public static class ChooseDbCommand
             config.DefaultDatabase = alias;
 
             await ConsoleHelper.UpdateConfigAsync(config);
+            Console.WriteLine($"'{alias}' is selected as default database");
         }
         else
         {

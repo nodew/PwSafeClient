@@ -1,37 +1,33 @@
 ﻿using Medo.Security.Cryptography.PasswordSafe;
 using System;
 using System.CommandLine;
+using System.CommandLine.NamingConventionBinder;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace PwSafeClient.CLI.Commands;
 
-public static class GetPasswordCommand
+public class GetPasswordCommand : Command
 {
-    public static RootCommand AddGetPasswordCommand(this RootCommand rootCommand)
+    public GetPasswordCommand() : base("get", "Get the password")
     {
-        var command = new Command("get", "Get the password");
+        AddArgument(new Argument<Guid>("GUID", "The ID of an entry"));
 
-        var entryIdArgument = new Argument<Guid>("GUID", "The ID of an entry");
+        AddOption(new Option<string>(
+            aliases: new string[] { "--alias", "-a" },
+            description: "The alias of the database"
+        ));
 
-        var aliasOption = new Option<string>("--alias", "The alias of the database");
-        aliasOption.AddAlias("-a");
+        AddOption(new Option<FileInfo>(
+            aliases: new string[] { "--file", "-f" },
+            description: "The file path of your database file"
+        ));
 
-        var fileOption = new Option<FileInfo>("--file", "The file path of your psafe3 file");
-        fileOption.AddAlias("-f");
-
-        command.AddOption(aliasOption);
-        command.AddOption(fileOption);
-
-        command.AddArgument(entryIdArgument);
-        command.SetHandler(HandleGetPassoword, entryIdArgument, aliasOption, fileOption);
-
-        rootCommand.Add(command);
-        return rootCommand;
+        Handler = CommandHandler.Create(Run);
     }
 
-    public static async Task HandleGetPassoword(Guid id, string alias, FileInfo? file)
+    public static async Task Run(Guid id, string alias, FileInfo? file)
     {
         string filepath;
         if (file != null)

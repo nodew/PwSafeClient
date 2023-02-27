@@ -1,5 +1,9 @@
-﻿using PwSafeClient.CLI.Commands;
+﻿using Microsoft.Extensions.Hosting;
+using PwSafeClient.CLI.Commands;
 using System.CommandLine;
+using System.CommandLine.Builder;
+using System.CommandLine.Hosting;
+using System.CommandLine.Parsing;
 
 namespace PwSafeClient.CLI;
 
@@ -9,23 +13,38 @@ class Program
     {
         System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 
-        RootCommand rootCommand = new RootCommand()
+        BuildCommandLine()
+            .UseHost(_ => Host.CreateDefaultBuilder(),
+                host =>
+                {
+                    host.ConfigureServices((context, services) =>
+                    {
+                        // TODO: Add services here
+                    });
+                })
+            .UseDefaults()
+            .Build()
+            .Invoke(args);
+    }
+
+    private static CommandLineBuilder BuildCommandLine()
+    {
+        var root = new RootCommand()
         {
             Description = "PasswordSafe CLI"
         };
 
-        rootCommand
-            .AddConfigCommand()
-            .AddChooseDbCommand()
-            .AddCreateDbCommand()
-            .AddShowDbCommand()
-            .AddListDbCommand()
-            .AddListEntriesCommand()
-            .AddNewEntryCommand()
-            .AddUpdateEntryCommand()
-            .AddRemoveEntryCommand()
-            .AddGetPasswordCommand();
+        root.AddCommand(new ConfigCommand());
 
-        rootCommand.Invoke(args);
+        root.AddCommand(new ChooseDbCommand());
+        root.AddCommand(new ListDbCommand());
+        root.AddCommand(new ShowDbCommand());
+        root.AddCommand(new CreateDbCommand());
+
+        root.AddCommand(new ListEntriesCommand());
+        root.AddCommand(new UpdateEntryCommand());
+        root.AddCommand(new GetPasswordCommand());
+
+        return new CommandLineBuilder(root);
     }
 }

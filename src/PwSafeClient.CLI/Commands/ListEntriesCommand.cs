@@ -3,6 +3,7 @@ using PwSafeClient.Core;
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
+using System.CommandLine.NamingConventionBinder;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,12 +16,10 @@ public enum EntriesViewMode
     Tree
 }
 
-public static class ListCommand
+public class ListEntriesCommand : Command
 {
-    public static RootCommand AddListEntriesCommand(this RootCommand rootCommand)
+    public ListEntriesCommand() : base("list", "List the items in database")
     {
-        Command command = new Command("list", "List the items in database");
-
         var aliasOption = new Option<string>("--alias", "The alias of the database");
         aliasOption.AddAlias("-a");
 
@@ -33,17 +32,31 @@ public static class ListCommand
 
         var filterOption = new Option<string>("--filter", "Filter items by title");
 
-        command.AddOption(aliasOption);
-        command.AddOption(fileOption);
-        command.AddOption(viewModeOption);
-        command.AddOption(filterOption);
-        command.SetHandler(HandleListEntriesAsync, aliasOption, fileOption, viewModeOption, filterOption);
+        AddOption(new Option<string>(
+            aliases: new string[] { "--alias", "-a" },
+            description: "The alias of the database"
+        ));
 
-        rootCommand.AddCommand(command);
-        return rootCommand;
+        AddOption(new Option<FileInfo>(
+            aliases: new string[] { "--file", "-f" },
+            description: "The file path of your database file"
+        ));
+
+        AddOption(new Option<EntriesViewMode>(
+            aliases: new string[] { "--mode", "-m" },
+            description: "The view mode, list view or tree view",
+            getDefaultValue: () => EntriesViewMode.List
+        ));
+
+        AddOption(new Option<string>(
+            name: "--filter",
+            description: "Filter items by title"
+        ));
+
+        Handler = CommandHandler.Create(Run);
     }
 
-    private static async Task HandleListEntriesAsync(string alias, FileInfo? file, EntriesViewMode viewMode, string? filter)
+    private static async Task Run(string alias, FileInfo? file, EntriesViewMode mode, string? filter)
     {
         string filepath;
 
@@ -82,11 +95,11 @@ public static class ListCommand
                 return;
             }
 
-            if (viewMode.Equals(EntriesViewMode.List))
+            if (mode.Equals(EntriesViewMode.List))
             {
                 PrintListView(entries);
             }
-            else if (viewMode.Equals(EntriesViewMode.Tree))
+            else if (mode.Equals(EntriesViewMode.Tree))
             {
                 PrintTreeView(entries);
             }

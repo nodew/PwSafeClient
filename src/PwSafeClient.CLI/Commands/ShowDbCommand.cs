@@ -1,35 +1,33 @@
 ﻿using Medo.Security.Cryptography.PasswordSafe;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.CommandLine;
+using System.CommandLine.NamingConventionBinder;
 using System.IO;
 using System.Threading.Tasks;
 
 namespace PwSafeClient.CLI.Commands;
 
-public static class ShowDbCommand
+public class ShowDbCommand : Command
 {
-    public static RootCommand AddShowDbCommand(this RootCommand rootCommand)
+    public ShowDbCommand() : base("showdb", "Show the detail of PasswordSafe database")
     {
-        Command command = new Command("showdb", "Show the detail of PasswordSafe database");
+        AddOption(new Option<string>(
+            aliases: new string[] { "--alias", "-a" },
+            description: "The alias of the database"
+        ));
 
-        var aliasOption = new Option<string>("--alias", "The alias of the database");
-        aliasOption.AddAlias("-a");
+        AddOption(new Option<FileInfo>(
+            aliases: new string[] { "--file", "-f" },
+            description: "The file path of your database file"
+        ));
 
-        var fileOption = new Option<FileInfo>("--file", "The file path of your psafe3 file");
-        fileOption.AddAlias("-f");
-
-        command.AddOption(aliasOption);
-        command.AddOption(fileOption);
-        command.SetHandler(HandleShowDbAsync, aliasOption, fileOption);
-
-        rootCommand.AddCommand(command);
-        return rootCommand;
+        Handler = CommandHandler.Create(Run);
     }
 
-    private static async Task HandleShowDbAsync(string alias, FileInfo? file)
+    private static async Task Run(string? alias, FileInfo? file, IHost host)
     {
         string filepath;
-
 
         if (file != null)
         {
