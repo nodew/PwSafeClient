@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="PasswordSafe" Version="6.1.0" />
+    <PackageReference Include="Medo.PasswordSafe" Version="6.2.0" />
   </ItemGroup>
 
 </Project>

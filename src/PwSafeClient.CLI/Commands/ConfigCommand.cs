@@ -1,6 +1,7 @@
 ﻿using System.CommandLine;
 using System.IO;
 using System.Threading.Tasks;
+using PwSafeClient.CLI.Helpers;
 
 namespace PwSafeClient.CLI.Commands;
 

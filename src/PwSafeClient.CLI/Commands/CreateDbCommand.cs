@@ -1,4 +1,5 @@
 ﻿using Medo.Security.Cryptography.PasswordSafe;
+using PwSafeClient.CLI.Helpers;
 using System;
 using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <AssemblyName>pwsafe</AssemblyName>
@@ -6,15 +6,14 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="PasswordSafe" Version="6.1.0" />
+    <PackageReference Include="Medo.PasswordSafe" Version="6.2.0" />
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
     <PackageReference Include="System.CommandLine.Hosting" Version="0.4.0-alpha.22272.1" />
     <PackageReference Include="System.CommandLine.NamingConventionBinder" Version="2.0.0-beta4.22272.1" />
-    <PackageReference Include="System.Text.Json" Version="7.0.2" />
+    <PackageReference Include="System.Text.Json" Version="7.0.3" />
     <PackageReference Include="TextCopy" Version="6.2.1" />
   </ItemGroup>
-
   <ItemGroup>
-    <ProjectReference Include="..\PwSafeClient.Core\PwSafeClient.Core.csproj" />
+    <ProjectReference Include="..\PwSafeClient.Shared\PwSafeClient.Shared.csproj" />
   </ItemGroup>
 </Project>

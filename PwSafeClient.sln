@@ -7,7 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1B2039DC-9BF
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PwSafeClient.CLI", "src\PwSafeClient.CLI\PwSafeClient.CLI.csproj", "{011D9C56-5DD1-4787-BF7F-2833E28C00C4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PwSafeClient.Core", "src\PwSafeClient.Core\PwSafeClient.Core.csproj", "{D600D79E-1E94-4A40-9AD1-22245901F423}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PwSafeClient.Shared", "src\PwSafeClient.Shared\PwSafeClient.Shared.csproj", "{31BFDF5D-838D-4B51-8DE7-DD81E0D5737D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,25 +31,25 @@ Global
 		{011D9C56-5DD1-4787-BF7F-2833E28C00C4}.Release|x64.Build.0 = Release|Any CPU
 		{011D9C56-5DD1-4787-BF7F-2833E28C00C4}.Release|x86.ActiveCfg = Release|Any CPU
 		{011D9C56-5DD1-4787-BF7F-2833E28C00C4}.Release|x86.Build.0 = Release|Any CPU
-		{D600D79E-1E94-4A40-9AD1-22245901F423}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D600D79E-1E94-4A40-9AD1-22245901F423}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D600D79E-1E94-4A40-9AD1-22245901F423}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{D600D79E-1E94-4A40-9AD1-22245901F423}.Debug|x64.Build.0 = Debug|Any CPU
-		{D600D79E-1E94-4A40-9AD1-22245901F423}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{D600D79E-1E94-4A40-9AD1-22245901F423}.Debug|x86.Build.0 = Debug|Any CPU
-		{D600D79E-1E94-4A40-9AD1-22245901F423}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D600D79E-1E94-4A40-9AD1-22245901F423}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D600D79E-1E94-4A40-9AD1-22245901F423}.Release|x64.ActiveCfg = Release|Any CPU
-		{D600D79E-1E94-4A40-9AD1-22245901F423}.Release|x64.Build.0 = Release|Any CPU
-		{D600D79E-1E94-4A40-9AD1-22245901F423}.Release|x86.ActiveCfg = Release|Any CPU
-		{D600D79E-1E94-4A40-9AD1-22245901F423}.Release|x86.Build.0 = Release|Any CPU
+		{31BFDF5D-838D-4B51-8DE7-DD81E0D5737D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31BFDF5D-838D-4B51-8DE7-DD81E0D5737D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31BFDF5D-838D-4B51-8DE7-DD81E0D5737D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{31BFDF5D-838D-4B51-8DE7-DD81E0D5737D}.Debug|x64.Build.0 = Debug|Any CPU
+		{31BFDF5D-838D-4B51-8DE7-DD81E0D5737D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{31BFDF5D-838D-4B51-8DE7-DD81E0D5737D}.Debug|x86.Build.0 = Debug|Any CPU
+		{31BFDF5D-838D-4B51-8DE7-DD81E0D5737D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31BFDF5D-838D-4B51-8DE7-DD81E0D5737D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31BFDF5D-838D-4B51-8DE7-DD81E0D5737D}.Release|x64.ActiveCfg = Release|Any CPU
+		{31BFDF5D-838D-4B51-8DE7-DD81E0D5737D}.Release|x64.Build.0 = Release|Any CPU
+		{31BFDF5D-838D-4B51-8DE7-DD81E0D5737D}.Release|x86.ActiveCfg = Release|Any CPU
+		{31BFDF5D-838D-4B51-8DE7-DD81E0D5737D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{011D9C56-5DD1-4787-BF7F-2833E28C00C4} = {1B2039DC-9BFD-4FFE-93EF-F5BCA8A0827B}
-		{D600D79E-1E94-4A40-9AD1-22245901F423} = {1B2039DC-9BFD-4FFE-93EF-F5BCA8A0827B}
+		{31BFDF5D-838D-4B51-8DE7-DD81E0D5737D} = {1B2039DC-9BFD-4FFE-93EF-F5BCA8A0827B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0426BC53-12AF-4590-969B-AD4B7A5A2908}

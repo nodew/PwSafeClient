@@ -1,4 +1,5 @@
 ﻿using Medo.Security.Cryptography.PasswordSafe;
+using PwSafeClient.CLI.Helpers;
 using PwSafeClient.Core;
 using System;
 using System.Collections.Generic;
