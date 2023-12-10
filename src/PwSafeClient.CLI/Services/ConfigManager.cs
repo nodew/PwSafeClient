@@ -1,4 +1,5 @@
 ﻿using PwSafeClient.CLI.Contracts.Services;
+using PwSafeClient.CLI.Exceptions;
 using PwSafeClient.CLI.Models;
 using PwSafeClient.Shared;
 using System;
@@ -23,8 +24,12 @@ public class ConfigManager : IConfigManager
 
     private readonly string configFilepath;
 
-    public ConfigManager(IEnvironmentManager environmentManager)
+    private readonly IConsoleService consoleService;
+
+    public ConfigManager(IEnvironmentManager environmentManager, IConsoleService consoleService)
     {
+        this.consoleService = consoleService;
+
         string? homeDirectory = environmentManager.GetHomeDirectory();
         if (string.IsNullOrEmpty(homeDirectory))
         {
@@ -32,6 +37,11 @@ public class ConfigManager : IConfigManager
         }
 
         configFilepath = Path.Combine(homeDirectory, configFilename);
+    }
+
+    public bool ConfigExists()
+    {
+        return File.Exists(configFilepath);
     }
 
     /// <inheritdoc/>
@@ -93,22 +103,22 @@ public class ConfigManager : IConfigManager
         }
         catch (FileNotFoundException)
         {
-            Console.Error.WriteLine($"Cannot find config file: {configFilepath}");
+            consoleService.LogError($"Cannot find config file: {configFilepath}");
             throw;
         }
         catch (DirectoryNotFoundException)
         {
-            Console.Error.WriteLine($"Cannot find config file: {configFilepath}");
+            consoleService.LogError($"Cannot find config file: {configFilepath}");
             throw;
         }
         catch (JsonException)
         {
-            Console.Error.WriteLine($"Cannot parse config file: {configFilepath}, please double check the config.");
+            consoleService.LogError($"Cannot parse config file: {configFilepath}, please double check the config.");
             throw;
         }
         catch (Exception e)
         {
-            Console.Error.WriteLine(e.Message);
+            consoleService.LogError(e.Message);
             throw;
         }
     }
@@ -139,7 +149,7 @@ public class ConfigManager : IConfigManager
         }
         catch (Exception e)
         {
-            Console.Error.WriteLine(e.Message);
+            consoleService.LogError(e.Message);
             throw;
         }
     }
@@ -150,7 +160,17 @@ public class ConfigManager : IConfigManager
         ArgumentValidator.ThrowIfNullOrWhiteSpace(nameof(alias), alias);
 
         Config config = await LoadConfigAsync();
-        config.DefaultDatabase = alias;
-        await SaveAsync(config);
+
+        foreach (var item in config.Databases)
+        {
+            if (item.Key == alias)
+            {
+                config.DefaultDatabase = alias;
+                await SaveAsync(config);
+                return;
+            }
+        }
+
+        throw new DatabaseNotFoundException(alias);
     }
 }

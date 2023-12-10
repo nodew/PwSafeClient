@@ -1,9 +1,9 @@
-﻿namespace PwSafeClient.CLI.Contracts.Helpers;
+﻿namespace PwSafeClient.CLI.Contracts.Services;
 
 /// <summary>
 /// Console helper.
 /// </summary>
-public interface IConsoleHelper
+public interface IConsoleService
 {
     /// <summary>
     /// Read a password from console.

@@ -9,6 +9,12 @@ namespace PwSafeClient.CLI.Contracts.Services;
 public interface IConfigManager
 {
     /// <summary>
+    /// Check if the configuration file exists.
+    /// </summary>
+    /// <returns>If the configuration file exists.</returns>
+    bool ConfigExists();
+
+    /// <summary>
     /// Add a new database to the configuration.
     /// </summary>
     /// <param name="alias">The alias of the database.</param>

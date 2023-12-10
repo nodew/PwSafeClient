@@ -1,13 +1,13 @@
-﻿using PwSafeClient.CLI.Contracts.Helpers;
+﻿using PwSafeClient.CLI.Contracts.Services;
 using System;
 using System.Collections.Generic;
 
-namespace PwSafeClient.CLI.Helpers;
+namespace PwSafeClient.CLI.Services;
 
 /// <summary>
-/// Implement <see cref="IConsoleHelper"/>.
+/// Implement <see cref="IConsoleService"/>.
 /// </summary>
-public class ConsoleHelper : IConsoleHelper
+public class ConsoleService : IConsoleService
 {
     /// <inheritdoc/>
     public string ReadPassword()

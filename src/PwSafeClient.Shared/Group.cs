@@ -2,15 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace PwSafeClient.Core;
+namespace PwSafeClient.Shared;
 
 public class Group
 {
-    public Group(string groupName)
+    public Group()
+    {
+        Name = string.Empty;
+        Parent = null;
+        Children = [];
+    }
+    public Group(string groupName, Group parent)
     {
         Name = groupName;
-        Parent = null;
-        Children = new List<Group>();
+        Parent = parent;
+        Children = [];
     }
 
     public string Name { get; set; }
@@ -19,6 +25,7 @@ public class Group
 
     public List<Group> Children { get; set; }
 
+    public bool IsRoot => Parent == null;
     public string GetGroupPath()
     {
         if (Parent == null && string.IsNullOrEmpty(Name))
@@ -67,10 +74,7 @@ public class Group
 
         if (child == null)
         {
-            child = new Group(childGroupName)
-            {
-                Parent = this,
-            };
+            child = new Group(childGroupName, this);
 
             Children.Add(child);
         }
