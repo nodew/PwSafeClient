@@ -1,10 +1,12 @@
-﻿using Medo.Security.Cryptography.PasswordSafe;
-using System;
+﻿using System;
 using System.CommandLine;
-using System.CommandLine.NamingConventionBinder;
+using System.CommandLine.Invocation;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Medo.Security.Cryptography.PasswordSafe;
+using PwSafeClient.CLI.Contracts.Helpers;
+using PwSafeClient.CLI.Contracts.Services;
 
 namespace PwSafeClient.CLI.Commands;
 
@@ -12,61 +14,65 @@ public class GetPasswordCommand : Command
 {
     public GetPasswordCommand() : base("get", "Get the password")
     {
-        AddArgument(new Argument<Guid>("GUID", "The ID of an entry"));
+        AddArgument(new Argument<Guid>("ID", "The ID of an entry"));
 
         AddOption(new Option<string>(
-            aliases: new string[] { "--alias", "-a" },
+            aliases: ["--alias", "-a"],
             description: "The alias of the database"
         ));
 
         AddOption(new Option<FileInfo>(
-            aliases: new string[] { "--file", "-f" },
+            aliases: ["--file", "-f"],
             description: "The file path of your database file"
         ));
-
-        Handler = CommandHandler.Create(Run);
     }
 
-    public static async Task Run(Guid id, string alias, FileInfo? file)
+    public class GetPasswordCommandHandler : CommandHandler
     {
-        string filepath;
-        if (file != null)
-        {
-            filepath = file.FullName;
-        }
-        else
-        {
-            filepath = await ConsoleHelper.GetPWSFilePathAsync(alias);
-        }
+        private readonly IConsoleService consoleService;
+        private readonly IDocumentHelper documentHelper;
 
-        if (!File.Exists(filepath))
+        public GetPasswordCommandHandler(IConsoleService consoleService, IDocumentHelper documentHelper)
         {
-            ConsoleHelper.LogError($"Can't locate a valid file, please check your command parameters or configuration in <HOMEDIR>/pwsafe.json");
-            return;
+            this.consoleService = consoleService;
+            this.documentHelper = documentHelper;
         }
 
-        string password = ConsoleHelper.ReadPassword();
+        public string? Alias { get; set; }
 
-        try
+        public FileInfo? File { get; set; }
+
+        public Guid Id { get; set; }
+
+        public override async Task<int> InvokeAsync(InvocationContext context)
         {
-            var doc = Document.Load(filepath, password);
-            doc.IsReadOnly = true;
-
-            var entry = doc.Entries.Where(entry => entry.Uuid == id).FirstOrDefault();
-
-            if (entry != null)
+            Document? document = await documentHelper.TryLoadDocumentAsync(Alias, File, true);
+            if (document == null)
             {
-                await TextCopy.ClipboardService.SetTextAsync(entry.Password);
-                Console.WriteLine("Copied password to your clipboard");
+                return 1;
             }
-            else
+
+            try
             {
-                ConsoleHelper.LogError("Entry is not found");
+                var entry = document.Entries.Where(entry => entry.Uuid == Id).FirstOrDefault();
+
+                if (entry != null)
+                {
+                    await TextCopy.ClipboardService.SetTextAsync(entry.Password);
+                    Console.WriteLine("Copied password to your clipboard");
+                    return 0;
+                }
+                else
+                {
+                    consoleService.LogError("Entry is not found");
+                    return 1;
+                }
             }
-        }
-        catch (Exception ex)
-        {
-            ConsoleHelper.LogError(ex.Message);
+            catch (Exception ex)
+            {
+                consoleService.LogError(ex.Message);
+                return 1;
+            }
         }
     }
 }

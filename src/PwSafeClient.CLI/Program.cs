@@ -1,5 +1,9 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using PwSafeClient.CLI.Commands;
+using PwSafeClient.CLI.Contracts.Helpers;
+using PwSafeClient.CLI.Contracts.Services;
+using PwSafeClient.CLI.Services;
 using System.CommandLine;
 using System.CommandLine.Builder;
 using System.CommandLine.Hosting;
@@ -19,8 +23,23 @@ class Program
                 {
                     host.ConfigureServices((context, services) =>
                     {
-                        // TODO: Add services here
+                        services.AddSingleton<IConfigManager, ConfigManager>();
+                        services.AddSingleton<IEnvironmentManager, EnvironmentManager>();
+                        services.AddSingleton<IConsoleService, ConsoleService>();
+                        services.AddSingleton<IDocumentHelper, DocumentHelper>();
                     });
+
+                    host.UseCommandHandler<InitConfigCommand, InitConfigCommand.InitConfigCommandHandler>();
+                    host.UseCommandHandler<SetAliasCommand, SetAliasCommand.SetAliasCommandHandler>();
+                    host.UseCommandHandler<RemoveAliasCommand, RemoveAliasCommand.RemoveAliasCommandHandler>();
+
+                    host.UseCommandHandler<ChooseDbCommand, ChooseDbCommand.ChooseDbCommandHandler>();
+                    host.UseCommandHandler<ListDbCommand, ListDbCommand.ListDbCommandHandler>();
+                    host.UseCommandHandler<ShowDbCommand, ShowDbCommand.ShowDbCommandHandler>();
+                    host.UseCommandHandler<CreateDbCommand, CreateDbCommand.CreateDbCommandHandler>();
+
+                    host.UseCommandHandler<ListEntriesCommand, ListEntriesCommand.ListEntriesCommandHandler>();
+                    host.UseCommandHandler<GetPasswordCommand, GetPasswordCommand.GetPasswordCommandHandler>();
                 })
             .UseDefaults()
             .Build()
@@ -42,7 +61,7 @@ class Program
         root.AddCommand(new CreateDbCommand());
 
         root.AddCommand(new ListEntriesCommand());
-        root.AddCommand(new UpdateEntryCommand());
+        //root.AddCommand(new UpdateEntryCommand());
         root.AddCommand(new GetPasswordCommand());
 
         return new CommandLineBuilder(root);

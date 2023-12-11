@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace PwSafeClient.Core;
+namespace PwSafeClient.Shared;
 
 public static class PwSafeClientHelper
 {
@@ -21,7 +21,7 @@ public static class PwSafeClientHelper
 
         var oderedGroupList = groupList.OrderBy(item => item.ToString());
 
-        var group = new Group(string.Empty);
+        var group = new Group();
 
         foreach (GroupPath path in oderedGroupList)
         {
