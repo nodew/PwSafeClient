@@ -1,4 +1,15 @@
-﻿namespace PwSafeClient.CLI.Commands;
+﻿using System;
+using System.Collections.Generic;
+using System.CommandLine;
+using System.CommandLine.Invocation;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using Medo.Security.Cryptography.PasswordSafe;
+using PwSafeClient.CLI.Contracts.Services;
+using PwSafeClient.Shared;
+
+namespace PwSafeClient.CLI.Commands;
 
 public enum EntriesViewMode
 {
@@ -6,145 +17,153 @@ public enum EntriesViewMode
     Tree
 }
 
-//public class ListEntriesCommand : Command
-//{
-//    public ListEntriesCommand() : base("list", "List the items in database")
-//    {
-//        var aliasOption = new Option<string>("--alias", "The alias of the database");
-//        aliasOption.AddAlias("-a");
+public class ListEntriesCommand : Command {
+    public ListEntriesCommand() : base("list", "List the items in database")
+    {
+        AddOption(new Option<string>(
+            aliases: ["--alias", "-a"],
+            description: "The alias of the database"
+        ));
 
-//        var fileOption = new Option<FileInfo>("--file", "The file path of your psafe3 file");
-//        fileOption.AddAlias("-f");
+        AddOption(new Option<FileInfo>(
+            aliases: ["--file", "-f"],
+            description: "The file path of your database file"
+        ));
 
-//        var viewModeOption = new Option<EntriesViewMode>("--mode", "The view mode, list view or tree view");
-//        viewModeOption.AddAlias("-m");
-//        viewModeOption.SetDefaultValue(EntriesViewMode.List);
+        AddOption(new Option<EntriesViewMode>(
+            aliases: ["--mode", "-m"],
+            description: "The view mode, list view or tree view",
+            getDefaultValue: () => EntriesViewMode.List
+        ));
 
-//        var filterOption = new Option<string>("--filter", "Filter items by title");
+        AddOption(new Option<string>(
+            name: "--filter",
+            description: "Filter items by title"
+        ));
+    }
 
-//        AddOption(new Option<string>(
-//            aliases: new string[] { "--alias", "-a" },
-//            description: "The alias of the database"
-//        ));
+    public class ListEntriesCommandHandler : CommandHandler
+    {
+        private readonly IConfigManager configManager;
+        private readonly IConsoleService consoleService;
 
-//        AddOption(new Option<FileInfo>(
-//            aliases: new string[] { "--file", "-f" },
-//            description: "The file path of your database file"
-//        ));
+        public ListEntriesCommandHandler(IConfigManager configManager, IConsoleService consoleService)
+        {
+            this.configManager = configManager;
+            this.consoleService = consoleService;
+        }
 
-//        AddOption(new Option<EntriesViewMode>(
-//            aliases: new string[] { "--mode", "-m" },
-//            description: "The view mode, list view or tree view",
-//            getDefaultValue: () => EntriesViewMode.List
-//        ));
+        public string? Alias { get; set; }
 
-//        AddOption(new Option<string>(
-//            name: "--filter",
-//            description: "Filter items by title"
-//        ));
+        public FileInfo? File { get; set; }
 
-//        Handler = CommandHandler.Create(Run);
-//    }
+        public EntriesViewMode Mode { get; set; }
 
-//    private static async Task Run(string alias, FileInfo? file, EntriesViewMode mode, string? filter)
-//    {
-//        string filepath;
+        public string? Filter { get; set; }
 
-//        if (file != null)
-//        {
-//            filepath = file.FullName;
-//        }
-//        else
-//        {
-//            filepath = await ConsoleService.GetPWSFilePathAsync(alias);
-//        }
+        public override async Task<int> InvokeAsync(InvocationContext context)
+        {
+            string filepath;
 
-//        if (!File.Exists(filepath))
-//        {
-//            ConsoleService.LogError($"Can't locate a valid file, please check your command parameters or configuration in <HOMEDIR>/pwsafe.json");
-//            return;
-//        }
+            if (File != null)
+            {
+                filepath = File.FullName;
+            }
+            else
+            {
+                filepath = await configManager.GetDbPath(Alias);
+            }
 
-//        string password = ConsoleService.ReadPassword();
+            if (!System.IO.File.Exists(filepath))
+            {
+                consoleService.LogError($"Can't locate a valid file, please check your command parameters or configuration in <HOMEDIR>/pwsafe.json");
+                return 1;
+            }
 
-//        try
-//        {
-//            var doc = Document.Load(filepath, password);
-//            doc.IsReadOnly = true;
+            string password = consoleService.ReadPassword();
 
-//            List<Entry> entries = doc.Entries.ToList();
+            try
+            {
+                var doc = Document.Load(filepath, password);
+                doc.IsReadOnly = true;
 
-//            if (!string.IsNullOrEmpty(filter))
-//            {
-//                entries = entries.Where(entry => entry.Title.ToLower().Contains(filter.ToLower())).ToList();
-//            }
+                List<Entry> entries = doc.Entries.ToList();
 
-//            if (entries.Count == 0)
-//            {
-//                Console.WriteLine("No available item.");
-//                return;
-//            }
+                if (!string.IsNullOrEmpty(Filter))
+                {
+                    entries = entries.Where(entry => entry.Title.ToLower().Contains(Filter.ToLower())).ToList();
+                }
 
-//            if (mode.Equals(EntriesViewMode.List))
-//            {
-//                PrintListView(entries);
-//            }
-//            else if (mode.Equals(EntriesViewMode.Tree))
-//            {
-//                PrintTreeView(entries);
-//            }
-//        }
-//        catch (Exception ex)
-//        {
-//            ConsoleService.LogError(ex.ToString());
-//        }
-//    }
+                if (entries.Count == 0)
+                {
+                    Console.WriteLine("No available item.");
+                    return 0;
+                }
 
-//    private static void PrintListView(List<Entry> entries)
-//    {
-//        var fmt = "{0,-36} | {1,-40} | {2,-32} | {3}";
-//        var oderedEntries = entries.OrderBy(entry => entry.Title);
+                if (Mode == EntriesViewMode.List)
+                {
+                    PrintListView(entries);
+                }
+                else if (Mode == EntriesViewMode.Tree)
+                {
+                    PrintTreeView(entries);
+                }
 
-//        Console.OutputEncoding = System.Text.Encoding.UTF8;
-//        Console.WriteLine(fmt, "Uuid", "Title", "Username", "Group");
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                consoleService.LogError(ex.ToString());
+                return 1;
+            }
+        }
 
-//        foreach (Entry entry in oderedEntries)
-//        {
-//            Console.WriteLine(fmt, entry.Uuid, entry.Title, entry.UserName, entry.Group);
-//        }
-//    }
+        private static void PrintListView(List<Entry> entries)
+        {
+            var fmt = "{0,-36} | {1,-40} | {2,-32} | {3}";
+            var oderedEntries = entries.OrderBy(entry => entry.Title);
 
-//    private static void PrintTreeView(List<Entry> entries)
-//    {
-//        Console.OutputEncoding = System.Text.Encoding.UTF8;
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+            Console.WriteLine(fmt, "Uuid", "Title", "Username", "Group");
 
-//        var group = PwSafeClientHelper.GetGroupInfo(entries);
-//        PrintTreeView(entries, group, 0);
-//    }
+            foreach (Entry entry in oderedEntries)
+            {
+                Console.WriteLine(fmt, entry.Uuid, entry.Title, entry.UserName, entry.Group);
+            }
+        }
 
-//    private static void PrintTreeView(List<Entry> entries, Group group, int depth)
-//    {
-//        var groupPath = group.GetGroupPath();
+        private static void PrintTreeView(List<Entry> entries)
+        {
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-//        var subEntries = entries
-//            .Where(entry => entry.Group == groupPath)
-//            .OrderBy(entry => entry.Title);
+            var group = PwSafeClientHelper.GetGroupInfo(entries);
+            PrintTreeView(entries, group, 0);
+        }
 
-//        if (depth >= 1)
-//        {
-//            Console.WriteLine("{0}|- {1}", new string(' ', (depth - 1) * 2), group.Name);
-//        }
+        private static void PrintTreeView(List<Entry> entries, Group group, int depth)
+        {
+            var groupPath = group.GetGroupPath();
+
+            var subEntries = entries
+                .Where(entry => entry.Group == groupPath)
+                .OrderBy(entry => entry.Title);
+
+            if (depth >= 1)
+            {
+                Console.WriteLine("{0}|- {1}", new string(' ', (depth - 1) * 2), group.Name);
+            }
 
 
-//        foreach (Entry entry in subEntries)
-//        {
-//            var fmt = "{0}|- {1}({2}) [{3}]";
-//            Console.WriteLine(fmt, new string(' ', depth * 2), entry.Title, entry.UserName, entry.Uuid);
-//        }
+            foreach (Entry entry in subEntries)
+            {
+                var fmt = "{0}|- {1}({2}) [{3}]";
+                Console.WriteLine(fmt, new string(' ', depth * 2), entry.Title, entry.UserName, entry.Uuid);
+            }
 
-//        foreach (Group child in group.Children)
-//        {
-//            PrintTreeView(entries, child, depth + 1);
-//        }
-//    }
-//}
+            foreach (Group child in group.Children)
+            {
+                PrintTreeView(entries, child, depth + 1);
+            }
+        }
+    }
+}

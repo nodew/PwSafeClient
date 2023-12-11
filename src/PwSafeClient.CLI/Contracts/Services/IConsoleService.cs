@@ -1,4 +1,7 @@
-﻿namespace PwSafeClient.CLI.Contracts.Services;
+﻿using System.IO;
+using Medo.Security.Cryptography.PasswordSafe;
+
+namespace PwSafeClient.CLI.Contracts.Services;
 
 /// <summary>
 /// Console helper.

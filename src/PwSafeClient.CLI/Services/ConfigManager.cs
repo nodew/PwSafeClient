@@ -76,7 +76,7 @@ public class ConfigManager : IConfigManager
         {
             if (string.IsNullOrEmpty(filePath))
             {
-                throw new Exception($"The database with alias: {alias} is not configured.");
+                throw new DatabaseNotFoundException(alias);
             }
             else
             {
@@ -85,7 +85,7 @@ public class ConfigManager : IConfigManager
         }
         else
         {
-            throw new Exception($"Cannot find database with alias: {alias}");
+            throw new DatabaseNotFoundException(alias);
         }
     }
 

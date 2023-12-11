@@ -1,64 +1,78 @@
-﻿namespace PwSafeClient.CLI.Commands;
+﻿using System;
+using System.CommandLine;
+using System.CommandLine.Invocation;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using Medo.Security.Cryptography.PasswordSafe;
+using PwSafeClient.CLI.Contracts.Helpers;
+using PwSafeClient.CLI.Contracts.Services;
 
-//public class GetPasswordCommand : Command
-//{
-//    public GetPasswordCommand() : base("get", "Get the password")
-//    {
-//        AddArgument(new Argument<Guid>("GUID", "The ID of an entry"));
+namespace PwSafeClient.CLI.Commands;
 
-//        AddOption(new Option<string>(
-//            aliases: new string[] { "--alias", "-a" },
-//            description: "The alias of the database"
-//        ));
+public class GetPasswordCommand : Command
+{
+    public GetPasswordCommand() : base("get", "Get the password")
+    {
+        AddArgument(new Argument<Guid>("ID", "The ID of an entry"));
 
-//        AddOption(new Option<FileInfo>(
-//            aliases: new string[] { "--file", "-f" },
-//            description: "The file path of your database file"
-//        ));
+        AddOption(new Option<string>(
+            aliases: ["--alias", "-a"],
+            description: "The alias of the database"
+        ));
 
-//        Handler = CommandHandler.Create(Run);
-//    }
+        AddOption(new Option<FileInfo>(
+            aliases: ["--file", "-f"],
+            description: "The file path of your database file"
+        ));
+    }
 
-//    public static async Task Run(Guid id, string alias, FileInfo? file)
-//    {
-//        string filepath;
-//        if (file != null)
-//        {
-//            filepath = file.FullName;
-//        }
-//        else
-//        {
-//            filepath = await ConsoleService.GetPWSFilePathAsync(alias);
-//        }
+    public class GetPasswordCommandHandler : CommandHandler
+    {
+        private readonly IConsoleService consoleService;
+        private readonly IDocumentHelper documentHelper;
 
-//        if (!File.Exists(filepath))
-//        {
-//            ConsoleService.LogError($"Can't locate a valid file, please check your command parameters or configuration in <HOMEDIR>/pwsafe.json");
-//            return;
-//        }
+        public GetPasswordCommandHandler(IConsoleService consoleService, IDocumentHelper documentHelper)
+        {
+            this.consoleService = consoleService;
+            this.documentHelper = documentHelper;
+        }
 
-//        string password = ConsoleService.ReadPassword();
+        public string? Alias { get; set; }
 
-//        try
-//        {
-//            var doc = Document.Load(filepath, password);
-//            doc.IsReadOnly = true;
+        public FileInfo? File { get; set; }
 
-//            var entry = doc.Entries.Where(entry => entry.Uuid == id).FirstOrDefault();
+        public Guid Id { get; set; }
 
-//            if (entry != null)
-//            {
-//                await TextCopy.ClipboardService.SetTextAsync(entry.Password);
-//                Console.WriteLine("Copied password to your clipboard");
-//            }
-//            else
-//            {
-//                ConsoleService.LogError("Entry is not found");
-//            }
-//        }
-//        catch (Exception ex)
-//        {
-//            ConsoleService.LogError(ex.Message);
-//        }
-//    }
-//}
+        public override async Task<int> InvokeAsync(InvocationContext context)
+        {
+            Document? document = await documentHelper.TryLoadDocumentAsync(Alias, File, true);
+            if (document == null)
+            {
+                return 1;
+            }
+
+            try
+            {
+                var entry = document.Entries.Where(entry => entry.Uuid == Id).FirstOrDefault();
+
+                if (entry != null)
+                {
+                    await TextCopy.ClipboardService.SetTextAsync(entry.Password);
+                    Console.WriteLine("Copied password to your clipboard");
+                    return 0;
+                }
+                else
+                {
+                    consoleService.LogError("Entry is not found");
+                    return 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                consoleService.LogError(ex.Message);
+                return 1;
+            }
+        }
+    }
+}

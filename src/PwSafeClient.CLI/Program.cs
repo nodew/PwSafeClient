@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PwSafeClient.CLI.Commands;
+using PwSafeClient.CLI.Contracts.Helpers;
 using PwSafeClient.CLI.Contracts.Services;
 using PwSafeClient.CLI.Services;
 using System.CommandLine;
@@ -25,6 +26,7 @@ class Program
                         services.AddSingleton<IConfigManager, ConfigManager>();
                         services.AddSingleton<IEnvironmentManager, EnvironmentManager>();
                         services.AddSingleton<IConsoleService, ConsoleService>();
+                        services.AddSingleton<IDocumentHelper, DocumentHelper>();
                     });
 
                     host.UseCommandHandler<InitConfigCommand, InitConfigCommand.InitConfigCommandHandler>();
@@ -35,6 +37,9 @@ class Program
                     host.UseCommandHandler<ListDbCommand, ListDbCommand.ListDbCommandHandler>();
                     host.UseCommandHandler<ShowDbCommand, ShowDbCommand.ShowDbCommandHandler>();
                     host.UseCommandHandler<CreateDbCommand, CreateDbCommand.CreateDbCommandHandler>();
+
+                    host.UseCommandHandler<ListEntriesCommand, ListEntriesCommand.ListEntriesCommandHandler>();
+                    host.UseCommandHandler<GetPasswordCommand, GetPasswordCommand.GetPasswordCommandHandler>();
                 })
             .UseDefaults()
             .Build()
@@ -55,9 +60,9 @@ class Program
         root.AddCommand(new ShowDbCommand());
         root.AddCommand(new CreateDbCommand());
 
-        //root.AddCommand(new ListEntriesCommand());
+        root.AddCommand(new ListEntriesCommand());
         //root.AddCommand(new UpdateEntryCommand());
-        //root.AddCommand(new GetPasswordCommand());
+        root.AddCommand(new GetPasswordCommand());
 
         return new CommandLineBuilder(root);
     }
