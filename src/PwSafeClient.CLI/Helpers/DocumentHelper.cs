@@ -10,6 +10,7 @@ public class DocumentHelper : IDocumentHelper
 {
     private readonly IConfigManager configManager;
     private readonly IConsoleService consoleService;
+    private static Document? document;
 
     public DocumentHelper(IConfigManager configManager, IConsoleService consoleService)
     {
@@ -19,7 +20,10 @@ public class DocumentHelper : IDocumentHelper
 
     public async Task<Document?> TryLoadDocumentAsync(string? alias, FileInfo? fileInfo, bool readOnly)
     {
-        Document? document = null;
+        if (document != null)
+        {
+            return document;
+        }
 
         try {
             string filepath;
