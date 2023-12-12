@@ -14,4 +14,12 @@ public interface IDocumentHelper
     /// <param name="readOnly">Whether to load the document as readonly</param>
     /// <returns>The document</returns>
     Task<Document?> TryLoadDocumentAsync(string? alias, FileInfo? fileInfo, bool readOnly);
+
+    /// <summary>
+    /// Try to get the file path of the document.
+    /// </summary>
+    /// <param name="alias">The alias of file</param>
+    /// <param name="fileInfo">The file info of database</param>
+    /// <returns></returns>
+    Task<string> GetDocumentFilePath(string? alias, FileInfo? fileInfo);
 }

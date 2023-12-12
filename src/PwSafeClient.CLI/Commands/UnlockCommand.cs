@@ -35,8 +35,8 @@ public class UnlockCommand : Command
     }
 
     public class UnlockCommandHandler : CommandHandler {
-        private IDocumentHelper documentHelper;
-        private IConsoleService consoleService;
+        private readonly IDocumentHelper documentHelper;
+        private readonly IConsoleService consoleService;
 
         public UnlockCommandHandler(IDocumentHelper documentHelper, IConsoleService consoleService)
         {
@@ -66,7 +66,8 @@ public class UnlockCommand : Command
 
             do
             {
-                input = consoleService.ReadLine();
+                input = consoleService.ReadLine().Trim();
+
                 if (input == "exit")
                 {
                     break;

@@ -20,6 +20,7 @@ public class PasswordGenerator {
     /// </summary>
     /// <returns></returns>
     public string GeneratePassword() {
+        Console.WriteLine($"Generating password...");
         char[] password = new char[passwordPolicy.TotalPasswordLength];
 
         bool useEasyVision = passwordPolicy.Style.HasFlag(PasswordPolicyStyle.UseEasyVision);

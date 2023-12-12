@@ -62,4 +62,14 @@ public class DocumentHelper : IDocumentHelper
 
         return document;
     }
+
+    public async Task<string> GetDocumentFilePath(string? alias, FileInfo? fileInfo)
+    {
+        if (fileInfo != null)
+        {
+            return fileInfo.FullName;
+        }
+
+        return await configManager.GetDbPath(alias);
+    }
 }

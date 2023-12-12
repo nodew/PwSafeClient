@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Medo.Security.Cryptography.PasswordSafe;
 using PwSafeClient.CLI.Contracts.Helpers;
 using PwSafeClient.CLI.Contracts.Services;
+using PwSafeClient.Shared;
 
 namespace PwSafeClient.CLI.Commands;
 
@@ -110,34 +111,83 @@ public class NewEntryCommand : Command
                 return 1;
             }
 
-            NamedPasswordPolicy? namedPasswordPolicy = document.NamedPasswordPolicies.FirstOrDefault(p => p.Name == Policy);
+            if (document.IsReadOnly)
+            {
+                consoleService.LogError("The database is readonly");
+                return 1;
+            }
+
+            if (string.IsNullOrWhiteSpace(Title)) {
+                consoleService.LogError("The title is required");
+                return 1;
+            }
+
+            if (document.Entries.Any(e => e.Title == Title && e.Group.ToString() == Group)) {
+                consoleService.LogError($"The entry {Title} already exists under the group {Group}");
+                return 1;
+            }
 
             try
             {
-                var entry = new Entry
+                var entry = new Entry()
                 {
                     Title = Title,
                     UserName = Username,
                     Password = Password,
-                    Group = Group,
+                    Group = new GroupPath(Group),
                     Url = Url,
                     Email = Email,
                     Notes = Notes
                 };
 
-                if (namedPasswordPolicy != null)
+                if (string.IsNullOrWhiteSpace(Password))
                 {
-                    entry.PasswordPolicy.TotalPasswordLength = namedPasswordPolicy.TotalPasswordLength;
-                    entry.PasswordPolicy.MinimumLowercaseCount = namedPasswordPolicy.MinimumLowercaseCount;
-                    entry.PasswordPolicy.MinimumUppercaseCount = namedPasswordPolicy.MinimumUppercaseCount;
-                    entry.PasswordPolicy.MinimumDigitCount = namedPasswordPolicy.MinimumDigitCount;
-                    entry.PasswordPolicy.MinimumSymbolCount = namedPasswordPolicy.MinimumSymbolCount;
-                    entry.PasswordPolicy.Style = namedPasswordPolicy.Style;
-                    entry.PasswordPolicy.SetSpecialSymbolSet(namedPasswordPolicy.GetSpecialSymbolSet());
+                    NamedPasswordPolicy? namedPasswordPolicy = null;
+
+                    if (!string.IsNullOrEmpty(Policy))
+                    {
+                        namedPasswordPolicy = document.NamedPasswordPolicies.FirstOrDefault(p => p.Name == Policy);
+                        if (namedPasswordPolicy == null)
+                        {
+                            consoleService.LogError($"The password policy {Policy} is not found");
+                            return 1;
+                        }
+                    }
+
+                    Console.WriteLine(entry.PasswordPolicy.TotalPasswordLength);
+                    Console.WriteLine(entry.PasswordPolicy.MinimumLowercaseCount);
+                    Console.WriteLine(entry.PasswordPolicy.MinimumUppercaseCount);
+                    Console.WriteLine(entry.PasswordPolicy.MinimumDigitCount);
+                    Console.WriteLine(entry.PasswordPolicy.MinimumSymbolCount);
+                    Console.WriteLine(entry.PasswordPolicy.Style);
+                    Console.WriteLine(entry.PasswordPolicy.GetSpecialSymbolSet());
+
+                    if (namedPasswordPolicy != null) {
+                        entry.PasswordPolicy.TotalPasswordLength = namedPasswordPolicy.TotalPasswordLength;
+                        entry.PasswordPolicy.MinimumLowercaseCount = namedPasswordPolicy.MinimumLowercaseCount;
+                        entry.PasswordPolicy.MinimumUppercaseCount = namedPasswordPolicy.MinimumUppercaseCount;
+                        entry.PasswordPolicy.MinimumDigitCount = namedPasswordPolicy.MinimumDigitCount;
+                        entry.PasswordPolicy.MinimumSymbolCount = namedPasswordPolicy.MinimumSymbolCount;
+                        entry.PasswordPolicy.Style = namedPasswordPolicy.Style;
+                        entry.PasswordPolicy.SetSpecialSymbolSet(namedPasswordPolicy.GetSpecialSymbolSet());
+
+                        entry.PasswordPolicyName = namedPasswordPolicy.Name;
+                        entry.Password = new PasswordGenerator(entry.PasswordPolicy).GeneratePassword();
+                        Console.WriteLine($"Generated password!");
+                    }
+
+                    Console.WriteLine(entry.PasswordPolicy.TotalPasswordLength);
+                    Console.WriteLine(entry.PasswordPolicy.MinimumLowercaseCount);
+                    Console.WriteLine(entry.PasswordPolicy.MinimumUppercaseCount);
+                    Console.WriteLine(entry.PasswordPolicy.MinimumDigitCount);
+                    Console.WriteLine(entry.PasswordPolicy.MinimumSymbolCount);
+                    Console.WriteLine(entry.PasswordPolicy.Style);
+                    Console.WriteLine(entry.PasswordPolicy.GetSpecialSymbolSet());
                 }
 
                 document.Entries.Add(entry);
-                document.Save(File!.FullName);
+
+                document.Save();
 
                 Console.WriteLine($"Entry {Title} is added to the database");
                 return 0;
@@ -145,7 +195,7 @@ public class NewEntryCommand : Command
             catch (Exception ex)
             {
                 consoleService.LogError(ex.Message);
-                return 1;
+                throw;
             }
         }
     }
