@@ -26,4 +26,10 @@ public interface IConsoleService
     /// </summary>
     /// <param name="errorMessage">The error message.</param>
     void LogError(string errorMessage);
+
+    /// <summary>
+    /// Log success message to console.
+    /// </summary>
+    /// <param name="message">The success message.</param>
+    void LogSuccess(string message);
 }

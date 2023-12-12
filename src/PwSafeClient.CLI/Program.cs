@@ -40,6 +40,7 @@ class Program
 
                     host.UseCommandHandler<ListEntriesCommand, ListEntriesCommand.ListEntriesCommandHandler>();
                     host.UseCommandHandler<GetPasswordCommand, GetPasswordCommand.GetPasswordCommandHandler>();
+                    host.UseCommandHandler<NewEntryCommand, NewEntryCommand.NewEntryCommandHandler>();
                 })
             .UseDefaults()
             .Build()
@@ -61,8 +62,9 @@ class Program
         root.AddCommand(new CreateDbCommand());
 
         root.AddCommand(new ListEntriesCommand());
-        //root.AddCommand(new UpdateEntryCommand());
         root.AddCommand(new GetPasswordCommand());
+        root.AddCommand(new NewEntryCommand());
+        //root.AddCommand(new UpdateEntryCommand());
 
         return new CommandLineBuilder(root);
     }

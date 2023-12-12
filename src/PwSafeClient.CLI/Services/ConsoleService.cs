@@ -12,7 +12,7 @@ public class ConsoleService : IConsoleService
     /// <inheritdoc/>
     public string ReadPassword()
     {
-        List<char> password = new() { };
+        List<char> password = [];
 
         Console.Write("Enter your password: ");
         while (true)
@@ -55,6 +55,14 @@ public class ConsoleService : IConsoleService
     {
         Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine(errorMessage);
+        Console.ResetColor();
+    }
+
+    /// <inheritdoc/>
+    public void LogSuccess(string message)
+    {
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine(message);
         Console.ResetColor();
     }
 }
