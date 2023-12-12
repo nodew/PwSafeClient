@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Medo.Security.Cryptography.PasswordSafe;
+using PwSafeClient.CLI.Contracts.Helpers;
 using PwSafeClient.CLI.Contracts.Services;
 using PwSafeClient.Shared;
 
@@ -44,12 +45,12 @@ public class ListEntriesCommand : Command {
 
     public class ListEntriesCommandHandler : CommandHandler
     {
-        private readonly IConfigManager configManager;
+        private readonly IDocumentHelper documentHelper;
         private readonly IConsoleService consoleService;
 
-        public ListEntriesCommandHandler(IConfigManager configManager, IConsoleService consoleService)
+        public ListEntriesCommandHandler(IDocumentHelper documentHelper, IConsoleService consoleService)
         {
-            this.configManager = configManager;
+            this.documentHelper = documentHelper;
             this.consoleService = consoleService;
         }
 
@@ -63,59 +64,36 @@ public class ListEntriesCommand : Command {
 
         public override async Task<int> InvokeAsync(InvocationContext context)
         {
-            string filepath;
+            Document? document = await documentHelper.TryLoadDocumentAsync(Alias, File, true);
 
-            if (File != null)
+            if (document == null)
             {
-                filepath = File.FullName;
-            }
-            else
-            {
-                filepath = await configManager.GetDbPath(Alias);
-            }
-
-            if (!System.IO.File.Exists(filepath))
-            {
-                consoleService.LogError($"Can't locate a valid file, please check your command parameters or configuration in <HOMEDIR>/pwsafe.json");
                 return 1;
             }
 
-            string password = consoleService.ReadPassword();
+            List<Entry> entries = document.Entries.ToList();
 
-            try
+            if (!string.IsNullOrEmpty(Filter))
             {
-                var doc = Document.Load(filepath, password);
-                doc.IsReadOnly = true;
+                entries = entries.Where(entry => entry.Title.ToLower().Contains(Filter.ToLower())).ToList();
+            }
 
-                List<Entry> entries = doc.Entries.ToList();
-
-                if (!string.IsNullOrEmpty(Filter))
-                {
-                    entries = entries.Where(entry => entry.Title.ToLower().Contains(Filter.ToLower())).ToList();
-                }
-
-                if (entries.Count == 0)
-                {
-                    Console.WriteLine("No available item.");
-                    return 0;
-                }
-
-                if (Mode == EntriesViewMode.List)
-                {
-                    PrintListView(entries);
-                }
-                else if (Mode == EntriesViewMode.Tree)
-                {
-                    PrintTreeView(entries);
-                }
-
+            if (entries.Count == 0)
+            {
+                Console.WriteLine("No available item.");
                 return 0;
             }
-            catch (Exception ex)
+
+            if (Mode == EntriesViewMode.List)
             {
-                consoleService.LogError(ex.ToString());
-                return 1;
+                PrintListView(entries);
             }
+            else if (Mode == EntriesViewMode.Tree)
+            {
+                PrintTreeView(entries);
+            }
+
+            return 0;
         }
 
         private static void PrintListView(List<Entry> entries)
