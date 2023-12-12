@@ -13,11 +13,13 @@ namespace PwSafeClient.CLI;
 
 class Program
 {
+    public static Parser? Parser;
+
     static void Main(string[] args)
     {
         System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 
-        BuildCommandLine()
+        Parser = BuildCommandLine()
             .UseHost(_ => Host.CreateDefaultBuilder(),
                 host =>
                 {
@@ -41,10 +43,13 @@ class Program
                     host.UseCommandHandler<ListEntriesCommand, ListEntriesCommand.ListEntriesCommandHandler>();
                     host.UseCommandHandler<GetPasswordCommand, GetPasswordCommand.GetPasswordCommandHandler>();
                     host.UseCommandHandler<NewEntryCommand, NewEntryCommand.NewEntryCommandHandler>();
+
+                    host.UseCommandHandler<UnlockCommand, UnlockCommand.UnlockCommandHandler>();
                 })
             .UseDefaults()
-            .Build()
-            .Invoke(args);
+            .Build();
+
+        Parser.Invoke(args);
     }
 
     private static CommandLineBuilder BuildCommandLine()
@@ -65,6 +70,8 @@ class Program
         root.AddCommand(new GetPasswordCommand());
         root.AddCommand(new NewEntryCommand());
         //root.AddCommand(new UpdateEntryCommand());
+
+        root.AddCommand(new UnlockCommand());
 
         return new CommandLineBuilder(root);
     }

@@ -22,6 +22,16 @@ public interface IConsoleService
     string ReadQA(string question);
 
     /// <summary>
+    /// Read a line from console.
+    /// </summary>
+    string ReadLine();
+
+    /// <summary>
+    /// Read a line from console with given symbol.
+    /// </summary>
+    string ReadLine(string symbol);
+
+    /// <summary>
     /// Log error message to console.
     /// </summary>
     /// <param name="errorMessage">The error message.</param>

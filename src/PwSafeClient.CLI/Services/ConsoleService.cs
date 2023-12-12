@@ -50,6 +50,15 @@ public class ConsoleService : IConsoleService
         return answer ?? string.Empty;
     }
 
+    public string ReadLine() => ReadLine(">");
+
+    public string ReadLine(string symbol = ">")
+    {
+        Console.Write($"{symbol} ");
+        string? input = Console.ReadLine();
+        return input ?? string.Empty;
+    }
+
     /// <inheritdoc/>
     public void LogError(string errorMessage)
     {
