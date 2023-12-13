@@ -1,14 +1,15 @@
-﻿using System;
+﻿using Medo.Security.Cryptography.PasswordSafe;
+using PwSafeClient.CLI.Contracts.Helpers;
+using PwSafeClient.CLI.Contracts.Services;
+using PwSafeClient.CLI.Options;
+using PwSafeClient.Shared;
+using System;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Medo.Security.Cryptography.PasswordSafe;
-using PwSafeClient.CLI.Contracts.Helpers;
-using PwSafeClient.CLI.Contracts.Services;
-using PwSafeClient.Shared;
 
 namespace PwSafeClient.CLI.Commands;
 
@@ -18,18 +19,13 @@ public enum EntriesViewMode
     Tree
 }
 
-public class ListEntriesCommand : Command {
+public class ListEntriesCommand : Command
+{
     public ListEntriesCommand() : base("list", "List the items in database")
     {
-        AddOption(new Option<string>(
-            aliases: ["--alias", "-a"],
-            description: "The alias of the database"
-        ));
+        AddOption(CommonOptions.AliasOption());
 
-        AddOption(new Option<FileInfo>(
-            aliases: ["--file", "-f"],
-            description: "The file path of your database file"
-        ));
+        AddOption(CommonOptions.FileOption());
 
         AddOption(new Option<EntriesViewMode>(
             aliases: ["--mode", "-m"],

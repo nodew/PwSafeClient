@@ -45,7 +45,7 @@ public class ConfigManager : IConfigManager
     }
 
     /// <inheritdoc/>
-    public async Task AddDatabase(string alias, string filepath, bool isDefault = false)
+    public async Task AddDatabaseAsync(string alias, string filepath, bool isDefault = false)
     {
         ArgumentValidator.ThrowIfNullOrWhiteSpace(nameof(alias), alias);
         ArgumentValidator.ThrowIfNullOrWhiteSpace(nameof(filepath), filepath);
@@ -62,7 +62,7 @@ public class ConfigManager : IConfigManager
     }
 
     /// <inheritdoc/>
-    public async Task<string> GetDbPath(string? alias)
+    public async Task<string> GetDbPathAsync(string? alias)
     {
         Config config = await LoadConfigAsync();
         alias ??= config.DefaultDatabase;
@@ -87,6 +87,20 @@ public class ConfigManager : IConfigManager
         {
             throw new DatabaseNotFoundException(alias);
         }
+    }
+
+    /// <inheritdoc/>
+    public async Task<int> GetIdleTimeAsync()
+    {
+        Config config = await LoadConfigAsync();
+        return config.IdleTime;
+    }
+
+    /// <inheritdoc/>
+    public async Task<int> GetMaxBackupCountAsync()
+    {
+        Config config = await LoadConfigAsync();
+        return config.MaxBackupCount;
     }
 
     /// <inheritdoc/>
@@ -124,7 +138,7 @@ public class ConfigManager : IConfigManager
     }
 
     /// <inheritdoc/>
-    public async Task RemoveDatabase(string alias)
+    public async Task RemoveDatabaseAsync(string alias)
     {
         ArgumentValidator.ThrowIfNullOrWhiteSpace(nameof(alias), alias);
 
@@ -155,7 +169,7 @@ public class ConfigManager : IConfigManager
     }
 
     /// <inheritdoc/>
-    public async Task SetDefaultDatabase(string alias)
+    public async Task SetDefaultDatabaseAsync(string alias)
     {
         ArgumentValidator.ThrowIfNullOrWhiteSpace(nameof(alias), alias);
 

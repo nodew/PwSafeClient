@@ -35,7 +35,7 @@ public class RemoveAliasCommand : Command
             }
 
             try {
-                await configManager.RemoveDatabase(Alias);
+                await configManager.RemoveDatabaseAsync(Alias);
                 return 0;
             } catch (Exception e) {
                 consoleService.LogError(e.Message);

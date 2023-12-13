@@ -1,14 +1,16 @@
+using Medo.Security.Cryptography.PasswordSafe;
+using PwSafeClient.CLI.Contracts.Helpers;
+using PwSafeClient.CLI.Contracts.Services;
+using PwSafeClient.CLI.Options;
 using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Medo.Security.Cryptography.PasswordSafe;
-using PwSafeClient.CLI.Contracts.Helpers;
-using PwSafeClient.CLI.Contracts.Services;
 
 namespace PwSafeClient.CLI.Commands;
 
@@ -17,31 +19,36 @@ public class UnlockCommand : Command
     public UnlockCommand()
         : base("unlock", "Unlock a database")
     {
-        AddOption(new Option<string>(
-            aliases: ["--alias", "-a"],
-            description: "The alias of the database"
-        ));
+        AddOption(CommonOptions.AliasOption());
 
-        AddOption(new Option<FileInfo>(
-            aliases: ["--file", "-f"],
-            description: "The file path of your database file"
-        ));
+        AddOption(CommonOptions.FileOption());
 
-        AddOption(new Option<bool>(
-            name: "--readonly",
-            description: "Open database in read-only mode",
-            getDefaultValue: () => true
-        ));
+        AddOption(CommonOptions.ReadOnlyOption());
     }
 
-    public class UnlockCommandHandler : CommandHandler {
+    public class UnlockCommandHandler : CommandHandler
+    {
         private readonly IDocumentHelper documentHelper;
         private readonly IConsoleService consoleService;
+        private readonly IConfigManager configManager;
 
-        public UnlockCommandHandler(IDocumentHelper documentHelper, IConsoleService consoleService)
+        private static readonly string[] allowedCommands =
+        [
+            "get",
+            "add",
+            "list",
+            "rm",
+            "update",
+            "showdb",
+        ];
+
+        private const string exitCommand = ":exit";
+
+        public UnlockCommandHandler(IDocumentHelper documentHelper, IConsoleService consoleService, IConfigManager configManager)
         {
             this.documentHelper = documentHelper;
             this.consoleService = consoleService;
+            this.configManager = configManager;
         }
 
         public string? Alias { get; set; }
@@ -59,41 +66,50 @@ public class UnlockCommand : Command
                 return 1;
             }
 
-            Timer timer = new(_ => LockDatabase(), null, (int)TimeSpan.FromMinutes(1).TotalMilliseconds, Timeout.Infinite);
-            Console.CancelKeyPress += (_, _) => HandleCancelEvent();
+            int idleTime = await configManager.GetIdleTimeAsync();
+            string displayName = await documentHelper.GetDocumentDisplayNameAsync(Alias, File);
+
+            Timer timer = new(_ => HandleExit(), null, (int)TimeSpan.FromMinutes(idleTime).TotalMilliseconds, Timeout.Infinite);
+            Console.CancelKeyPress += (_, _) => HandleExit();
 
             string input;
 
             do
             {
-                input = consoleService.ReadLine().Trim();
+                input = consoleService.ReadLine($"{displayName}>").Trim();
 
-                if (input == "exit")
-                {
-                    break;
-                }
-
-                string[] args = input.Split(" ");
-                if (args.Length == 0)
+                if (string.IsNullOrWhiteSpace(input))
                 {
                     continue;
                 }
 
-                await Program.Parser!.InvokeAsync(args);
+                if (input == exitCommand)
+                {
+                    break;
+                }
 
-                timer.Change((int)TimeSpan.FromMinutes(1).TotalMilliseconds, Timeout.Infinite);
-            } while (input != "exit");
+                ParseResult result = Program.Parser!.Parse(input);
+
+                if (!allowedCommands.Contains(result.CommandResult.Command.Name))
+                {
+                    Console.WriteLine($"Unsupported operation: {input}");
+                    continue;
+                }
+
+                await Program.Parser!.InvokeAsync(input);
+
+                timer.Change((int)TimeSpan.FromMinutes(idleTime).TotalMilliseconds, Timeout.Infinite);
+            } while (input != exitCommand);
+
+            HandleExit();
 
             return 0;
         }
 
-        private static void LockDatabase() {
-            Console.WriteLine("Locking database...");
-            Process.GetCurrentProcess().Kill();
-        }
-
-        private static void HandleCancelEvent() {
-            Console.WriteLine("Exiting...");
+        private void HandleExit()
+        {
+            Console.WriteLine("Locking database and exiting...");
+            documentHelper.SaveDocumentAsync(Alias, File);
             Process.GetCurrentProcess().Kill();
         }
     }

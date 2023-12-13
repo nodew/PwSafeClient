@@ -1,13 +1,14 @@
-﻿using System;
+﻿using Medo.Security.Cryptography.PasswordSafe;
+using PwSafeClient.CLI.Contracts.Helpers;
+using PwSafeClient.CLI.Contracts.Services;
+using PwSafeClient.CLI.Options;
+using PwSafeClient.Shared;
+using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Medo.Security.Cryptography.PasswordSafe;
-using PwSafeClient.CLI.Contracts.Helpers;
-using PwSafeClient.CLI.Contracts.Services;
-using PwSafeClient.Shared;
 
 namespace PwSafeClient.CLI.Commands;
 
@@ -15,15 +16,9 @@ public class NewEntryCommand : Command
 {
     public NewEntryCommand() : base("add", "Add a new entry")
     {
-        AddOption(new Option<string>(
-            aliases: ["--alias", "-a"],
-            description: "The alias of the database"
-        ));
+        AddOption(CommonOptions.AliasOption());
 
-        AddOption(new Option<FileInfo>(
-            aliases: ["--file", "-f"],
-            description: "The file path of your database file"
-        ));
+        AddOption(CommonOptions.FileOption());
 
         AddOption(new Option<string>(
             aliases: ["--title", "-t"],
@@ -73,7 +68,8 @@ public class NewEntryCommand : Command
         ));
     }
 
-    public class NewEntryCommandHandler : CommandHandler {
+    public class NewEntryCommandHandler : CommandHandler
+    {
         private readonly IConsoleService consoleService;
         private readonly IDocumentHelper documentHelper;
 
@@ -117,12 +113,14 @@ public class NewEntryCommand : Command
                 return 1;
             }
 
-            if (string.IsNullOrWhiteSpace(Title)) {
+            if (string.IsNullOrWhiteSpace(Title))
+            {
                 consoleService.LogError("The title is required");
                 return 1;
             }
 
-            if (document.Entries.Any(e => e.Title == Title && e.Group.ToString() == Group)) {
+            if (document.Entries.Any(e => e.Title == Title && e.Group.ToString() == Group))
+            {
                 consoleService.LogError($"The entry {Title} already exists under the group {Group}");
                 return 1;
             }
@@ -162,7 +160,8 @@ public class NewEntryCommand : Command
                     Console.WriteLine(entry.PasswordPolicy.Style);
                     Console.WriteLine(entry.PasswordPolicy.GetSpecialSymbolSet());
 
-                    if (namedPasswordPolicy != null) {
+                    if (namedPasswordPolicy != null)
+                    {
                         entry.PasswordPolicy.TotalPasswordLength = namedPasswordPolicy.TotalPasswordLength;
                         entry.PasswordPolicy.MinimumLowercaseCount = namedPasswordPolicy.MinimumLowercaseCount;
                         entry.PasswordPolicy.MinimumUppercaseCount = namedPasswordPolicy.MinimumUppercaseCount;
@@ -187,7 +186,7 @@ public class NewEntryCommand : Command
 
                 document.Entries.Add(entry);
 
-                document.Save();
+                await documentHelper.SaveDocumentAsync(Alias, File);
 
                 Console.WriteLine($"Entry {Title} is added to the database");
                 return 0;

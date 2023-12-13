@@ -1,12 +1,13 @@
-﻿using System;
+﻿using Medo.Security.Cryptography.PasswordSafe;
+using PwSafeClient.CLI.Contracts.Helpers;
+using PwSafeClient.CLI.Contracts.Services;
+using PwSafeClient.CLI.Options;
+using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Medo.Security.Cryptography.PasswordSafe;
-using PwSafeClient.CLI.Contracts.Helpers;
-using PwSafeClient.CLI.Contracts.Services;
 
 namespace PwSafeClient.CLI.Commands;
 
@@ -16,15 +17,9 @@ public class GetPasswordCommand : Command
     {
         AddArgument(new Argument<Guid>("ID", "The ID of an entry"));
 
-        AddOption(new Option<string>(
-            aliases: ["--alias", "-a"],
-            description: "The alias of the database"
-        ));
+        AddOption(CommonOptions.AliasOption());
 
-        AddOption(new Option<FileInfo>(
-            aliases: ["--file", "-f"],
-            description: "The file path of your database file"
-        ));
+        AddOption(CommonOptions.FileOption());
     }
 
     public class GetPasswordCommandHandler : CommandHandler

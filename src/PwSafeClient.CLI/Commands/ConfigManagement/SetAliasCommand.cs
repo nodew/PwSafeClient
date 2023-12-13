@@ -1,5 +1,5 @@
 ﻿using PwSafeClient.CLI.Contracts.Services;
-using PwSafeClient.CLI.Models;
+using PwSafeClient.CLI.Options;
 using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
@@ -12,8 +12,8 @@ public class SetAliasCommand : Command
 {
     public SetAliasCommand() : base("set", "Set alias for your psafe3 files")
     {
-        AddOption(new Option<string>(new[] { "--alias", "-a" }, "The alias of the database"));
-        AddOption(new Option<FileInfo>(new[] { "--file", "-f" }, "The file path of your psafe3 file"));
+        AddOption(CommonOptions.AliasOption());
+        AddOption(CommonOptions.FileOption());
         AddOption(new Option<bool>(new[] { "--default" }, "Whether to set the database as default"));
     }
 
@@ -48,10 +48,13 @@ public class SetAliasCommand : Command
                 return 1;
             }
 
-            try {
-                await configManager.AddDatabase(Alias, File.FullName, Default);
+            try
+            {
+                await configManager.AddDatabaseAsync(Alias, File.FullName, Default);
                 return 0;
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 consoleService.LogError(e.Message);
                 return 1;
             }

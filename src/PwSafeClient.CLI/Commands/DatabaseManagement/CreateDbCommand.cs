@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Medo.Security.Cryptography.PasswordSafe;
+using PwSafeClient.CLI.Contracts.Services;
+using PwSafeClient.CLI.Options;
+using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
 using System.Threading.Tasks;
-using Medo.Security.Cryptography.PasswordSafe;
-using PwSafeClient.CLI.Contracts.Services;
 
 namespace PwSafeClient.CLI.Commands;
 
@@ -14,10 +15,7 @@ public class CreateDbCommand : Command
     {
         AddArgument(new Argument<Guid>("FILE", "The file path of your psafe3 file"));
 
-        AddOption(new Option<string>(
-            aliases: ["--alias", "-a"],
-            description: "The alias of the database"
-        ));
+        AddOption(CommonOptions.AliasOption());
 
         AddOption(new Option<bool>(
             name: "--force",
@@ -68,13 +66,16 @@ public class CreateDbCommand : Command
 
             var password = consoleService.ReadPassword();
 
-            try {
+            try
+            {
                 Document document = new Document(password);
                 document.Save(File.FullName);
 
-                await configManager.AddDatabase(Alias, File.FullName, Default);
+                await configManager.AddDatabaseAsync(Alias, File.FullName, Default);
                 return 0;
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 consoleService.LogError(e.Message);
                 return 1;
             }

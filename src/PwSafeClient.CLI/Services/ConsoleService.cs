@@ -50,8 +50,6 @@ public class ConsoleService : IConsoleService
         return answer ?? string.Empty;
     }
 
-    public string ReadLine() => ReadLine(">");
-
     public string ReadLine(string symbol = ">")
     {
         Console.Write($"{symbol} ");

@@ -19,4 +19,17 @@ public class Config
     /// </summary>
     [JsonPropertyName("databases")]
     public Dictionary<string, string> Databases { get; set; } = new Dictionary<string, string>();
+
+
+    /// <summary>
+    /// The idle time in minutes before the interactive terminal exits.
+    /// </summary>
+    [JsonPropertyName("idleTime")]
+    public int IdleTime { get; set; } = 5;
+
+    /// <summary>
+    /// The maximum number of backup files to keep.
+    /// </summary>
+    [JsonPropertyName("maxBackupCount")]
+    public int MaxBackupCount { get; set; } = 5;
 }
