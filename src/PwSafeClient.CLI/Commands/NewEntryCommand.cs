@@ -119,7 +119,18 @@ public class NewEntryCommand : Command
                 return 1;
             }
 
-            if (document.Entries.Any(e => e.Title == Title && e.Group.ToString() == Group))
+            string[] groupSegments = [];
+            if (!string.IsNullOrWhiteSpace(Group))
+            {
+                groupSegments = Group.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+                for (int i = 0; i < groupSegments.Length; i++)
+                {
+                    groupSegments[i] = groupSegments[i].Trim();
+                }
+            }
+
+            GroupPath targetGroupPath = new(groupSegments);
+            if (document.Entries.Any(e => e.Title == Title && e.Group == targetGroupPath))
             {
                 consoleService.LogError($"The entry {Title} already exists under the group {Group}");
                 return 1;
@@ -132,7 +143,7 @@ public class NewEntryCommand : Command
                     Title = Title,
                     UserName = Username,
                     Password = Password,
-                    Group = new GroupPath(Group),
+                    Group = targetGroupPath,
                     Url = Url,
                     Email = Email,
                     Notes = Notes

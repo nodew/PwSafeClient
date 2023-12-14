@@ -1,6 +1,7 @@
 namespace PwSafeClient.Shared;
 
-public static class PwCharPool {
+public static class PwCharPool
+{
     public static readonly char[] StdLowercaseChars = "abcdefghijklmnopqrstuvwxyz".ToCharArray();
 
     public static readonly char[] StdUppercaseChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();

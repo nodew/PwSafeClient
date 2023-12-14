@@ -109,24 +109,22 @@ public class ListEntriesCommand : Command
         private static void PrintTreeView(List<Entry> entries)
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
-
-            var group = PwSafeClientHelper.GetGroupInfo(entries);
-            PrintTreeView(entries, group, 0);
+            Group root = new GroupBuilder(entries).Build();
+            PrintTreeView(entries, root, 0);
         }
 
         private static void PrintTreeView(List<Entry> entries, Group group, int depth)
         {
-            var groupPath = group.GetGroupPath();
+            GroupPath groupPath = group.GetGroupPath();
 
-            var subEntries = entries
-                .Where(entry => entry.Group == groupPath)
+            IEnumerable<Entry> subEntries = entries
+                .Where(entry => entry.Group.Equals(groupPath))
                 .OrderBy(entry => entry.Title);
 
             if (depth >= 1)
             {
                 Console.WriteLine("{0}|- {1}", new string(' ', (depth - 1) * 2), group.Name);
             }
-
 
             foreach (Entry entry in subEntries)
             {

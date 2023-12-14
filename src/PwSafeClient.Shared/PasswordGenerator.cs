@@ -4,14 +4,16 @@ using Medo.Security.Cryptography.PasswordSafe;
 
 namespace PwSafeClient.Shared;
 
-public class PasswordGenerator {
+public class PasswordGenerator
+{
     private readonly PasswordPolicy passwordPolicy;
 
     /// <summary>
     /// Initialize a new instance of the <see cref="PasswordGenerator"/>.
     /// </summary>
     /// <param name="passwordPolicy"></param>
-    public PasswordGenerator(PasswordPolicy passwordPolicy) {
+    public PasswordGenerator(PasswordPolicy passwordPolicy)
+    {
         this.passwordPolicy = passwordPolicy;
     }
 
@@ -19,7 +21,8 @@ public class PasswordGenerator {
     /// Generate a password based on the password policy.
     /// </summary>
     /// <returns></returns>
-    public string GeneratePassword() {
+    public string GeneratePassword()
+    {
         Console.WriteLine($"Generating password...");
         char[] password = new char[passwordPolicy.TotalPasswordLength];
 
@@ -31,15 +34,18 @@ public class PasswordGenerator {
         bool useLowercase = passwordPolicy.Style.HasFlag(PasswordPolicyStyle.UseLowercase);
         bool makePronounceable = passwordPolicy.Style.HasFlag(PasswordPolicyStyle.MakePronounceable);
 
-        if (useHexDigits) {
-            for (var i = 0; i < passwordPolicy.TotalPasswordLength; i++) {
+        if (useHexDigits)
+        {
+            for (var i = 0; i < passwordPolicy.TotalPasswordLength; i++)
+            {
                 password[i] = GetRandomChar(PwCharPool.StdHexDigitChars);
             }
 
             return string.Join("", password);
         }
 
-        if (makePronounceable) {
+        if (makePronounceable)
+        {
             return MakePronounceablePassword();
         }
 
@@ -50,35 +56,44 @@ public class PasswordGenerator {
 
         int n = 0;
 
-        if (useUppercase) {
-            for (var i = 0; i < passwordPolicy.MinimumUppercaseCount; i++) {
+        if (useUppercase)
+        {
+            for (var i = 0; i < passwordPolicy.MinimumUppercaseCount; i++)
+            {
                 password[n + i] = GetRandomChar(uppercaseChars);
                 n++;
             }
         }
 
-        if (useLowercase) {
-            for (var i = 0; i < passwordPolicy.MinimumLowercaseCount; i++) {
+        if (useLowercase)
+        {
+            for (var i = 0; i < passwordPolicy.MinimumLowercaseCount; i++)
+            {
                 password[n + i] = GetRandomChar(lowercaseChars);
                 n++;
             }
         }
 
-        if (useDigits) {
-            for (var i = 0; i < passwordPolicy.MinimumDigitCount; i++) {
+        if (useDigits)
+        {
+            for (var i = 0; i < passwordPolicy.MinimumDigitCount; i++)
+            {
                 password[n + i] = GetRandomChar(digitChars);
                 n++;
             }
         }
 
-        if (useSymbols) {
-            for (var i = 0; i < passwordPolicy.MinimumSymbolCount; i++) {
+        if (useSymbols)
+        {
+            for (var i = 0; i < passwordPolicy.MinimumSymbolCount; i++)
+            {
                 password[n + i] = GetRandomChar(symbolChars);
                 n++;
             }
         }
 
-        for (var i = n; i < passwordPolicy.TotalPasswordLength; i++) {
+        for (var i = n; i < passwordPolicy.TotalPasswordLength; i++)
+        {
             password[i] = GetRandomChar(uppercaseChars.Concat(lowercaseChars).Concat(digitChars).Concat(symbolChars).ToArray());
         }
 
@@ -90,26 +105,31 @@ public class PasswordGenerator {
     /// TODO: Generate a pronounceable password.
     /// </summary>
     /// <returns>Pronounceable password</returns>
-    private string MakePronounceablePassword() {
+    private string MakePronounceablePassword()
+    {
         char[] password = new char[passwordPolicy.TotalPasswordLength];
         return string.Join("", password);
     }
 
-    private static char GetRandomChar(char[] chars) {
+    private static char GetRandomChar(char[] chars)
+    {
         var random = new Random();
         var randomChar = chars[random.Next(chars.Length)];
         return randomChar;
     }
 
-    private static char[] Shuffle(char[] password) {
+    private static char[] Shuffle(char[] password)
+    {
         var length = password.Length;
         var count = length * 3;
 
-        while (count > 0) {
+        while (count > 0)
+        {
             var index1 = new Random().Next(length);
             var index2 = new Random().Next(length);
 
-            if (index1 == index2) {
+            if (index1 == index2)
+            {
                 continue;
             }
 

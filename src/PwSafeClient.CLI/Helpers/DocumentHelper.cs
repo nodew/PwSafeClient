@@ -27,7 +27,8 @@ public class DocumentHelper : IDocumentHelper
             return document;
         }
 
-        try {
+        try
+        {
             string filepath = await GetDocumentFilePathAsync(alias, fileInfo);
 
             if (!File.Exists(filepath))

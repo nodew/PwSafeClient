@@ -6,35 +6,55 @@ namespace PwSafeClient.Shared;
 
 public class Group
 {
+    private string name;
+
+    private Group? parent;
+
+    private List<Group> children;
+
     public Group()
     {
-        Name = string.Empty;
-        Parent = null;
-        Children = [];
+        name = string.Empty;
+        parent = null;
+        children = [];
     }
+
     public Group(string groupName, Group parent)
     {
-        Name = groupName;
-        Parent = parent;
-        Children = [];
+        this.parent = parent;
+        name = groupName;
+        children = [];
     }
 
-    public string Name { get; set; }
+    public string Name
+    {
+        get => name;
+        set => name = value;
+    }
 
-    public Group? Parent { get; set; }
+    public Group? Parent
+    {
+        get => parent;
+        set => parent = value;
+    }
 
-    public List<Group> Children { get; set; }
+    public List<Group> Children
+    {
+        get => children;
+        set => children = value;
+    }
 
     public bool IsRoot => Parent == null;
-    public string GetGroupPath()
+
+    public GroupPath GetGroupPath()
     {
-        if (Parent == null && string.IsNullOrEmpty(Name))
+        if (IsRoot)
         {
-            return string.Empty;
+            return new GroupPath();
         }
 
-        List<string> segments = new List<string> { Name };
-        var node = this;
+        List<string> segments = [Name];
+        Group node = this;
 
         while (node.Parent != null)
         {
@@ -44,7 +64,7 @@ public class Group
 
         segments.Reverse();
 
-        return new GroupPath(segments.ToArray());
+        return new GroupPath([.. segments]);
     }
 
     public void InsertByGroupPath(GroupPath path)
@@ -59,15 +79,15 @@ public class Group
 
         var childGroupName = segments[0];
 
-        string[] nestedPath;
+        string[] subSegments;
 
         if (segments.Length > 1)
         {
-            nestedPath = segments[1..(segments.Length - 1)];
+            subSegments = segments[1..(segments.Length)];
         }
         else
         {
-            nestedPath = new string[0];
+            subSegments = [];
         }
 
         var child = Children.Where(item => item.Name == childGroupName).FirstOrDefault();
@@ -79,9 +99,9 @@ public class Group
             Children.Add(child);
         }
 
-        if (nestedPath != null)
+        if (subSegments.Length > 0)
         {
-            child.InsertBySegments(nestedPath);
+            child.InsertBySegments(subSegments);
         }
     }
 }

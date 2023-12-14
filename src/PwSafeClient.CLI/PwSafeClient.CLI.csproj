@@ -6,12 +6,12 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Medo.PasswordSafe" Version="6.2.0" />
-    <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
-    <PackageReference Include="System.CommandLine.Hosting" Version="0.4.0-alpha.22272.1" />
-    <PackageReference Include="System.CommandLine.NamingConventionBinder" Version="2.0.0-beta4.22272.1" />
-    <PackageReference Include="System.Text.Json" Version="8.0.0" />
-    <PackageReference Include="TextCopy" Version="6.2.1" />
+    <PackageReference Include="Medo.PasswordSafe" />
+    <PackageReference Include="System.CommandLine" />
+    <PackageReference Include="System.CommandLine.Hosting" />
+    <PackageReference Include="System.CommandLine.NamingConventionBinder" />
+    <PackageReference Include="System.Text.Json" />
+    <PackageReference Include="TextCopy" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PwSafeClient.Shared\PwSafeClient.Shared.csproj" />
