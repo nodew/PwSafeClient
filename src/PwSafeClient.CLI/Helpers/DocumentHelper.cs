@@ -2,7 +2,9 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+
 using Medo.Security.Cryptography.PasswordSafe;
+
 using PwSafeClient.CLI.Contracts.Helpers;
 using PwSafeClient.CLI.Contracts.Services;
 using PwSafeClient.CLI.Exceptions;

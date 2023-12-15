@@ -1,6 +1,7 @@
-﻿using PwSafeClient.CLI.Contracts.Services;
 using System;
 using System.Collections.Generic;
+
+using PwSafeClient.CLI.Contracts.Services;
 
 namespace PwSafeClient.CLI.Services;
 

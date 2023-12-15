@@ -1,4 +1,4 @@
-﻿using Medo.Security.Cryptography.PasswordSafe;
+using Medo.Security.Cryptography.PasswordSafe;
 
 namespace PwSafeClient.Shared.UnitTests;
 

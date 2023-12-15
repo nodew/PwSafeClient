@@ -1,9 +1,10 @@
-﻿using PwSafeClient.CLI.Contracts.Services;
-using PwSafeClient.CLI.Models;
 using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Threading.Tasks;
+
+using PwSafeClient.CLI.Contracts.Services;
+using PwSafeClient.CLI.Models;
 
 namespace PwSafeClient.CLI.Commands;
 

@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Threading.Tasks;
+
 using PwSafeClient.CLI.Contracts.Services;
 
 namespace PwSafeClient.CLI.Commands;

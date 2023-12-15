@@ -1,7 +1,3 @@
-using Medo.Security.Cryptography.PasswordSafe;
-using PwSafeClient.CLI.Contracts.Helpers;
-using PwSafeClient.CLI.Contracts.Services;
-using PwSafeClient.CLI.Options;
 using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
@@ -11,6 +7,12 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
+using Medo.Security.Cryptography.PasswordSafe;
+
+using PwSafeClient.CLI.Contracts.Helpers;
+using PwSafeClient.CLI.Contracts.Services;
+using PwSafeClient.CLI.Options;
 
 namespace PwSafeClient.CLI.Commands;
 

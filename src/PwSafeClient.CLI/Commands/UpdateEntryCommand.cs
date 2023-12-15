@@ -1,1 +1,1 @@
-﻿namespace PwSafeClient.CLI.Commands;
+namespace PwSafeClient.CLI.Commands;

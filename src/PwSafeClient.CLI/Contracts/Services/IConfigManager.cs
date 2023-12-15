@@ -1,5 +1,6 @@
-﻿using PwSafeClient.CLI.Models;
 using System.Threading.Tasks;
+
+using PwSafeClient.CLI.Models;
 
 namespace PwSafeClient.CLI.Contracts.Services;
 
