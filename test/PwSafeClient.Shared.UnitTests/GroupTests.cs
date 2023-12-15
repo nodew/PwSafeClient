@@ -71,12 +71,12 @@ public class GroupTests
         root.InsertBySegments(["group1", "group2", "group4"]);
 
         // Act
-        var targetGroups = root.GetChildGroupsByGroupPath(new GroupPath("group1", "group2"));
+        var targetGroup = root.GetChildGroupByGroupPath(new GroupPath("group1", "group2"));
 
         // Assert
-        Assert.AreEqual(2, targetGroups.Count);
-        Assert.AreEqual("group3", targetGroups[0].Name);
-        Assert.AreEqual("group4", targetGroups[1].Name);
+        Assert.IsNotNull(targetGroup);
+        Assert.AreEqual(2, targetGroup.Children.Count);
+        Assert.AreEqual("group2", targetGroup.Name);
     }
 
     [TestMethod]
@@ -88,11 +88,11 @@ public class GroupTests
         root.InsertBySegments(["group1", "group2", "group4"]);
 
         // Act
-        var targetGroups = root.GetChildGroupsBySegments(["group1", "group2"]);
+        var targetGroup = root.GetChildGroupBySegments(["group1", "group2"]);
 
         // Assert
-        Assert.AreEqual(2, targetGroups.Count);
-        Assert.AreEqual("group3", targetGroups[0].Name);
-        Assert.AreEqual("group4", targetGroups[1].Name);
+        Assert.IsNotNull(targetGroup);
+        Assert.AreEqual(2, targetGroup.Children.Count);
+        Assert.AreEqual("group2", targetGroup.Name);
     }
 }
