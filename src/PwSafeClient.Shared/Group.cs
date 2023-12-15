@@ -105,4 +105,26 @@ public class Group
             child.InsertBySegments(subSegments);
         }
     }
+
+    public Group? GetSubGroupByGroupPath(GroupPath path)
+    {
+        var segments = path.GetSegments();
+        return GetSubGroupBySegments(segments);
+    }
+
+    public Group? GetSubGroupBySegments(string[] segments)
+    {
+        if (segments.Length == 0) return this;
+
+        var childGroupName = segments[0];
+
+        var child = Children.Where(item => item.Name == childGroupName).FirstOrDefault();
+
+        if (child == null)
+        {
+            return null;
+        }
+
+        return child.GetSubGroupBySegments(segments[1..segments.Length]);
+    }
 }

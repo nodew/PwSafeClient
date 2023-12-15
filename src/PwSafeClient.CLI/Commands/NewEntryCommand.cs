@@ -132,7 +132,7 @@ public class NewEntryCommand : Command
             }
 
             GroupPath targetGroupPath = new(groupSegments);
-            if (document.Entries.Any(e => e.Title == Title && e.Group == targetGroupPath))
+            if (document.Entries.Any(e => e.Title == Title && e.Group.Equals(targetGroupPath)))
             {
                 consoleService.LogError($"The entry {Title} already exists under the group {Group}");
                 return 1;
@@ -165,14 +165,6 @@ public class NewEntryCommand : Command
                         }
                     }
 
-                    Console.WriteLine(entry.PasswordPolicy.TotalPasswordLength);
-                    Console.WriteLine(entry.PasswordPolicy.MinimumLowercaseCount);
-                    Console.WriteLine(entry.PasswordPolicy.MinimumUppercaseCount);
-                    Console.WriteLine(entry.PasswordPolicy.MinimumDigitCount);
-                    Console.WriteLine(entry.PasswordPolicy.MinimumSymbolCount);
-                    Console.WriteLine(entry.PasswordPolicy.Style);
-                    Console.WriteLine(entry.PasswordPolicy.GetSpecialSymbolSet());
-
                     if (namedPasswordPolicy != null)
                     {
                         entry.PasswordPolicy.TotalPasswordLength = namedPasswordPolicy.TotalPasswordLength;
@@ -185,23 +177,14 @@ public class NewEntryCommand : Command
 
                         entry.PasswordPolicyName = namedPasswordPolicy.Name;
                         entry.Password = new PasswordGenerator(entry.PasswordPolicy).GeneratePassword();
-                        Console.WriteLine($"Generated password!");
                     }
-
-                    Console.WriteLine(entry.PasswordPolicy.TotalPasswordLength);
-                    Console.WriteLine(entry.PasswordPolicy.MinimumLowercaseCount);
-                    Console.WriteLine(entry.PasswordPolicy.MinimumUppercaseCount);
-                    Console.WriteLine(entry.PasswordPolicy.MinimumDigitCount);
-                    Console.WriteLine(entry.PasswordPolicy.MinimumSymbolCount);
-                    Console.WriteLine(entry.PasswordPolicy.Style);
-                    Console.WriteLine(entry.PasswordPolicy.GetSpecialSymbolSet());
                 }
 
                 document.Entries.Add(entry);
 
                 await documentHelper.SaveDocumentAsync(Alias, File);
 
-                Console.WriteLine($"Entry {Title} is added to the database");
+                consoleService.LogSuccess($"Entry {Title} is added to the database");
                 return 0;
             }
             catch (Exception ex)

@@ -14,9 +14,9 @@ public interface IConsoleService
     /// <summary>
     /// Read a answer of given question from console.
     /// </summary>
-    /// <param name="question">The question to end user.</param>
-    /// <returns>The answer from end user.</returns>
-    string ReadQA(string question);
+    /// <param name="message">The question to end user.</param>
+    /// <returns>If confirm or cancel an action</returns>
+    bool DoConfirm(string message);
 
     /// <summary>
     /// Read a line from console with given symbol.
