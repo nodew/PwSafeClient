@@ -104,7 +104,7 @@ public class RemoveEntryCommand : Command
                     }
                 }
 
-                Group? targetGroup = root.GetChildGroupBySegments(groupSegments);
+                Group? targetGroup = root.GetSubGroupBySegments(groupSegments);
 
                 if (targetGroup == null)
                 {

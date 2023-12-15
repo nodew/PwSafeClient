@@ -63,7 +63,7 @@ public class GroupTests
     }
 
     [TestMethod]
-    public void GetChildGroupsByGroupPathTest()
+    public void GetSubGroupsByGroupPathTest()
     {
         // Arrange
         var root = new Group();
@@ -71,7 +71,7 @@ public class GroupTests
         root.InsertBySegments(["group1", "group2", "group4"]);
 
         // Act
-        var targetGroup = root.GetChildGroupByGroupPath(new GroupPath("group1", "group2"));
+        var targetGroup = root.GetSubGroupByGroupPath(new GroupPath("group1", "group2"));
 
         // Assert
         Assert.IsNotNull(targetGroup);
@@ -80,7 +80,7 @@ public class GroupTests
     }
 
     [TestMethod]
-    public void GetChildGroupsBySegmentsTest()
+    public void GetSubGroupsBySegmentsTest()
     {
         // Arrange
         var root = new Group();
@@ -88,7 +88,7 @@ public class GroupTests
         root.InsertBySegments(["group1", "group2", "group4"]);
 
         // Act
-        var targetGroup = root.GetChildGroupBySegments(["group1", "group2"]);
+        var targetGroup = root.GetSubGroupBySegments(["group1", "group2"]);
 
         // Assert
         Assert.IsNotNull(targetGroup);

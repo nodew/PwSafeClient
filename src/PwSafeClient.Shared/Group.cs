@@ -106,13 +106,13 @@ public class Group
         }
     }
 
-    public Group? GetChildGroupByGroupPath(GroupPath path)
+    public Group? GetSubGroupByGroupPath(GroupPath path)
     {
         var segments = path.GetSegments();
-        return GetChildGroupBySegments(segments);
+        return GetSubGroupBySegments(segments);
     }
 
-    public Group? GetChildGroupBySegments(string[] segments)
+    public Group? GetSubGroupBySegments(string[] segments)
     {
         if (segments.Length == 0) return this;
 
@@ -125,6 +125,6 @@ public class Group
             return null;
         }
 
-        return child.GetChildGroupBySegments(segments[1..segments.Length]);
+        return child.GetSubGroupBySegments(segments[1..segments.Length]);
     }
 }
