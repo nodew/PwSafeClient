@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Medo.PasswordSafe" Version="6.2.0" />
+    <PackageReference Include="Medo.PasswordSafe" />
   </ItemGroup>
 
 </Project>

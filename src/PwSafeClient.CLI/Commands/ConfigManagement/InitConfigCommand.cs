@@ -32,10 +32,13 @@ public class InitConfigCommand : Command
                 return 1;
             }
 
-            try {
+            try
+            {
                 await configManager.SaveAsync(new Config());
                 return 0;
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 consoleService.LogError(e.Message);
                 return 1;
             }

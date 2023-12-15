@@ -1,7 +1,4 @@
-﻿using System.IO;
-using Medo.Security.Cryptography.PasswordSafe;
-
-namespace PwSafeClient.CLI.Contracts.Services;
+﻿namespace PwSafeClient.CLI.Contracts.Services;
 
 /// <summary>
 /// Console helper.
@@ -22,18 +19,19 @@ public interface IConsoleService
     string ReadQA(string question);
 
     /// <summary>
-    /// Read a line from console.
-    /// </summary>
-    string ReadLine();
-
-    /// <summary>
     /// Read a line from console with given symbol.
     /// </summary>
-    string ReadLine(string symbol);
+    string ReadLine(string symbol = ">");
 
     /// <summary>
     /// Log error message to console.
     /// </summary>
     /// <param name="errorMessage">The error message.</param>
     void LogError(string errorMessage);
+
+    /// <summary>
+    /// Log success message to console.
+    /// </summary>
+    /// <param name="message">The success message.</param>
+    void LogSuccess(string message);
 }

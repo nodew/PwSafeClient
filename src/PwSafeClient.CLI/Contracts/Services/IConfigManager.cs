@@ -21,28 +21,40 @@ public interface IConfigManager
     /// <param name="filepath">The absolute filepath.</param>
     /// <param name="isDefault">Set the database as default.</param>
     /// <returns></returns>
-    Task AddDatabase(string alias, string filepath, bool isDefault = false);
+    Task AddDatabaseAsync(string alias, string filepath, bool isDefault = false);
 
     /// <summary>
     /// Remove a database from the configuration.
     /// </summary>
     /// <param name="alias">The alias of target database.</param>
     /// <returns></returns>
-    Task RemoveDatabase(string alias);
+    Task RemoveDatabaseAsync(string alias);
 
     /// <summary>
     /// Set the default database.
     /// </summary>
     /// <param name="alias">The alias of target database.</param>
     /// <returns></returns>
-    Task SetDefaultDatabase(string alias);
+    Task SetDefaultDatabaseAsync(string alias);
 
     /// <summary>
     /// Get the absolute path of the database.
     /// </summary>
     /// <param name="alias">The alias of the database.</param>
     /// <returns></returns>
-    Task<string> GetDbPath(string? alias);
+    Task<string> GetDbPathAsync(string? alias);
+
+    /// <summary>
+    /// Get the idle time in minutes before the interactive terminal exits.
+    /// </summary>
+    /// <returns></returns>
+    Task<int> GetIdleTimeAsync();
+
+    /// <summary>
+    /// Get the maximum number of backup files to keep.
+    /// </summary>
+    /// <returns></returns>
+    Task<int> GetMaxBackupCountAsync();
 
     /// <summary>
     /// Save the configuration.

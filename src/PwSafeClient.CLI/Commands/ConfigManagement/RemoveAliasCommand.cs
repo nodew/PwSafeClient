@@ -34,10 +34,13 @@ public class RemoveAliasCommand : Command
                 return 1;
             }
 
-            try {
-                await configManager.RemoveDatabase(Alias);
+            try
+            {
+                await configManager.RemoveDatabaseAsync(Alias);
                 return 0;
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 consoleService.LogError(e.Message);
                 return 1;
             }

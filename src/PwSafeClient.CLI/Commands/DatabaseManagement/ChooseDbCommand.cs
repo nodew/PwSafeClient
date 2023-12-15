@@ -36,7 +36,7 @@ public class ChooseDbCommand : Command
 
             try
             {
-                await configManager.SetDefaultDatabase(Alias);
+                await configManager.SetDefaultDatabaseAsync(Alias);
                 return 0;
             }
             catch (Exception)

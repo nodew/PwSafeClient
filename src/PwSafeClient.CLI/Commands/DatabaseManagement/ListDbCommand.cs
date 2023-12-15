@@ -25,7 +25,8 @@ public class ListDbCommand : Command
 
         public override async Task<int> InvokeAsync(InvocationContext context)
         {
-            try {
+            try
+            {
                 var config = await configManager.LoadConfigAsync();
 
                 if (config.Databases.Count == 0)
@@ -41,7 +42,9 @@ public class ListDbCommand : Command
 
                 Console.WriteLine(string.Format("Default database: {0}", config.DefaultDatabase ?? "Unknown"));
                 return 0;
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 consoleService.LogError(e.Message);
                 return 1;
             }

@@ -1,14 +1,15 @@
-﻿using System;
+﻿using Medo.Security.Cryptography.PasswordSafe;
+using PwSafeClient.CLI.Contracts.Helpers;
+using PwSafeClient.CLI.Contracts.Services;
+using PwSafeClient.CLI.Options;
+using PwSafeClient.Shared;
+using System;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Medo.Security.Cryptography.PasswordSafe;
-using PwSafeClient.CLI.Contracts.Helpers;
-using PwSafeClient.CLI.Contracts.Services;
-using PwSafeClient.Shared;
 
 namespace PwSafeClient.CLI.Commands;
 
@@ -18,18 +19,13 @@ public enum EntriesViewMode
     Tree
 }
 
-public class ListEntriesCommand : Command {
+public class ListEntriesCommand : Command
+{
     public ListEntriesCommand() : base("list", "List the items in database")
     {
-        AddOption(new Option<string>(
-            aliases: ["--alias", "-a"],
-            description: "The alias of the database"
-        ));
+        AddOption(CommonOptions.AliasOption());
 
-        AddOption(new Option<FileInfo>(
-            aliases: ["--file", "-f"],
-            description: "The file path of your database file"
-        ));
+        AddOption(CommonOptions.FileOption());
 
         AddOption(new Option<EntriesViewMode>(
             aliases: ["--mode", "-m"],
@@ -113,24 +109,22 @@ public class ListEntriesCommand : Command {
         private static void PrintTreeView(List<Entry> entries)
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
-
-            var group = PwSafeClientHelper.GetGroupInfo(entries);
-            PrintTreeView(entries, group, 0);
+            Group root = new GroupBuilder(entries).Build();
+            PrintTreeView(entries, root, 0);
         }
 
         private static void PrintTreeView(List<Entry> entries, Group group, int depth)
         {
-            var groupPath = group.GetGroupPath();
+            GroupPath groupPath = group.GetGroupPath();
 
-            var subEntries = entries
-                .Where(entry => entry.Group == groupPath)
+            IEnumerable<Entry> subEntries = entries
+                .Where(entry => entry.Group.Equals(groupPath))
                 .OrderBy(entry => entry.Title);
 
             if (depth >= 1)
             {
                 Console.WriteLine("{0}|- {1}", new string(' ', (depth - 1) * 2), group.Name);
             }
-
 
             foreach (Entry entry in subEntries)
             {
