@@ -44,11 +44,17 @@ public class ConsoleService : IConsoleService
     }
 
     /// <inheritdoc/>
-    public string ReadQA(string question)
+    public bool DoConfirm(string message)
     {
-        Console.Write($"{question} ");
-        string? answer = Console.ReadLine();
-        return answer ?? string.Empty;
+        string answer;
+        do
+        {
+            Console.Write($"{message} [y/n] ");
+            answer = Console.ReadLine()?.ToLowerInvariant() ?? string.Empty;
+            Console.WriteLine();
+        } while (answer != "y" && answer != "n");
+
+        return answer == "y";
     }
 
     public string ReadLine(string symbol = ">")

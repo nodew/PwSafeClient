@@ -61,4 +61,38 @@ public class GroupTests
         Assert.AreEqual("group2", group1.Children[0].Name);
         Assert.AreEqual("group4", group1.Children[1].Name);
     }
+
+    [TestMethod]
+    public void GetChildGroupsByGroupPathTest()
+    {
+        // Arrange
+        var root = new Group();
+        root.InsertBySegments(["group1", "group2", "group3"]);
+        root.InsertBySegments(["group1", "group2", "group4"]);
+
+        // Act
+        var targetGroups = root.GetChildGroupsByGroupPath(new GroupPath("group1", "group2"));
+
+        // Assert
+        Assert.AreEqual(2, targetGroups.Count);
+        Assert.AreEqual("group3", targetGroups[0].Name);
+        Assert.AreEqual("group4", targetGroups[1].Name);
+    }
+
+    [TestMethod]
+    public void GetChildGroupsBySegmentsTest()
+    {
+        // Arrange
+        var root = new Group();
+        root.InsertBySegments(["group1", "group2", "group3"]);
+        root.InsertBySegments(["group1", "group2", "group4"]);
+
+        // Act
+        var targetGroups = root.GetChildGroupsBySegments(["group1", "group2"]);
+
+        // Assert
+        Assert.AreEqual(2, targetGroups.Count);
+        Assert.AreEqual("group3", targetGroups[0].Name);
+        Assert.AreEqual("group4", targetGroups[1].Name);
+    }
 }
