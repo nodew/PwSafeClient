@@ -65,7 +65,7 @@ public class Group
 
         segments.Reverse();
 
-        return new GroupPath([..segments]);
+        return new GroupPath([.. segments]);
     }
 
     public void InsertByGroupPath(GroupPath path)
@@ -84,7 +84,7 @@ public class Group
 
         if (segments.Length > 1)
         {
-            subSegments = segments[1..(segments.Length)];
+            subSegments = segments[1..segments.Length];
         }
         else
         {
