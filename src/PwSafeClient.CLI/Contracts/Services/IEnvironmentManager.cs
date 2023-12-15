@@ -1,4 +1,4 @@
-﻿namespace PwSafeClient.CLI.Contracts.Services;
+namespace PwSafeClient.CLI.Contracts.Services;
 
 /// <summary>
 /// Manage the environment of the CLI.

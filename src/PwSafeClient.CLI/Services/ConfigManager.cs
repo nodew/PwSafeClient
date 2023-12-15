@@ -1,11 +1,12 @@
-﻿using PwSafeClient.CLI.Contracts.Services;
-using PwSafeClient.CLI.Exceptions;
-using PwSafeClient.CLI.Models;
-using PwSafeClient.Shared;
 using System;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
+
+using PwSafeClient.CLI.Contracts.Services;
+using PwSafeClient.CLI.Exceptions;
+using PwSafeClient.CLI.Models;
+using PwSafeClient.Shared;
 
 namespace PwSafeClient.CLI.Services;
 

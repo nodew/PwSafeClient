@@ -1,6 +1,7 @@
-﻿using Medo.Security.Cryptography.PasswordSafe;
 using System.Collections.Generic;
 using System.Linq;
+
+using Medo.Security.Cryptography.PasswordSafe;
 
 namespace PwSafeClient.Shared;
 
@@ -64,7 +65,7 @@ public class Group
 
         segments.Reverse();
 
-        return new GroupPath([.. segments]);
+        return new GroupPath([..segments]);
     }
 
     public void InsertByGroupPath(GroupPath path)

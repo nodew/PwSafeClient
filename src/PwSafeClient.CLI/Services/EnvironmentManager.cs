@@ -1,5 +1,6 @@
-﻿using PwSafeClient.CLI.Contracts.Services;
 using System;
+
+using PwSafeClient.CLI.Contracts.Services;
 
 namespace PwSafeClient.CLI.Services;
 

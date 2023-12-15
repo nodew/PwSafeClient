@@ -1,7 +1,8 @@
-﻿using Medo.Security.Cryptography.PasswordSafe;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
+using Medo.Security.Cryptography.PasswordSafe;
 
 namespace PwSafeClient.Shared;
 

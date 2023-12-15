@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.CommandLine.Invocation;
 using System.Threading.Tasks;
 
