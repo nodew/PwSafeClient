@@ -19,7 +19,7 @@ public class RemoveEntryCommand : Command
 {
     public RemoveEntryCommand() : base("rm", "Remove an entry or group from the database")
     {
-        AddArgument(new Argument<Guid>("ID", getDefaultValue: () => Guid.Empty, "The ID of an entry"));
+        AddArgument(new Argument<Guid?>("ID", "The ID of an entry"));
 
         AddOption(CommonOptions.AliasOption());
 
@@ -46,7 +46,7 @@ public class RemoveEntryCommand : Command
 
         public FileInfo? File { get; set; }
 
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
 
         public string? Group { get; set; }
 
@@ -66,13 +66,13 @@ public class RemoveEntryCommand : Command
                 return 1;
             }
 
-            if (Id == Guid.Empty && string.IsNullOrWhiteSpace(Group))
+            if ((Id == null || Id == Guid.Empty) && string.IsNullOrWhiteSpace(Group))
             {
                 consoleService.LogError("Either ID or group must be specified");
                 return 1;
             }
 
-            if (Id != Guid.Empty)
+            if (Id != null && Id != Guid.Empty)
             {
                 Entry? entry = document.Entries.Where(entry => entry.Uuid == Id).FirstOrDefault();
 

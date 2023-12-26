@@ -20,7 +20,6 @@ public class Config
     [JsonPropertyName("databases")]
     public Dictionary<string, string> Databases { get; set; } = new Dictionary<string, string>();
 
-
     /// <summary>
     /// The idle time in minutes before the interactive terminal exits.
     /// </summary>
