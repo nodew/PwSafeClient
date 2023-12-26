@@ -1,5 +1,4 @@
 using System.CommandLine;
-using System.IO;
 
 namespace PwSafeClient.CLI.Commands;
 
