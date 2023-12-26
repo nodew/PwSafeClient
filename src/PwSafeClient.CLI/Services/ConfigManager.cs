@@ -21,9 +21,13 @@ public class ConfigManager : IConfigManager
         WriteIndented = true
     };
 
-    private const string configFilename = "pwsafe.json";
+    private const string configFolder = ".pwsafe";
 
-    private readonly string configFilepath;
+    private const string configFilename = "config.json";
+
+    private readonly string configFileAbsolutePath;
+
+    private readonly string configFolderAbsolutePath;
 
     private readonly IConsoleService consoleService;
 
@@ -37,12 +41,20 @@ public class ConfigManager : IConfigManager
             throw new Exception("Cannot find home directory.");
         }
 
-        configFilepath = Path.Combine(homeDirectory, configFilename);
+        configFolderAbsolutePath = Path.Combine(homeDirectory, configFolder);
+        configFileAbsolutePath = Path.Combine(configFolderAbsolutePath, configFilename);
     }
 
+    /// <inheritdoc/>
     public bool ConfigExists()
     {
-        return File.Exists(configFilepath);
+        return File.Exists(configFileAbsolutePath);
+    }
+
+    /// <inheritdoc/>
+    public string GetConfigPath()
+    {
+        return configFileAbsolutePath;
     }
 
     /// <inheritdoc/>
@@ -109,7 +121,7 @@ public class ConfigManager : IConfigManager
     {
         try
         {
-            using FileStream fileStream = File.Open(configFilepath, FileMode.Open);
+            using FileStream fileStream = File.Open(configFileAbsolutePath, FileMode.Open);
             using StreamReader reader = new StreamReader(fileStream);
             string json = await reader.ReadToEndAsync();
 
@@ -118,17 +130,17 @@ public class ConfigManager : IConfigManager
         }
         catch (FileNotFoundException)
         {
-            consoleService.LogError($"Cannot find config file: {configFilepath}");
+            consoleService.LogError($"Cannot find config file: {configFileAbsolutePath}");
             throw;
         }
         catch (DirectoryNotFoundException)
         {
-            consoleService.LogError($"Cannot find config file: {configFilepath}");
+            consoleService.LogError($"Cannot find config file: {configFileAbsolutePath}");
             throw;
         }
         catch (JsonException)
         {
-            consoleService.LogError($"Cannot parse config file: {configFilepath}, please double check the config.");
+            consoleService.LogError($"Cannot parse config file: {configFileAbsolutePath}, please double check the config.");
             throw;
         }
         catch (Exception e)
@@ -159,8 +171,13 @@ public class ConfigManager : IConfigManager
     {
         try
         {
+            if (!Directory.Exists(configFolderAbsolutePath))
+            {
+                Directory.CreateDirectory(configFolderAbsolutePath);
+            }
+
             string content = JsonSerializer.Serialize(config, options);
-            return File.WriteAllTextAsync(configFilepath, content);
+            return File.WriteAllTextAsync(configFileAbsolutePath, content);
         }
         catch (Exception e)
         {

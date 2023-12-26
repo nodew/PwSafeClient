@@ -27,15 +27,18 @@ public class InitConfigCommand : Command
 
         public override async Task<int> InvokeAsync(InvocationContext context)
         {
+            string filepath = configManager.GetConfigPath();
+
             if (configManager.ConfigExists())
             {
-                consoleService.LogError("The pwsafe.json has already existed");
+                consoleService.LogError($"'{filepath}' has already existed.");
                 return 1;
             }
 
             try
             {
                 await configManager.SaveAsync(new Config());
+                consoleService.LogSuccess($"'{filepath}' has been initialized.");
                 return 0;
             }
             catch (Exception e)

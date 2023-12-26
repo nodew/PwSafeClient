@@ -41,6 +41,7 @@ public class UnlockCommand : Command
             "list",
             "rm",
             "update",
+            "renew",
             "showdb",
         ];
 

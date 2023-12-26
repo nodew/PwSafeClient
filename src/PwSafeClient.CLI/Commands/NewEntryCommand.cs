@@ -1,6 +1,7 @@
 using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.CommandLine.Parsing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,7 +17,11 @@ namespace PwSafeClient.CLI.Commands;
 
 public class NewEntryCommand : Command
 {
-    public NewEntryCommand() : base("add", "Add a new entry")
+    private static readonly Option<string?> PasswordOption = new Option<string?>(
+        aliases: ["--password", "-p"],
+        description: "The password of the entry");
+
+    public NewEntryCommand() : base("add", "Add a new entry to the database")
     {
         AddOption(CommonOptions.AliasOption());
 
@@ -33,11 +38,7 @@ public class NewEntryCommand : Command
             getDefaultValue: () => string.Empty
         ));
 
-        AddOption(new Option<string>(
-            aliases: ["--password", "-p"],
-            description: "The password of the entry",
-            getDefaultValue: () => string.Empty
-        ));
+        AddOption(PasswordOption);
 
         AddOption(new Option<string>(
             aliases: ["--group", "-g"],
@@ -89,7 +90,7 @@ public class NewEntryCommand : Command
 
         public string Username { get; set; } = string.Empty;
 
-        public string Password { get; set; } = string.Empty;
+        public string? Password { get; set; } = null;
 
         public string Policy { get; set; } = string.Empty;
 
@@ -111,13 +112,13 @@ public class NewEntryCommand : Command
 
             if (document.IsReadOnly)
             {
-                consoleService.LogError("The database is readonly");
+                consoleService.LogError("The database is readonly.");
                 return 1;
             }
 
             if (string.IsNullOrWhiteSpace(Title))
             {
-                consoleService.LogError("The title is required");
+                consoleService.LogError("The title is required.");
                 return 1;
             }
 
@@ -134,8 +135,13 @@ public class NewEntryCommand : Command
             GroupPath targetGroupPath = new(groupSegments);
             if (document.Entries.Any(e => e.Title == Title && e.Group.Equals(targetGroupPath)))
             {
-                consoleService.LogError($"The entry {Title} already exists under the group {Group}");
-                return 1;
+                consoleService.LogError($"The entry {Title} already exists under the group {Group}.");
+                bool shouldContinue = consoleService.DoConfirm("Do you want to continue?");
+
+                if (!shouldContinue)
+                {
+                    return 0;
+                }
             }
 
             try
@@ -144,14 +150,27 @@ public class NewEntryCommand : Command
                 {
                     Title = Title,
                     UserName = Username,
-                    Password = Password,
                     Group = targetGroupPath,
                     Url = Url,
                     Email = Email,
                     Notes = Notes
                 };
 
-                if (string.IsNullOrWhiteSpace(Password))
+                string newPassword = string.Empty;
+
+                if (context.ParseResult.HasOption(PasswordOption))
+                {
+                    if (string.IsNullOrWhiteSpace(Password))
+                    {
+                        newPassword = consoleService.ReadPassword();
+                    }
+                    else
+                    {
+                        newPassword = Password;
+                    }
+                }
+
+                if (string.IsNullOrWhiteSpace(newPassword))
                 {
                     NamedPasswordPolicy? namedPasswordPolicy = null;
 
@@ -160,7 +179,7 @@ public class NewEntryCommand : Command
                         namedPasswordPolicy = document.NamedPasswordPolicies.FirstOrDefault(p => p.Name == Policy);
                         if (namedPasswordPolicy == null)
                         {
-                            consoleService.LogError($"The password policy {Policy} is not found");
+                            consoleService.LogError($"The password policy {Policy} is not found.");
                             return 1;
                         }
                     }
@@ -176,15 +195,17 @@ public class NewEntryCommand : Command
                         entry.PasswordPolicy.SetSpecialSymbolSet(namedPasswordPolicy.GetSpecialSymbolSet());
 
                         entry.PasswordPolicyName = namedPasswordPolicy.Name;
-                        entry.Password = new PasswordGenerator(entry.PasswordPolicy).GeneratePassword();
+                        newPassword = new PasswordGenerator(entry.PasswordPolicy).GeneratePassword();
                     }
                 }
+
+                entry.Password = newPassword;
 
                 document.Entries.Add(entry);
 
                 await documentHelper.SaveDocumentAsync(Alias, File);
 
-                consoleService.LogSuccess($"Entry {Title} is added to the database");
+                consoleService.LogSuccess($"Entry {Title} is added to the database.");
                 return 0;
             }
             catch (Exception ex)

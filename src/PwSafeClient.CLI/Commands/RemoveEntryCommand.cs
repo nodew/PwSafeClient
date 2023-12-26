@@ -19,7 +19,7 @@ public class RemoveEntryCommand : Command
 {
     public RemoveEntryCommand() : base("rm", "Remove an entry or group from the database")
     {
-        AddArgument(new Argument<Guid>("ID", getDefaultValue: () => Guid.Empty, "The ID of an entry"));
+        AddArgument(new Argument<Guid?>("ID", "The ID of an entry"));
 
         AddOption(CommonOptions.AliasOption());
 
@@ -46,7 +46,7 @@ public class RemoveEntryCommand : Command
 
         public FileInfo? File { get; set; }
 
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
 
         public string? Group { get; set; }
 
@@ -62,17 +62,17 @@ public class RemoveEntryCommand : Command
 
             if (document.IsReadOnly)
             {
-                consoleService.LogError("The database is readonly");
+                consoleService.LogError("The database is readonly.");
                 return 1;
             }
 
-            if (Id == Guid.Empty && string.IsNullOrWhiteSpace(Group))
+            if ((Id == null || Id == Guid.Empty) && string.IsNullOrWhiteSpace(Group))
             {
-                consoleService.LogError("Either ID or group must be specified");
+                consoleService.LogError("Either ID or group must be specified.");
                 return 1;
             }
 
-            if (Id != Guid.Empty)
+            if (Id != null && Id != Guid.Empty)
             {
                 Entry? entry = document.Entries.Where(entry => entry.Uuid == Id).FirstOrDefault();
 
@@ -86,7 +86,7 @@ public class RemoveEntryCommand : Command
                 }
                 else
                 {
-                    consoleService.LogError($"Entry '{Id}' is not found");
+                    consoleService.LogError($"Entry '{Id}' is not found.");
                     return 1;
                 }
             }
@@ -108,7 +108,7 @@ public class RemoveEntryCommand : Command
 
                 if (targetGroup == null)
                 {
-                    consoleService.LogError($"Group '{Group}' is not found");
+                    consoleService.LogError($"Group '{Group}' is not found.");
                     return 1;
                 }
 
@@ -136,7 +136,7 @@ public class RemoveEntryCommand : Command
                 }
                 else
                 {
-                    Console.WriteLine($"No entries found under group '{Group}'");
+                    Console.WriteLine($"No entries found under group '{Group}'.");
                 }
             }
 
@@ -148,7 +148,7 @@ public class RemoveEntryCommand : Command
             }
             else if (totalRemovedEntries > 1)
             {
-                consoleService.LogSuccess($"{totalRemovedEntries} entries removed");
+                consoleService.LogSuccess($"{totalRemovedEntries} entries removed.");
             }
 
             return 0;
