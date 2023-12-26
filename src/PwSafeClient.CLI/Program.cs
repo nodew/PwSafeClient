@@ -43,8 +43,10 @@ class Program
                     host.UseCommandHandler<CreateDbCommand, CreateDbCommand.CreateDbCommandHandler>();
 
                     host.UseCommandHandler<ListEntriesCommand, ListEntriesCommand.ListEntriesCommandHandler>();
-                    host.UseCommandHandler<GetPasswordCommand, GetPasswordCommand.GetPasswordCommandHandler>();
                     host.UseCommandHandler<NewEntryCommand, NewEntryCommand.NewEntryCommandHandler>();
+                    host.UseCommandHandler<GetPasswordCommand, GetPasswordCommand.GetPasswordCommandHandler>();
+                    host.UseCommandHandler<RenewPasswordCommand, RenewPasswordCommand.RenewPasswordCommandHandler>();
+                    host.UseCommandHandler<UpdateEntryCommand, UpdateEntryCommand.UpdateEntryCommandHandler>();
                     host.UseCommandHandler<RemoveEntryCommand, RemoveEntryCommand.RemoveEntryCommandHandler>();
 
                     host.UseCommandHandler<UnlockCommand, UnlockCommand.UnlockCommandHandler>();
@@ -70,10 +72,11 @@ class Program
         root.AddCommand(new CreateDbCommand());
 
         root.AddCommand(new ListEntriesCommand());
-        root.AddCommand(new GetPasswordCommand());
         root.AddCommand(new NewEntryCommand());
+        root.AddCommand(new GetPasswordCommand());
+        root.AddCommand(new RenewPasswordCommand());
+        root.AddCommand(new UpdateEntryCommand());
         root.AddCommand(new RemoveEntryCommand());
-        //root.AddCommand(new UpdateEntryCommand());
 
         root.AddCommand(new UnlockCommand());
 

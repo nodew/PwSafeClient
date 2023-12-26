@@ -15,7 +15,7 @@ namespace PwSafeClient.CLI.Commands;
 
 public class GetPasswordCommand : Command
 {
-    public GetPasswordCommand() : base("get", "Get the password")
+    public GetPasswordCommand() : base("get", "Get the password of an entry")
     {
         AddArgument(new Argument<Guid>("ID", "The ID of an entry"));
 
@@ -56,12 +56,12 @@ public class GetPasswordCommand : Command
                 if (entry != null)
                 {
                     await TextCopy.ClipboardService.SetTextAsync(entry.Password);
-                    Console.WriteLine("Copied password to your clipboard");
+                    Console.WriteLine("Copied password to your clipboard.");
                     return 0;
                 }
                 else
                 {
-                    consoleService.LogError("Entry is not found");
+                    consoleService.LogError("Entry is not found.");
                     return 1;
                 }
             }

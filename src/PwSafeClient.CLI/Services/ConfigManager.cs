@@ -45,9 +45,16 @@ public class ConfigManager : IConfigManager
         configFileAbsolutePath = Path.Combine(configFolderAbsolutePath, configFilename);
     }
 
+    /// <inheritdoc/>
     public bool ConfigExists()
     {
         return File.Exists(configFileAbsolutePath);
+    }
+
+    /// <inheritdoc/>
+    public string GetConfigPath()
+    {
+        return configFileAbsolutePath;
     }
 
     /// <inheritdoc/>

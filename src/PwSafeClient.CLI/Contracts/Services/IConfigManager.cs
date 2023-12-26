@@ -16,6 +16,12 @@ public interface IConfigManager
     bool ConfigExists();
 
     /// <summary>
+    /// Get the absolute path of the configuration file.
+    /// </summary>
+    /// <returns>The configuration file path.</returns>
+    string GetConfigPath();
+
+    /// <summary>
     /// Add a new database to the configuration.
     /// </summary>
     /// <param name="alias">The alias of the database.</param>
