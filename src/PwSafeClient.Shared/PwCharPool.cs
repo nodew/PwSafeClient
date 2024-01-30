@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace PwSafeClient.Shared;
 
 public static class PwCharPool
@@ -23,4 +27,37 @@ public static class PwCharPool
     public static readonly char[] EasyVisionHexDigitChars = "0123456789abcdef".ToCharArray();
 
     public static readonly char[] PronounceableSymbolChars = "@&(#!|$+".ToCharArray();
+
+    public static bool IsInCharPool(char c, char[] charPool)
+    {
+        if (charPool is null)
+        {
+            throw new ArgumentNullException(nameof(charPool));
+        }
+
+        return Array.IndexOf(charPool, c) >= 0;
+    }
+
+    public static bool IsValidSymbolChar(char c)
+    {
+        return IsInCharPool(c, StdSymbolChars);
+    }
+
+    public static bool HasDuplicatedCharacters(string content)
+    {
+        var set = new HashSet<char>(content);
+        return set.Count != content.Length;
+    }
+
+    public static bool IsValidSymbols(string symbols)
+    {
+        ArgumentNullException.ThrowIfNull(symbols);
+
+        if (HasDuplicatedCharacters(symbols))
+        {
+            return false;
+        }
+
+        return symbols.All(IsValidSymbolChar);
+    }
 }

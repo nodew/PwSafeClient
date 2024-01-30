@@ -49,6 +49,11 @@ class Program
                     host.UseCommandHandler<UpdateEntryCommand, UpdateEntryCommand.UpdateEntryCommandHandler>();
                     host.UseCommandHandler<RemoveEntryCommand, RemoveEntryCommand.RemoveEntryCommandHandler>();
 
+                    host.UseCommandHandler<ListPoliciesCommand, ListPoliciesCommand.ListPoliciesCommandHandler>();
+                    host.UseCommandHandler<AddPolicyCommand, AddPolicyCommand.AddPolicyCommandHandler>();
+                    host.UseCommandHandler<RemovePolicyCommand, RemovePolicyCommand.RemovePolicyCommandHandler>();
+                    host.UseCommandHandler<UpdatePolicyCommand, UpdatePolicyCommand.UpdatePolicyCommandHandler>();
+
                     host.UseCommandHandler<UnlockCommand, UnlockCommand.UnlockCommandHandler>();
                 })
             .UseDefaults()
@@ -77,6 +82,8 @@ class Program
         root.AddCommand(new RenewPasswordCommand());
         root.AddCommand(new UpdateEntryCommand());
         root.AddCommand(new RemoveEntryCommand());
+
+        root.AddCommand(new PolicyCommand());
 
         root.AddCommand(new UnlockCommand());
 
