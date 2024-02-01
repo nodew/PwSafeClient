@@ -1,7 +1,6 @@
 using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using System.CommandLine.Parsing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -39,6 +38,8 @@ public class UpdatePolicyCommand : Command
 
         AddOption(PasswordPolicyOptions.EasyVisionOption());
 
+        AddOption(PasswordPolicyOptions.PronounceableOption());
+
         AddOption(PasswordPolicyOptions.LengthOption());
     }
 
@@ -63,6 +64,8 @@ public class UpdatePolicyCommand : Command
 
         public bool EasyVision { get; set; }
 
+        public bool Pronounceable { get; set; }
+
         public int Digits { get; set; }
 
         public int Uppercase { get; set; }
@@ -77,6 +80,11 @@ public class UpdatePolicyCommand : Command
 
         public override async Task<int> InvokeAsync(InvocationContext context)
         {
+            if (!HasValidatedInput())
+            {
+                return 1;
+            }
+
             Document? document = await documentHelper.TryLoadDocumentAsync(Alias, File, false);
             if (document == null)
             {
@@ -90,12 +98,6 @@ public class UpdatePolicyCommand : Command
                 if (policy == null)
                 {
                     consoleService.LogError($"Password policy '{Name}' is not found");
-                    return 1;
-                }
-
-                if (Length < 6)
-                {
-                    consoleService.LogError("The password must contain no less than 6 characters.");
                     return 1;
                 }
 
@@ -113,52 +115,39 @@ public class UpdatePolicyCommand : Command
                     style |= PasswordPolicyStyle.UseEasyVision;
                 }
 
-                if (context.ParseResult.HasOption(PasswordPolicyOptions.DigitsOption()))
+                if (Pronounceable)
+                {
+                    style |= PasswordPolicyStyle.MakePronounceable;
+                }
+
+                if (Digits >= 0)
                 {
                     style |= PasswordPolicyStyle.UseDigits;
                 }
 
-                if (context.ParseResult.HasOption(PasswordPolicyOptions.UppercaseOption()))
+                if (Uppercase >= 0)
                 {
                     style |= PasswordPolicyStyle.UseUppercase;
                 }
 
-                if (context.ParseResult.HasOption(PasswordPolicyOptions.LowercaseOption()))
+                if (Lowercase >= 0)
                 {
                     style |= PasswordPolicyStyle.UseLowercase;
                 }
 
-                if (context.ParseResult.HasOption(PasswordPolicyOptions.SymbolsOption()))
+                if (Symbols >= 0)
                 {
                     style |= PasswordPolicyStyle.UseSymbols;
                 }
 
                 policy.Style = style;
-                policy.MinimumDigitCount = Digits;
-                policy.MinimumUppercaseCount = Uppercase;
-                policy.MinimumLowercaseCount = Lowercase;
-                policy.MinimumSymbolCount = Symbols;
+                policy.MinimumDigitCount = FilterNegativeValue(Digits);
+                policy.MinimumUppercaseCount = FilterNegativeValue(Uppercase);
+                policy.MinimumLowercaseCount = FilterNegativeValue(Lowercase);
+                policy.MinimumSymbolCount = FilterNegativeValue(Symbols);
 
-                if (context.ParseResult.HasOption(PasswordPolicyOptions.SymbolCharsOption()))
+                if (!string.IsNullOrWhiteSpace(SymbolChars))
                 {
-                    if (string.IsNullOrWhiteSpace(SymbolChars))
-                    {
-                        consoleService.LogError("The symbol characters cannot be empty.");
-                        return 1;
-                    }
-
-                    if (PwCharPool.HasDuplicatedCharacters(SymbolChars))
-                    {
-                        consoleService.LogError("The symbol characters contain duplicated characters.");
-                        return 1;
-                    }
-
-                    if (!PwCharPool.IsValidSymbols(SymbolChars))
-                    {
-                        consoleService.LogError("The symbol characters contain invalid characters.");
-                        return 1;
-                    }
-
                     policy.SetSpecialSymbolSet(SymbolChars.ToArray());
                 }
                 else
@@ -173,8 +162,6 @@ public class UpdatePolicyCommand : Command
                     }
                 }
 
-                document.NamedPasswordPolicies.Add(policy);
-
                 await documentHelper.SaveDocumentAsync(Alias, File);
                 consoleService.LogSuccess($"Password policy '{policy.Name}' is added");
             }
@@ -185,6 +172,45 @@ public class UpdatePolicyCommand : Command
             }
 
             return 0;
+        }
+
+        private static int FilterNegativeValue(int value)
+        {
+            return value < 0 ? 0 : value;
+        }
+
+        private bool HasValidatedInput()
+        {
+            if (Length < 6)
+            {
+                consoleService.LogError("The password must contain no less than 6 characters.");
+                return false;
+            }
+
+            int constraintsLength = FilterNegativeValue(Digits) + FilterNegativeValue(Uppercase) + FilterNegativeValue(Lowercase) + FilterNegativeValue(Symbols);
+
+            if (constraintsLength > Length)
+            {
+                consoleService.LogError("The password length is less than the sum of 'at least' constraints.");
+                return false;
+            }
+
+            if (!string.IsNullOrWhiteSpace(SymbolChars))
+            {
+                if (PwCharPool.HasDuplicatedCharacters(SymbolChars))
+                {
+                    consoleService.LogError("The symbol characters contain duplicated characters.");
+                    return false;
+                }
+
+                if (!PwCharPool.IsValidSymbols(SymbolChars))
+                {
+                    consoleService.LogError("The symbol characters contain invalid characters.");
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }
