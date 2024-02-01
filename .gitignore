@@ -1,6 +1,7 @@
 obj
 objd
 bin
+nupkg
 .vs
 .vscode
 launchSettings.json
