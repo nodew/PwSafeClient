@@ -43,6 +43,7 @@ public class UnlockCommand : Command
             "update",
             "renew",
             "showdb",
+            "policy",
         ];
 
         private const string exitCommand = ":exit";
