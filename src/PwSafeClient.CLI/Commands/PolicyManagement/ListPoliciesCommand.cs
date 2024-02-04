@@ -10,6 +10,7 @@ using Medo.Security.Cryptography.PasswordSafe;
 using PwSafeClient.CLI.Contracts.Helpers;
 using PwSafeClient.CLI.Contracts.Services;
 using PwSafeClient.CLI.Options;
+using PwSafeClient.Shared;
 
 namespace PwSafeClient.CLI.Commands;
 
@@ -39,7 +40,7 @@ public class ListPoliciesCommand : Command
 
         public override async Task<int> InvokeAsync(InvocationContext context)
         {
-            Document? document = await documentHelper.TryLoadDocumentAsync(Alias, File, true);
+            var document = await documentHelper.TryLoadDocumentAsync(Alias, File, true);
             if (document == null)
             {
                 return 1;
@@ -49,7 +50,7 @@ public class ListPoliciesCommand : Command
             {
                 if (document.NamedPasswordPolicies.Any())
                 {
-                    foreach (NamedPasswordPolicy policy in document.NamedPasswordPolicies)
+                    foreach (var policy in document.NamedPasswordPolicies)
                     {
                         PrintPasswordPolicy(policy);
                     }
@@ -69,57 +70,56 @@ public class ListPoliciesCommand : Command
             }
         }
 
-        private void PrintPasswordPolicy(NamedPasswordPolicy policy)
+        private static void PrintPasswordPolicy(NamedPasswordPolicy policy)
         {
-            bool isPronounceable = policy.Style.HasFlag(PasswordPolicyStyle.MakePronounceable);
-            bool useLowercase = policy.Style.HasFlag(PasswordPolicyStyle.UseLowercase);
-            bool useUppercase = policy.Style.HasFlag(PasswordPolicyStyle.UseUppercase);
-            bool useDigits = policy.Style.HasFlag(PasswordPolicyStyle.UseDigits);
-            bool useSymbols = policy.Style.HasFlag(PasswordPolicyStyle.UseSymbols);
+            var isPronounceable = policy.Style.HasFlag(PasswordPolicyStyle.MakePronounceable);
+            var useLowercase = policy.Style.HasFlag(PasswordPolicyStyle.UseLowercase);
+            var useUppercase = policy.Style.HasFlag(PasswordPolicyStyle.UseUppercase);
+            var useDigits = policy.Style.HasFlag(PasswordPolicyStyle.UseDigits);
+            var useSymbols = policy.Style.HasFlag(PasswordPolicyStyle.UseSymbols);
+            var useHexDigits = policy.Style.HasFlag(PasswordPolicyStyle.UseHexDigits);
+            var useEasyVision = policy.Style.HasFlag(PasswordPolicyStyle.UseEasyVision);
+            var symbols = policy.GetSpecialSymbolSet();
 
-            Console.WriteLine($"{policy.Name}:");
-            Console.WriteLine($"    Password length: {policy.TotalPasswordLength}.");
-
-            if (policy.Style.HasFlag(PasswordPolicyStyle.UseHexDigits))
+            if (symbols.Length == 0 && !isPronounceable)
             {
-                Console.WriteLine($"    Hex digits only.");
-                return;
+                symbols = useEasyVision ? PwCharPool.EasyVisionDigitChars : PwCharPool.StdDigitChars;
             }
 
-            Console.WriteLine($"    Pronounceable: {isPronounceable}.");
-            Console.WriteLine($"    Easy vision: {policy.Style.HasFlag(PasswordPolicyStyle.UseEasyVision)}.");
+            var format = "{0,-30}: {1}";
 
-            Console.WriteLine();
-            Console.WriteLine($"    Use lowercase: {useLowercase}.");
-            if (useLowercase && !isPronounceable)
+            Console.WriteLine($"---------------- {policy.Name} ----------------");
+            Console.WriteLine(format, $"Password length", policy.TotalPasswordLength);
+            Console.WriteLine(format, "Use lowercase characters", RenderPolicyValue(useLowercase, isPronounceable ? 0 : policy.MinimumLowercaseCount));
+            Console.WriteLine(format, "Use uppercase characters", RenderPolicyValue(useUppercase, isPronounceable ? 0 : policy.MinimumUppercaseCount));
+            Console.WriteLine(format, "Use digits", RenderPolicyValue(useDigits, isPronounceable ? 0 : policy.MinimumDigitCount));
+            Console.WriteLine(format, "Use symbols", RenderPolicyValue(useSymbols, isPronounceable ? 0 : policy.MinimumSymbolCount, string.Join("", symbols)));
+            Console.WriteLine(format, "Use easy vision characters", RenderPolicyValue(useHexDigits, 0));
+            Console.WriteLine(format, "Pronounceable passwords", RenderPolicyValue(isPronounceable, 0));
+            Console.WriteLine(format, "Hexadecimal characters", RenderPolicyValue(useHexDigits, 0));
+        }
+
+        private static string RenderPolicyValue(bool enabled, int minimumCount, string? symbols = null)
+        {
+            if (enabled)
             {
-                Console.WriteLine($"    Minimum lowercase: {policy.MinimumLowercaseCount}.");
-            }
-
-            Console.WriteLine();
-            Console.WriteLine($"    Use uppercase: {useUppercase}.");
-            if (useUppercase && !isPronounceable)
-            {
-                Console.WriteLine($"    Minimum uppercase: {policy.MinimumUppercaseCount}.");
-            }
-
-            Console.WriteLine();
-            Console.WriteLine($"    Use digits: {useDigits}.");
-            if (useDigits && !isPronounceable)
-            {
-                Console.WriteLine($"    Minimum digits: {policy.MinimumDigitCount}.");
-            }
-
-            Console.WriteLine();
-            if (!isPronounceable)
-            {
-                Console.WriteLine($"    Use symbols: {useSymbols}.");
-
-                if (useSymbols)
+                if (minimumCount > 0)
                 {
-                    Console.WriteLine($"    Minimum symbols: {policy.MinimumSymbolCount}.");
-                    Console.WriteLine($"    Symbols: {policy.GetSpecialSymbolSet()}.");
+                    if (!string.IsNullOrWhiteSpace(symbols))
+                    {
+                        return $"Yes - (At least {minimumCount}) from set '{symbols}";
+                    }
+
+                    return $"Yes - (At least {minimumCount})";
                 }
+                else
+                {
+                    return "Yes";
+                }
+            }
+            else
+            {
+                return "No";
             }
         }
     }

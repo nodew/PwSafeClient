@@ -104,7 +104,7 @@ public class NewEntryCommand : Command
 
         public override async Task<int> InvokeAsync(InvocationContext context)
         {
-            Document? document = await documentHelper.TryLoadDocumentAsync(Alias, File, false);
+            var document = await documentHelper.TryLoadDocumentAsync(Alias, File, false);
             if (document == null)
             {
                 return 1;
@@ -126,7 +126,7 @@ public class NewEntryCommand : Command
             if (!string.IsNullOrWhiteSpace(Group))
             {
                 groupSegments = Group.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
-                for (int i = 0; i < groupSegments.Length; i++)
+                for (var i = 0; i < groupSegments.Length; i++)
                 {
                     groupSegments[i] = groupSegments[i].Trim();
                 }
@@ -136,7 +136,7 @@ public class NewEntryCommand : Command
             if (document.Entries.Any(e => e.Title == Title && e.Group.Equals(targetGroupPath)))
             {
                 consoleService.LogError($"The entry {Title} already exists under the group {Group}.");
-                bool shouldContinue = consoleService.DoConfirm("Do you want to continue?");
+                var shouldContinue = consoleService.DoConfirm("Do you want to continue?");
 
                 if (!shouldContinue)
                 {
@@ -156,7 +156,7 @@ public class NewEntryCommand : Command
                     Notes = Notes
                 };
 
-                string newPassword = string.Empty;
+                var newPassword = string.Empty;
 
                 if (context.ParseResult.HasOption(PasswordOption))
                 {

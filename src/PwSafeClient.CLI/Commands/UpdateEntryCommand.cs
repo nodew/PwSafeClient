@@ -79,8 +79,8 @@ public class UpdateEntryCommand : Command
 
         public override async Task<int> InvokeAsync(InvocationContext context)
         {
-            Document? document = await documentHelper.TryLoadDocumentAsync(Alias, File, true);
-            bool isUpdated = false;
+            var document = await documentHelper.TryLoadDocumentAsync(Alias, File, true);
+            var isUpdated = false;
 
             if (document == null)
             {

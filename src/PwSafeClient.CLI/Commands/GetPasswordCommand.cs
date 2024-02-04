@@ -43,7 +43,7 @@ public class GetPasswordCommand : Command
 
         public override async Task<int> InvokeAsync(InvocationContext context)
         {
-            Document? document = await documentHelper.TryLoadDocumentAsync(Alias, File, true);
+            var document = await documentHelper.TryLoadDocumentAsync(Alias, File, true);
             if (document == null)
             {
                 return 1;

@@ -85,7 +85,7 @@ public class UpdatePolicyCommand : Command
                 return 1;
             }
 
-            Document? document = await documentHelper.TryLoadDocumentAsync(Alias, File, false);
+            var document = await documentHelper.TryLoadDocumentAsync(Alias, File, false);
             if (document == null)
             {
                 return 1;
@@ -187,7 +187,7 @@ public class UpdatePolicyCommand : Command
                 return false;
             }
 
-            int constraintsLength = FilterNegativeValue(Digits) + FilterNegativeValue(Uppercase) + FilterNegativeValue(Lowercase) + FilterNegativeValue(Symbols);
+            var constraintsLength = FilterNegativeValue(Digits) + FilterNegativeValue(Uppercase) + FilterNegativeValue(Lowercase) + FilterNegativeValue(Symbols);
 
             if (constraintsLength > Length)
             {

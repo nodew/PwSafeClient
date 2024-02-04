@@ -35,7 +35,7 @@ public class ConfigManager : IConfigManager
     {
         this.consoleService = consoleService;
 
-        string? homeDirectory = environmentManager.GetHomeDirectory();
+        var homeDirectory = environmentManager.GetHomeDirectory();
         if (string.IsNullOrEmpty(homeDirectory))
         {
             throw new Exception("Cannot find home directory.");
@@ -63,7 +63,7 @@ public class ConfigManager : IConfigManager
         ArgumentValidator.ThrowIfNullOrWhiteSpace(nameof(alias), alias);
         ArgumentValidator.ThrowIfNullOrWhiteSpace(nameof(filepath), filepath);
 
-        Config config = await LoadConfigAsync();
+        var config = await LoadConfigAsync();
         config.Databases[alias] = filepath;
 
         if (isDefault)
@@ -77,7 +77,7 @@ public class ConfigManager : IConfigManager
     /// <inheritdoc/>
     public async Task<string> GetDbPathAsync(string? alias)
     {
-        Config config = await LoadConfigAsync();
+        var config = await LoadConfigAsync();
         alias ??= config.DefaultDatabase;
 
         if (string.IsNullOrEmpty(alias))
@@ -85,7 +85,7 @@ public class ConfigManager : IConfigManager
             throw new Exception("The default database is not configured.");
         }
 
-        if (config.Databases.TryGetValue(alias, out string? filePath))
+        if (config.Databases.TryGetValue(alias, out var filePath))
         {
             if (string.IsNullOrEmpty(filePath))
             {
@@ -105,14 +105,14 @@ public class ConfigManager : IConfigManager
     /// <inheritdoc/>
     public async Task<int> GetIdleTimeAsync()
     {
-        Config config = await LoadConfigAsync();
+        var config = await LoadConfigAsync();
         return config.IdleTime;
     }
 
     /// <inheritdoc/>
     public async Task<int> GetMaxBackupCountAsync()
     {
-        Config config = await LoadConfigAsync();
+        var config = await LoadConfigAsync();
         return config.MaxBackupCount;
     }
 
@@ -121,11 +121,11 @@ public class ConfigManager : IConfigManager
     {
         try
         {
-            using FileStream fileStream = File.Open(configFileAbsolutePath, FileMode.Open);
-            using StreamReader reader = new StreamReader(fileStream);
-            string json = await reader.ReadToEndAsync();
+            using var fileStream = File.Open(configFileAbsolutePath, FileMode.Open);
+            using var reader = new StreamReader(fileStream);
+            var json = await reader.ReadToEndAsync();
 
-            Config? config = JsonSerializer.Deserialize<Config>(json, options);
+            var config = JsonSerializer.Deserialize<Config>(json, options);
             return config ?? new Config();
         }
         catch (FileNotFoundException)
@@ -155,7 +155,7 @@ public class ConfigManager : IConfigManager
     {
         ArgumentValidator.ThrowIfNullOrWhiteSpace(nameof(alias), alias);
 
-        Config config = await LoadConfigAsync();
+        var config = await LoadConfigAsync();
         config.Databases.Remove(alias);
 
         if (config.DefaultDatabase == alias)
@@ -176,7 +176,7 @@ public class ConfigManager : IConfigManager
                 Directory.CreateDirectory(configFolderAbsolutePath);
             }
 
-            string content = JsonSerializer.Serialize(config, options);
+            var content = JsonSerializer.Serialize(config, options);
             return File.WriteAllTextAsync(configFileAbsolutePath, content);
         }
         catch (Exception e)
@@ -191,7 +191,7 @@ public class ConfigManager : IConfigManager
     {
         ArgumentValidator.ThrowIfNullOrWhiteSpace(nameof(alias), alias);
 
-        Config config = await LoadConfigAsync();
+        var config = await LoadConfigAsync();
 
         foreach (var item in config.Databases)
         {

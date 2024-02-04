@@ -63,15 +63,15 @@ public class UnlockCommand : Command
 
         public override async Task<int> InvokeAsync(InvocationContext context)
         {
-            Document? doc = await documentHelper.TryLoadDocumentAsync(Alias, File, ReadOnly);
+            var doc = await documentHelper.TryLoadDocumentAsync(Alias, File, ReadOnly);
 
             if (doc == null)
             {
                 return 1;
             }
 
-            int idleTime = await configManager.GetIdleTimeAsync();
-            string displayName = await documentHelper.GetDocumentDisplayNameAsync(Alias, File);
+            var idleTime = await configManager.GetIdleTimeAsync();
+            var displayName = await documentHelper.GetDocumentDisplayNameAsync(Alias, File);
 
             Timer timer = new(_ => HandleExit(), null, (int)TimeSpan.FromMinutes(idleTime).TotalMilliseconds, Timeout.Infinite);
             Console.CancelKeyPress += (_, _) => HandleExit();
@@ -92,7 +92,7 @@ public class UnlockCommand : Command
                     break;
                 }
 
-                ParseResult result = Program.Parser!.Parse(input);
+                var result = Program.Parser!.Parse(input);
 
                 if (!allowedCommands.Contains(result.CommandResult.Command.Name))
                 {

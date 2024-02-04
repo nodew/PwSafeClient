@@ -43,7 +43,7 @@ public class RemovePolicyCommand : Command
 
         public override async Task<int> InvokeAsync(InvocationContext context)
         {
-            Document? document = await documentHelper.TryLoadDocumentAsync(Alias, File, false);
+            var document = await documentHelper.TryLoadDocumentAsync(Alias, File, false);
 
             if (document == null)
             {

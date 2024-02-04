@@ -62,14 +62,14 @@ public class ListEntriesCommand : Command
 
         public override async Task<int> InvokeAsync(InvocationContext context)
         {
-            Document? document = await documentHelper.TryLoadDocumentAsync(Alias, File, true);
+            var document = await documentHelper.TryLoadDocumentAsync(Alias, File, true);
 
             if (document == null)
             {
                 return 1;
             }
 
-            List<Entry> entries = document.Entries.ToList();
+            var entries = document.Entries.ToList();
 
             if (!string.IsNullOrEmpty(Filter))
             {
@@ -102,7 +102,7 @@ public class ListEntriesCommand : Command
             Console.OutputEncoding = System.Text.Encoding.UTF8;
             Console.WriteLine(fmt, "Uuid", "Title", "Username", "Group");
 
-            foreach (Entry entry in oderedEntries)
+            foreach (var entry in oderedEntries)
             {
                 Console.WriteLine(fmt, entry.Uuid, entry.Title, entry.UserName, entry.Group);
             }
@@ -111,13 +111,13 @@ public class ListEntriesCommand : Command
         private static void PrintTreeView(List<Entry> entries)
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
-            Group root = new GroupBuilder(entries).Build();
+            var root = new GroupBuilder(entries).Build();
             PrintTreeView(entries, root, 0);
         }
 
         private static void PrintTreeView(List<Entry> entries, Group group, int depth)
         {
-            GroupPath groupPath = group.GetGroupPath();
+            var groupPath = group.GetGroupPath();
 
             IEnumerable<Entry> subEntries = entries
                 .Where(entry => entry.Group.Equals(groupPath))
@@ -128,13 +128,13 @@ public class ListEntriesCommand : Command
                 Console.WriteLine("{0}|- {1}", new string(' ', (depth - 1) * 2), group.Name);
             }
 
-            foreach (Entry entry in subEntries)
+            foreach (var entry in subEntries)
             {
                 var fmt = "{0}|- {1}({2}) [{3}]";
                 Console.WriteLine(fmt, new string(' ', depth * 2), entry.Title, entry.UserName, entry.Uuid);
             }
 
-            foreach (Group child in group.Children)
+            foreach (var child in group.Children)
             {
                 PrintTreeView(entries, child, depth + 1);
             }

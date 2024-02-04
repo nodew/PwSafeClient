@@ -70,7 +70,7 @@ public class CreateDbCommand : Command
 
             try
             {
-                Document document = new Document(password);
+                var document = new Document(password);
                 document.Save(File.FullName);
 
                 await configManager.AddDatabaseAsync(Alias, File.FullName, Default);
