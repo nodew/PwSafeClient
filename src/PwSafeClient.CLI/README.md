@@ -188,12 +188,12 @@ $ pwsafe policy add --name "Sample" \
 
 ```bash
 $ pwsafe policy update --name "Sample" \
-                    --length 12 \
-                    --uppercase 2 \
-                    --lowercase 2 \
-                    --digits 1 \
-                    --symbols=-1 \
-                    --easy-vision
+                       --length 12 \
+                       --uppercase 2 \
+                       --lowercase 2 \
+                       --digits 1 \
+                       --symbols=-1 \
+                       --easy-vision
 ```
 
 #### 4. Remove a password policy
