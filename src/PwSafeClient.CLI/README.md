@@ -37,6 +37,7 @@ Commands:
   renew <ID>       Renew the password of an entry
   update <ID>      Update the properties of an entry
   rm <ID>          Remove an entry or group from the database
+  policy           Manage your password policies
   unlock           Unlock a database
 ```
 
@@ -160,6 +161,51 @@ $ pwsafe update <ID> --title <title> --username <username> --group <group> --url
 $ pwsafe rm <ID>
 # Remove a group
 $ pwsafe rm --group <group>
+```
+
+### Manage the password policy
+
+#### 1. List existing password policies
+
+```bash
+$ pwsafe policy list
+```
+
+#### 2. Add new password policy
+
+```bash
+$ pwsafe policy add --name "Sample" \
+                    --length 12 \
+                    --uppercase 2 \
+                    --lowercase 2 \
+                    --digits 1 \
+                    --symbols 1 \
+                    --symbol-chars "@#$%&" \
+                    --easy-vision
+```
+
+#### 3. Update an existing password policy
+
+```bash
+$ pwsafe policy update --name "Sample" \
+                    --length 12 \
+                    --uppercase 2 \
+                    --lowercase 2 \
+                    --digits 1 \
+                    --symbols=-1 \
+                    --easy-vision
+```
+
+#### 4. Remove a password policy
+
+```bash
+$ pwsafe policy rm --name "Sample"
+```
+
+#### 5. Generate password for given policy
+
+```bash
+$ pwsafe policy genpass --name "Sample"
 ```
 
 ### Interactive mode

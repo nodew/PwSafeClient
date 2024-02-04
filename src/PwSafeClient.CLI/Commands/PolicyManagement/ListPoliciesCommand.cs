@@ -97,6 +97,7 @@ public class ListPoliciesCommand : Command
             Console.WriteLine(format, "Use easy vision characters", RenderPolicyValue(useHexDigits, 0));
             Console.WriteLine(format, "Pronounceable passwords", RenderPolicyValue(isPronounceable, 0));
             Console.WriteLine(format, "Hexadecimal characters", RenderPolicyValue(useHexDigits, 0));
+            Console.WriteLine();
         }
 
         private static string RenderPolicyValue(bool enabled, int minimumCount, string? symbols = null)

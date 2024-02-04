@@ -63,6 +63,7 @@ class Program
                     host.UseCommandHandler<AddPolicyCommand, AddPolicyCommand.AddPolicyCommandHandler>();
                     host.UseCommandHandler<RemovePolicyCommand, RemovePolicyCommand.RemovePolicyCommandHandler>();
                     host.UseCommandHandler<UpdatePolicyCommand, UpdatePolicyCommand.UpdatePolicyCommandHandler>();
+                    host.UseCommandHandler<GeneratePasswordCommand, GeneratePasswordCommand.GeneratePasswordCommandHandler>();
 
                     host.UseCommandHandler<UnlockCommand, UnlockCommand.UnlockCommandHandler>();
                 })

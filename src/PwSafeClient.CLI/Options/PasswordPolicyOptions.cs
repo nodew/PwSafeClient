@@ -12,22 +12,22 @@ internal static class PasswordPolicyOptions
 
     public static Option<int> DigitsOption() => new(
         aliases: ["--digits", "-d"],
-        description: "Use digits, pass '-1' to disable the option",
+        description: "Use digits and specify the minimum requirement, pass '-1' to disable the option",
         getDefaultValue: () => 0);
 
     public static Option<int> UppercaseOption() => new(
         aliases: ["--uppercase", "-u"],
-        description: "Use uppercase, pass '-1' to disable the option",
+        description: "Use uppercase and specify the minimum requirement, pass '-1' to disable the option",
         getDefaultValue: () => 0);
 
     public static Option<int> LowercaseOption() => new(
         aliases: ["--lowercase", "-l"],
-        description: "Use lowercase, pass '-1' to disable the option",
+        description: "Use lowercase and specify the minimum requirement, pass '-1' to disable the option",
         getDefaultValue: () => 0);
 
     public static Option<int> SymbolsOption() => new(
         aliases: ["--symbols", "-s"],
-        description: "Use symbols, pass '-1' to disable the option",
+        description: "Use symbols and specify the minimum requirement, pass '-1' to disable the option",
         getDefaultValue: () => 0);
 
     public static Option<string> SymbolCharsOption() => new(
