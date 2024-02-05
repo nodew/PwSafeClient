@@ -28,11 +28,11 @@ class Program
                 {
                     host.ConfigureLogging(logger =>
                     {
-                        #if DEBUG
+#if DEBUG
                         logger.SetMinimumLevel(LogLevel.Debug);
-                        #else
+#else
                         logger.SetMinimumLevel(LogLevel.Warning);
-                        #endif
+#endif
                     });
 
                     host.ConfigureServices((context, services) =>

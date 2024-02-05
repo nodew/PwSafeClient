@@ -166,7 +166,8 @@ public class AddPolicyCommand : Command
                     policy.SetSpecialSymbolSet(PwCharPool.PronounceableSymbolChars);
                 }
                 else
-                {   if (!string.IsNullOrWhiteSpace(SymbolChars))
+                {
+                    if (!string.IsNullOrWhiteSpace(SymbolChars))
                     {
                         policy.SetSpecialSymbolSet(SymbolChars.ToArray());
                     }
