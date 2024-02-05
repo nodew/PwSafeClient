@@ -31,7 +31,7 @@ public class DocumentHelper : IDocumentHelper
 
         try
         {
-            string filepath = await GetDocumentFilePathAsync(alias, fileInfo);
+            var filepath = await GetDocumentFilePathAsync(alias, fileInfo);
 
             if (!File.Exists(filepath))
             {
@@ -39,7 +39,7 @@ public class DocumentHelper : IDocumentHelper
                 return null;
             }
 
-            string password = consoleService.ReadPassword();
+            var password = consoleService.ReadPassword();
 
             document = Document.Load(filepath, password);
             document.IsReadOnly = readOnly;
@@ -79,7 +79,7 @@ public class DocumentHelper : IDocumentHelper
 
         try
         {
-            string filepath = await GetDocumentFilePathAsync(alias, fileInfo);
+            var filepath = await GetDocumentFilePathAsync(alias, fileInfo);
             await BackupDocumentAsync(filepath);
             document.Save(filepath);
         }
@@ -96,7 +96,7 @@ public class DocumentHelper : IDocumentHelper
             return fileInfo.Name;
         }
 
-        Config config = await configManager.LoadConfigAsync();
+        var config = await configManager.LoadConfigAsync();
 
         return alias ?? config.DefaultDatabase ?? string.Empty;
     }
@@ -118,22 +118,22 @@ public class DocumentHelper : IDocumentHelper
             return;
         }
 
-        string? targetFolder = Path.GetDirectoryName(filepath);
-        string? filename = Path.GetFileNameWithoutExtension(filepath);
-        string? extension = Path.GetExtension(filepath);
+        var targetFolder = Path.GetDirectoryName(filepath);
+        var filename = Path.GetFileNameWithoutExtension(filepath);
+        var extension = Path.GetExtension(filepath);
 
         if (targetFolder == null || filename == null)
         {
             return;
         }
 
-        string[] backupFiles = Directory.GetFiles(targetFolder, $"{filename}_*.ibak")
+        var backupFiles = Directory.GetFiles(targetFolder, $"{filename}_*.ibak")
             .OrderByDescending(GetBackupVersion)
             .ToArray();
 
-        int maxBackupCount = await configManager.GetMaxBackupCountAsync();
+        var maxBackupCount = await configManager.GetMaxBackupCountAsync();
 
-        int backupVersion = 1;
+        var backupVersion = 1;
 
         if (backupFiles.Length > 0)
         {
@@ -146,7 +146,7 @@ public class DocumentHelper : IDocumentHelper
 
         if (backupFiles.Length >= maxBackupCount)
         {
-            for (int i = maxBackupCount - 1; i < backupFiles.Length; i++)
+            for (var i = maxBackupCount - 1; i < backupFiles.Length; i++)
             {
                 File.Delete(backupFiles[i]);
             }
@@ -155,18 +155,18 @@ public class DocumentHelper : IDocumentHelper
 
     private int GetBackupVersion(string filepath)
     {
-        string? filename = Path.GetFileNameWithoutExtension(filepath);
-        string? extension = Path.GetExtension(filepath);
+        var filename = Path.GetFileNameWithoutExtension(filepath);
+        var extension = Path.GetExtension(filepath);
 
         if (filename == null || extension == null)
         {
             return 0;
         }
 
-        string[]? nameAndVersionPair = filename.Split('_');
+        var nameAndVersionPair = filename.Split('_');
         if (nameAndVersionPair != null && nameAndVersionPair.Length == 2)
         {
-            if (int.TryParse(nameAndVersionPair[1], out int version))
+            if (int.TryParse(nameAndVersionPair[1], out var version))
             {
                 return version;
             }

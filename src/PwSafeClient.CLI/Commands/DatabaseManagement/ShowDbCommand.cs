@@ -38,14 +38,14 @@ public class ShowDbCommand : Command
 
         public override async Task<int> InvokeAsync(InvocationContext context)
         {
-            Document? doc = await documentHelper.TryLoadDocumentAsync(Alias, File, true);
+            var doc = await documentHelper.TryLoadDocumentAsync(Alias, File, true);
 
             if (doc == null)
             {
                 return 1;
             }
 
-            string format = "{0, -30}{1}";
+            var format = "{0, -30}{1}";
             Console.WriteLine(format, "Database UUID:", doc.Uuid);
             Console.WriteLine(format, "Name:", doc.Name ?? "-");
             Console.WriteLine(format, "Description:", doc.Description ?? "-");

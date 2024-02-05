@@ -10,6 +10,14 @@ public static class PwCharPool
 
     public static readonly char[] StdUppercaseChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
 
+    public static readonly char[] LowercaseVowels = "aeiouy".ToCharArray();
+
+    public static readonly char[] UppercaseVowels = "AEIOUY".ToCharArray();
+
+    public static readonly char[] LowercaseConsonants = "bcdfghjklmnpqrstvwxz".ToCharArray();
+
+    public static readonly char[] UppercaseConsonants = "BCDFGHJKLMNPQRSTVWXZ".ToCharArray();
+
     public static readonly char[] StdDigitChars = "0123456789".ToCharArray();
 
     public static readonly char[] StdHexDigitChars = "0123456789abcdef".ToCharArray();
@@ -18,7 +26,7 @@ public static class PwCharPool
 
     public static readonly char[] EasyVisionLowercaseChars = "abcdefghijkmnopqrstuvwxyz".ToCharArray();
 
-    public static readonly char[] EasyVisionUppercase_chars = "ABCDEFGHJKLMNPQRTUVWXY".ToCharArray();
+    public static readonly char[] EasyVisionUppercaseChars = "ABCDEFGHJKLMNPQRTUVWXY".ToCharArray();
 
     public static readonly char[] EasyVisionDigitChars = "346789".ToCharArray();
 

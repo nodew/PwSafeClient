@@ -6,8 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Medo.Security.Cryptography.PasswordSafe;
-
 using PwSafeClient.CLI.Contracts.Helpers;
 using PwSafeClient.CLI.Contracts.Services;
 using PwSafeClient.CLI.Options;
@@ -59,8 +57,8 @@ public class RenewPasswordCommand : Command
 
         public override async Task<int> InvokeAsync(InvocationContext context)
         {
-            Document? document = await documentHelper.TryLoadDocumentAsync(Alias, File, true);
-            string newPassword = string.Empty;
+            var document = await documentHelper.TryLoadDocumentAsync(Alias, File, true);
+            var newPassword = string.Empty;
 
             if (document == null)
             {
@@ -95,7 +93,7 @@ public class RenewPasswordCommand : Command
 
             if (string.IsNullOrEmpty(newPassword) && !string.IsNullOrWhiteSpace(Policy))
             {
-                NamedPasswordPolicy? namedPasswordPolicy = document.NamedPasswordPolicies.FirstOrDefault(p => p.Name == Policy);
+                var namedPasswordPolicy = document.NamedPasswordPolicies.FirstOrDefault(p => p.Name == Policy);
 
                 if (namedPasswordPolicy == null)
                 {

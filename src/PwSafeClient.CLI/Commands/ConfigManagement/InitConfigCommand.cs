@@ -27,7 +27,7 @@ public class InitConfigCommand : Command
 
         public override async Task<int> InvokeAsync(InvocationContext context)
         {
-            string filepath = configManager.GetConfigPath();
+            var filepath = configManager.GetConfigPath();
 
             if (configManager.ConfigExists())
             {

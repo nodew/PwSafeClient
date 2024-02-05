@@ -8,7 +8,7 @@ namespace PwSafeClient.CLI.Commands
     {
         public int Invoke(InvocationContext context)
         {
-            int result = 0;
+            var result = 0;
             Task.Run(async () => result = await InvokeAsync(context)).Wait();
             return result;
         }

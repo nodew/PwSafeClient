@@ -18,7 +18,7 @@ public class ConsoleService : IConsoleService
         Console.Write("Enter your password: ");
         while (true)
         {
-            ConsoleKeyInfo i = Console.ReadKey(true);
+            var i = Console.ReadKey(true);
             if (i.Key == ConsoleKey.Enter)
             {
                 break;
@@ -60,7 +60,7 @@ public class ConsoleService : IConsoleService
     public string ReadLine(string symbol = ">")
     {
         Console.Write($"{symbol} ");
-        string? input = Console.ReadLine();
+        var input = Console.ReadLine();
         return input ?? string.Empty;
     }
 

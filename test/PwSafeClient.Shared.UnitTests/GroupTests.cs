@@ -54,7 +54,7 @@ public class GroupTests
 
         root.InsertBySegments(["group1", "group4"]);
 
-        Group group1 = root.Children[0];
+        var group1 = root.Children[0];
 
         Assert.IsNotNull(group1);
         Assert.AreEqual(2, group1.Children.Count);

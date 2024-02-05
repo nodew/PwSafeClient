@@ -10,5 +10,6 @@ public class PolicyCommand : Command
         AddCommand(new AddPolicyCommand());
         AddCommand(new RemovePolicyCommand());
         AddCommand(new UpdatePolicyCommand());
+        AddCommand(new GeneratePasswordCommand());
     }
 }

@@ -85,7 +85,15 @@ public class AddPolicyCommand : Command
                 return 1;
             }
 
-            Document? document = await documentHelper.TryLoadDocumentAsync(Alias, File, false);
+            if (HexOnly && (Digits > 0 || Uppercase > 0 || Lowercase > 0 || Symbols > 0))
+            {
+                if (!consoleService.DoConfirm("When --hex-ony is set, all other options will be ignored, continue?"))
+                {
+                    return 0;
+                }
+            }
+
+            var document = await documentHelper.TryLoadDocumentAsync(Alias, File, false);
             if (document == null)
             {
                 return 1;
@@ -101,61 +109,78 @@ public class AddPolicyCommand : Command
                 var policy = new NamedPasswordPolicy(Name, Length);
 
                 PasswordPolicyStyle style = 0;
+                var minimumDigitCount = 0;
+                var minimumUppercaseCount = 0;
+                var minimumLowercaseCount = 0;
+                var minimumSymbolCount = 0;
 
                 if (HexOnly)
                 {
                     style |= PasswordPolicyStyle.UseHexDigits;
                 }
-
-                if (EasyVision)
+                else
                 {
-                    style |= PasswordPolicyStyle.UseEasyVision;
-                }
+                    if (Pronounceable)
+                    {
+                        style |= PasswordPolicyStyle.MakePronounceable;
+                    }
 
-                if (Pronounceable)
-                {
-                    style |= PasswordPolicyStyle.MakePronounceable;
-                }
+                    if (EasyVision)
+                    {
+                        style |= PasswordPolicyStyle.UseEasyVision;
+                    }
 
-                if (Digits >= 0)
-                {
-                    style |= PasswordPolicyStyle.UseDigits;
-                }
+                    if (Digits >= 0)
+                    {
+                        style |= PasswordPolicyStyle.UseDigits;
+                        minimumDigitCount = Pronounceable ? 0 : Digits;
+                    }
 
-                if (Uppercase >= 0)
-                {
-                    style |= PasswordPolicyStyle.UseUppercase;
-                }
+                    if (Uppercase >= 0)
+                    {
+                        style |= PasswordPolicyStyle.UseUppercase;
+                        minimumUppercaseCount = Pronounceable ? 0 : Uppercase;
+                    }
 
-                if (Lowercase >= 0)
-                {
-                    style |= PasswordPolicyStyle.UseLowercase;
-                }
+                    if (Lowercase >= 0)
+                    {
+                        style |= PasswordPolicyStyle.UseLowercase;
+                        minimumLowercaseCount = Pronounceable ? 0 : Lowercase;
+                    }
 
-                if (Symbols >= 0)
-                {
-                    style |= PasswordPolicyStyle.UseSymbols;
+                    if (Symbols >= 0)
+                    {
+                        style |= PasswordPolicyStyle.UseSymbols;
+                        minimumSymbolCount = Pronounceable ? 0 : Symbols;
+                    }
                 }
 
                 policy.Style = style;
-                policy.MinimumDigitCount = FilterNegativeValue(Digits);
-                policy.MinimumUppercaseCount = FilterNegativeValue(Uppercase);
-                policy.MinimumLowercaseCount = FilterNegativeValue(Lowercase);
-                policy.MinimumSymbolCount = FilterNegativeValue(Symbols);
+                policy.MinimumDigitCount = minimumDigitCount;
+                policy.MinimumUppercaseCount = minimumUppercaseCount;
+                policy.MinimumLowercaseCount = minimumLowercaseCount;
+                policy.MinimumSymbolCount = minimumSymbolCount;
 
-                if (!string.IsNullOrWhiteSpace(SymbolChars))
+                if (Pronounceable)
                 {
-                    policy.SetSpecialSymbolSet(SymbolChars.ToArray());
+                    policy.SetSpecialSymbolSet(PwCharPool.PronounceableSymbolChars);
                 }
                 else
                 {
-                    if (policy.Style.HasFlag(PasswordPolicyStyle.UseEasyVision))
+                    if (!string.IsNullOrWhiteSpace(SymbolChars))
                     {
-                        policy.SetSpecialSymbolSet(PwCharPool.EasyVisionSymbolChars);
+                        policy.SetSpecialSymbolSet(SymbolChars.ToArray());
                     }
                     else
                     {
-                        policy.SetSpecialSymbolSet(PwCharPool.StdSymbolChars);
+                        if (EasyVision)
+                        {
+                            policy.SetSpecialSymbolSet(PwCharPool.EasyVisionSymbolChars);
+                        }
+                        else
+                        {
+                            policy.SetSpecialSymbolSet(PwCharPool.StdSymbolChars);
+                        }
                     }
                 }
 
@@ -186,11 +211,17 @@ public class AddPolicyCommand : Command
                 return false;
             }
 
-            int constraintsLength = FilterNegativeValue(Digits) + FilterNegativeValue(Uppercase) + FilterNegativeValue(Lowercase) + FilterNegativeValue(Symbols);
+            var constraintsLength = FilterNegativeValue(Digits) + FilterNegativeValue(Uppercase) + FilterNegativeValue(Lowercase) + FilterNegativeValue(Symbols);
 
             if (constraintsLength > Length)
             {
                 consoleService.LogError("The password length is less than the sum of 'at least' constraints.");
+                return false;
+            }
+
+            if (EasyVision && Pronounceable)
+            {
+                Console.WriteLine("The options '--easy-vision' and '--pronounceable' cannot be used together.");
                 return false;
             }
 

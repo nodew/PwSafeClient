@@ -37,7 +37,7 @@ public class GroupBuilder
     {
         var groupList = new List<GroupPath>();
 
-        foreach (Entry entry in entries)
+        foreach (var entry in entries)
         {
             if (!string.IsNullOrEmpty(entry.Group) && !groupList.Contains(entry.Group))
             {
@@ -47,7 +47,7 @@ public class GroupBuilder
 
         var orderedGroupList = groupList.OrderBy(item => item.ToString());
 
-        foreach (GroupPath path in orderedGroupList)
+        foreach (var path in orderedGroupList)
         {
             Root.InsertByGroupPath(path);
         }

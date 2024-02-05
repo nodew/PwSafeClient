@@ -52,8 +52,8 @@ public class RemoveEntryCommand : Command
 
         public override async Task<int> InvokeAsync(InvocationContext context)
         {
-            Document? document = await documentHelper.TryLoadDocumentAsync(Alias, File, true);
-            int totalRemovedEntries = 0;
+            var document = await documentHelper.TryLoadDocumentAsync(Alias, File, true);
+            var totalRemovedEntries = 0;
 
             if (document == null)
             {
@@ -92,19 +92,19 @@ public class RemoveEntryCommand : Command
             }
             else if (!string.IsNullOrWhiteSpace(Group))
             {
-                Group root = new GroupBuilder([.. document.Entries]).Build();
+                var root = new GroupBuilder([.. document.Entries]).Build();
 
                 string[] groupSegments = [];
                 if (!string.IsNullOrWhiteSpace(Group))
                 {
                     groupSegments = Group.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
-                    for (int i = 0; i < groupSegments.Length; i++)
+                    for (var i = 0; i < groupSegments.Length; i++)
                     {
                         groupSegments[i] = groupSegments[i].Trim();
                     }
                 }
 
-                Group? targetGroup = root.GetSubGroupBySegments(groupSegments);
+                var targetGroup = root.GetSubGroupBySegments(groupSegments);
 
                 if (targetGroup == null)
                 {
@@ -117,7 +117,7 @@ public class RemoveEntryCommand : Command
                 List<Group> queue = [targetGroup];
                 while (queue.Count > 0)
                 {
-                    Group currentGroup = queue[0];
+                    var currentGroup = queue[0];
                     queue.RemoveAt(0);
                     queue.AddRange(currentGroup.Children);
                     targetItems.AddRange(document.Entries.Where(entry => entry.Group.Equals(currentGroup.GetGroupPath())));
@@ -128,7 +128,7 @@ public class RemoveEntryCommand : Command
                     if (consoleService.DoConfirm($"Are you sure to remove {targetItems.Count} entries under group '{Group}'?"))
                     {
                         totalRemovedEntries = targetItems.Count;
-                        foreach (Entry entry in targetItems)
+                        foreach (var entry in targetItems)
                         {
                             document.Entries.Remove(entry);
                         }

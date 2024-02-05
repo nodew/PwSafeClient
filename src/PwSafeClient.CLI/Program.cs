@@ -5,6 +5,7 @@ using System.CommandLine.Parsing;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 using PwSafeClient.CLI.Commands;
 using PwSafeClient.CLI.Contracts.Helpers;
@@ -25,6 +26,15 @@ class Program
             .UseHost(_ => Host.CreateDefaultBuilder(),
                 host =>
                 {
+                    host.ConfigureLogging(logger =>
+                    {
+#if DEBUG
+                        logger.SetMinimumLevel(LogLevel.Debug);
+#else
+                        logger.SetMinimumLevel(LogLevel.Warning);
+#endif
+                    });
+
                     host.ConfigureServices((context, services) =>
                     {
                         services.AddSingleton<IConfigManager, ConfigManager>();
@@ -53,6 +63,7 @@ class Program
                     host.UseCommandHandler<AddPolicyCommand, AddPolicyCommand.AddPolicyCommandHandler>();
                     host.UseCommandHandler<RemovePolicyCommand, RemovePolicyCommand.RemovePolicyCommandHandler>();
                     host.UseCommandHandler<UpdatePolicyCommand, UpdatePolicyCommand.UpdatePolicyCommandHandler>();
+                    host.UseCommandHandler<GeneratePasswordCommand, GeneratePasswordCommand.GeneratePasswordCommandHandler>();
 
                     host.UseCommandHandler<UnlockCommand, UnlockCommand.UnlockCommandHandler>();
                 })

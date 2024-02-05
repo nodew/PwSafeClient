@@ -55,7 +55,7 @@ public class Group
         }
 
         List<string> segments = [Name];
-        Group node = this;
+        var node = this;
 
         while (node.Parent != null)
         {
