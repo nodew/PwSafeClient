@@ -17,6 +17,7 @@ jobs:
     - uses: actions/checkout@v3
     - name: Extract Version
       if: ${{ github.ref_type == 'tag' }}
+      working-directory: .
       run: |
         version=$(./build/extract_version "${GITHUB_REF#refs/tags/}")
         echo "VERSION=$version" >> $GITHUB_ENV
