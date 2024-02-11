@@ -4,7 +4,6 @@
     <OutputType>Exe</OutputType>
     <AssemblyName>pwsafe</AssemblyName>
     <Nullable>enable</Nullable>
-    <PublishTrimmed>true</PublishTrimmed>
   </PropertyGroup>
 
   <PropertyGroup>
