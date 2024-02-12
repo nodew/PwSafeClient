@@ -20,7 +20,7 @@ jobs:
       if: ${{ github.ref_type == 'tag' }}
       working-directory: .
       run: |
-        version=$(./build/extract_version "${GITHUB_REF#refs/tags/}")
+        version=$(./build/extract_version.sh "${GITHUB_REF#refs/tags/}")
         echo "VERSION=$version" >> $GITHUB_ENV
     
     - name: Setup .NET
