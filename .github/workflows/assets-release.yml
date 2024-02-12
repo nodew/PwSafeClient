@@ -51,16 +51,8 @@ jobs:
       run: dotnet restore
 
     - name: Bundle exe
-      run: >
-        dotnet publish src/PwSafeClient.CLI
-                       -c Release
-                       -r ${{ matrix.runtime }}
-                       --self-contained true
-                       -p:PackageVersion=$VERSION
-                       -p:PublishSingleFile=true
-                       -p:IncludeNativeLibrariesForSelfExtract=true
-                       -p:PublishTrimmed=True
-                       -o release
+      run: >-
+        dotnet publish src/PwSafeClient.CLI -c Release -r ${{ matrix.runtime }} --self-contained true -p:PackageVersion=$VERSION -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:PublishTrimmed=True -o release
       env:
         Runtime: 
     - name: Upload binaries to release

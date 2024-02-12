@@ -1,5 +1,10 @@
-# Use Select-Object and -match to extract version pattern
-$version = $args[0] -match '(^[^-]+-)?v([0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?)$' | Select-Object -ExpandProperty Matches | Select-Object -ExpandProperty Groups | Where-Object Name -eq '2'
+$regex = '(^[^-]+-)?v([0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?)$'
+$matchResult = [regex]::Match($args[0], $regex)
 
-# Output the extracted version
-Write-Host $version
+if ($matchResult.Success) {
+  $match = $matchResult  | Select-Object -ExpandProperty Groups | Where-Object Name -eq '2'
+  $version = $match.Value
+  Write-Output $version
+} else {
+    Write-Error "Not match"
+}
