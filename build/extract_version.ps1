@@ -6,5 +6,5 @@ if ($matchResult.Success) {
   $version = $match.Value
   Write-Output $version
 } else {
-    Write-Error "Not match"
+  Write-Error "Not match"
 }
