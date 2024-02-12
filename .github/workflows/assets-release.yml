@@ -29,15 +29,15 @@ jobs:
     - uses: actions/checkout@v3
     
     - name: Extract Version
-      if: ${{ runner.os == 'windows' }} && ${{ github.ref_type == 'tag' }}
       working-directory: .
+      if: ${{ runner.os == 'Windows' }}
       run: |
         $version = .\build\extract_version.ps1 "${GITHUB_REF#refs/tags/}"
-        echo "VERSION=$version" >> $Env:GITHUB_ENV
+        echo "VERSION=$version" >> $env:GITHUB_ENV
     
     - name: Extract Version
-      if: ${{ runner.os != 'windows' }} && ${{ github.ref_type == 'tag' }}
       working-directory: .
+      if: ${{ runner.os == 'Linux' || runner.os == 'macOS' }} 
       run: |
         version=$(./build/extract_version.sh "${GITHUB_REF#refs/tags/}")
         echo "VERSION=$version" >> $GITHUB_ENV
