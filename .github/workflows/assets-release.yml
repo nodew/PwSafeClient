@@ -32,7 +32,8 @@ jobs:
       working-directory: .
       if: ${{ runner.os == 'Windows' }}
       run: |
-        $version = .\build\extract_version.ps1 "${GITHUB_REF#refs/tags/}"
+        $tag = $env:GITHUB_REF -replace '^refs/tags/'
+        $version = .\build\extract_version.ps1 $tag
         echo "VERSION=$version" >> $env:GITHUB_ENV
     
     - name: Extract Version
