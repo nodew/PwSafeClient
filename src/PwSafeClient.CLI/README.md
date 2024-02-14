@@ -1,5 +1,15 @@
 # The best Password Safe CLI tool
 
+## Installation
+
+Install as dotnet tool
+
+```bash
+dotnet tool install --global PasswordSafe.Cli
+```
+
+Or download the latest release from [GitHub Release](https://github.com/nodew/PwSafeClient/releases).
+
 ## Configuration
 
 ```json
