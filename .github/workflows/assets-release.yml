@@ -19,7 +19,7 @@ jobs:
           - os: windows-latest
             runtime: win-x64
             artifact_name: pwsafe.exe
-            asset_name: pwsafe-windows-amd64
+            asset_name: pwsafe-windows-amd64.exe
           - os: macos-latest
             runtime: osx-x64
             artifact_name: pwsafe
