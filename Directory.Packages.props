@@ -3,8 +3,12 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Microsoft.Maui.Controls" Version="8.0.70" />
-    <PackageVersion Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.70" />
+    <PackageVersion Include="AathifMahir.Maui.MauiIcons.FontAwesome" Version="3.0.0" />
+    <PackageVersion Include="AathifMahir.Maui.MauiIcons.Material" Version="3.0.0" />
+    <PackageVersion Include="CommunityToolkit.Maui" Version="9.0.2" />
+    <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+    <PackageVersion Include="Microsoft.Maui.Controls" Version="8.0.71" />
+    <PackageVersion Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.71" />
     <PackageVersion Include="Medo.PasswordSafe" Version="6.2.1" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
     <PackageVersion Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />

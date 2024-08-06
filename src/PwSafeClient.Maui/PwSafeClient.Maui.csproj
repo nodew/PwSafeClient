@@ -57,9 +57,27 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="AathifMahir.Maui.MauiIcons.FontAwesome" />
+		<PackageReference Include="AathifMahir.Maui.MauiIcons.Material" />
+		<PackageReference Include="CommunityToolkit.Maui" />
+		<PackageReference Include="CommunityToolkit.Mvvm" />
+		<PackageReference Include="Medo.PasswordSafe" />
 		<PackageReference Include="Microsoft.Maui.Controls" VersionOverride="$(MauiVersion)" />
-		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" VersionOverride="$(MauiVersion)"  />
+		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" VersionOverride="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Services\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiXaml Update="Views\AboutPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\SettingsPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	</ItemGroup>
 
 </Project>
