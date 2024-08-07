@@ -5,17 +5,31 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:views="clr-namespace:PwSafeClient.Maui.Views"
     xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+    xmlns:vm="clr-namespace:PwSafeClient.Maui.ViewModels"
     Shell.FlyoutBehavior="Flyout"
     Title="PasswordSafe">
 
-    <FlyoutItem Title="File">
+    <Shell.BindingContext>
+        <vm:AppShellViewModel />
+    </Shell.BindingContext>
+
+    <FlyoutItem Title="Files" IsVisible="{Binding HideManagerView}">
         <FlyoutItem.Icon>
             <FontImageSource Glyph="{mi:Material Icon=Password, IconColor={StaticResource Primary}}" />
         </FlyoutItem.Icon>
         <ShellContent
-            Title="File"
+            Title="Recent files"
             ContentTemplate="{DataTemplate views:MainPage}"
             Route="MainPage" />
+    </FlyoutItem>
+    <FlyoutItem Title="Records" IsVisible="{Binding ShowManagerView}" IsEnabled="{Binding IsDatabaseOpen}">
+        <FlyoutItem.Icon>
+            <FontImageSource Glyph="{mi:Material Icon=Password, IconColor={StaticResource Primary}}" />
+        </FlyoutItem.Icon>
+        <ShellContent
+            Title="Records"
+            ContentTemplate="{DataTemplate views:PasswordListPage}"
+            Route="PasswordListPage" />
     </FlyoutItem>
     <FlyoutItem Title="Preferences">
         <FlyoutItem.Icon>
@@ -31,7 +45,7 @@
             <FontImageSource Glyph="{mi:Material Icon=Info, IconColor={StaticResource Primary}}" />
         </FlyoutItem.Icon>
         <ShellContent
-            Title="About"
+            Title="About - PasswordSafe"
             ContentTemplate="{DataTemplate views:AboutPage}"
             Route="AboutPage" />
     </FlyoutItem>

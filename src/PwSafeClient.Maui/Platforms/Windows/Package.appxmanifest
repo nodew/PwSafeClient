@@ -36,6 +36,16 @@
         <uap:DefaultTile Square71x71Logo="$placeholder$.png" Wide310x150Logo="$placeholder$.png" Square310x310Logo="$placeholder$.png" />
         <uap:SplashScreen Image="$placeholder$.png" />
       </uap:VisualElements>
+      <Extensions>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="psafe3file">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.psafe3</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>PasswordSafe Database File</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+      </Extensions>
     </Application>
   </Applications>
 

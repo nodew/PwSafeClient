@@ -29,8 +29,12 @@ namespace PwSafeClient.Maui
             builder.Logging.AddDebug();
 #endif
 
-            builder.Services.AddScoped<MainPageViewModel>();
+            #region ViewModels
+            builder.Services.AddSingleton<AppShellViewModel>();
+            builder.Services.AddSingleton<MainPageViewModel>();
+
             builder.Services.AddScoped<SettingsPageViewModel>();
+            #endregion
 
             return builder.Build();
         }
