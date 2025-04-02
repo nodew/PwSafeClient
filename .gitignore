@@ -1,0 +1,8 @@
+obj
+objd
+bin
+nupkg
+.vs
+.vscode
+.idea
+launchSettings.json

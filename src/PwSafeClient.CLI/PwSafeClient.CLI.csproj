@@ -1,0 +1,50 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>pwsafe</AssemblyName>
+    <Nullable>enable</Nullable>
+    <RootNamespace>PwSafeClient.Cli</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IsPackable>true</IsPackable>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>pwsafe</ToolCommandName>
+    <PackageOutputPath>./nupkg</PackageOutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>PasswordSafe.Cli</PackageId>
+    <Authors>Qiao Wang</Authors>
+    <Description>Command-line interface for Password Safe.</Description>
+    <Copyright>Copyright 2024 Qiao Wang &lt;wangqiao11@hotmail.com&gt;</Copyright>
+    <Company>www.wangqiao.me</Company>
+    <PackageTags>cipher,PasswordSafe,pwsafe</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <PackageIcon>Icon.png</PackageIcon>
+    <PackageIconFullPath>$(MSBuildThisFileDirectory)Resources\Icon.png</PackageIconFullPath>
+    <RepositoryUrl>https://github.com/nodew/PwSafeClient</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Medo.PasswordSafe" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Spectre.Console" />
+    <PackageReference Include="Spectre.Console.Cli" />
+    <PackageReference Include="System.Text.Json" />
+    <PackageReference Include="TextCopy" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PwSafeClient.Shared\PwSafeClient.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="./Resources/Icon.png" Pack="true" PackagePath="" />
+    <None Include="./README.md" Pack="true" PackagePath="" />
+    <None Include="./LICENSE.md" Pack="true" PackagePath="" />
+  </ItemGroup>
+</Project>
