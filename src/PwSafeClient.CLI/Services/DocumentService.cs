@@ -111,7 +111,7 @@ internal class DocumentService : IDocumentService
         return alias ?? config.DefaultDatabase ?? string.Empty;
     }
 
-    private async Task<string> GetDocumentFilePathAsync(string? alias, string? filepath)
+    public async Task<string> GetDocumentFilePathAsync(string? alias, string? filepath)
     {
         if (filepath != null)
         {

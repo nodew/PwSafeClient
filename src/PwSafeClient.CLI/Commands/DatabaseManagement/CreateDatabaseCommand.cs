@@ -30,7 +30,7 @@ internal class CreateDatabaseCommand : AsyncCommand<CreateDatabaseCommand.Settin
         public bool IsDefault { get; init; }
 
         [Description("Force to create the database file if it already exists")]
-        [CommandOption("-f|--force")]
+        [CommandOption("--force")]
         public bool ForceCreate { get; init; }
     }
 

@@ -20,7 +20,7 @@ internal class AddDatabaseCommand : AsyncCommand<AddDatabaseCommand.Settings>
         public required string Alias { get; init; }
 
         [Description("Path to the database file")]
-        [CommandOption("-p|--path <PATH>")]
+        [CommandOption("-f|--file <PATH>")]
         public required string DatabasePath { get; init; }
 
         [Description("Set the database as default")]
@@ -28,7 +28,7 @@ internal class AddDatabaseCommand : AsyncCommand<AddDatabaseCommand.Settings>
         public bool IsDefault { get; init; }
 
         [Description("Force to update the alias if it already exists")]
-        [CommandOption("-f|--force")]
+        [CommandOption("--force")]
         public bool ForceUpdate { get; init; }
 
         public override ValidationResult Validate()

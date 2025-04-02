@@ -87,11 +87,6 @@ internal class ConfigManager : IConfigManager
 
     public Task SaveConfigurationAsync(Configuration configuration)
     {
-        if (!IsConfigurationExists())
-        {
-            throw new FailedToSaveConfigurationException($"\"{configFileAbsolutePath}\" doesn't exist.");
-        }
-
         try
         {
             var json = JsonSerializer.Serialize(configuration, options);
