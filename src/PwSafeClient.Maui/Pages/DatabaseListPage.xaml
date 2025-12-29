@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="PwSafeClient.Maui.Pages.DatabaseListPage"
+    x:Name="Page"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="Databases"
+    BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Import" Command="{Binding ImportDatabaseCommand}" />
+        <ToolbarItem Text="Settings" Clicked="OnSettingsClicked" />
+    </ContentPage.ToolbarItems>
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto" Padding="24" RowSpacing="16">
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" ColumnSpacing="12">
+            <Label Text="Databases" FontSize="24" VerticalOptions="Center" />
+
+            <ActivityIndicator
+                Grid.Column="1"
+                IsRunning="{Binding IsBusy}"
+                IsVisible="{Binding IsBusy}"
+                VerticalOptions="Center" />
+        </Grid>
+
+        <Border Grid.Row="1" Padding="12" Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}" Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="12" />
+            </Border.StrokeShape>
+            <Entry
+                Placeholder="Search"
+                Text="{Binding SearchText}"
+                BackgroundColor="Transparent" />
+        </Border>
+
+        <CollectionView
+            Grid.Row="2"
+            ItemsSource="{Binding Databases}"
+            SelectionMode="None">
+            <CollectionView.EmptyView>
+                <Label Text="No databases" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" HorizontalOptions="Center" VerticalOptions="Center" />
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border Padding="14" Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}" Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}" Margin="0,0,0,12">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="14" />
+                        </Border.StrokeShape>
+                        <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto" ColumnSpacing="12" RowSpacing="4">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding Source={x:Reference Page}, Path=BindingContext.OpenDatabaseCommand}"
+                                    CommandParameter="{Binding .}" />
+                            </Grid.GestureRecognizers>
+
+                            <Label Text="{Binding Alias}" FontSize="16" />
+
+                            <Border
+                                Grid.Column="1"
+                                Padding="8,4"
+                                Background="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray900}}"
+                                Stroke="Transparent"
+                                IsVisible="{Binding IsDefault}">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="10" />
+                                </Border.StrokeShape>
+                                <Label Text="Default" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
+                            </Border>
+
+                            <Label Grid.Row="1" Text="{Binding LastUpdatedText}" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" />
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Label Grid.Row="3" Text="{Binding ErrorMessage}" TextColor="Red" FontSize="12" />
+
+        <Button
+            Grid.RowSpan="4"
+            Text="+"
+            Command="{Binding CreateDatabaseCommand}"
+            BackgroundColor="{StaticResource Primary}"
+            FontSize="28"
+            CornerRadius="28"
+            HeightRequest="56"
+            WidthRequest="56"
+            Padding="0"
+            HorizontalOptions="End"
+            VerticalOptions="End" />
+    </Grid>
+</ContentPage>

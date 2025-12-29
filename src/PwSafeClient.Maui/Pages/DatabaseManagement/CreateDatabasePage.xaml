@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="PwSafeClient.Maui.Pages.DatabaseManagement.CreateDatabasePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="New Database"
+    BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Cancel" Command="{Binding CancelCommand}" IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}" />
+    </ContentPage.ToolbarItems>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="14">
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                <Label Text="New Database" FontSize="18" VerticalOptions="Center" />
+                <ActivityIndicator
+                    Grid.Column="1"
+                    IsRunning="{Binding IsBusy}"
+                    IsVisible="{Binding IsBusy}"
+                    VerticalOptions="Center" />
+            </Grid>
+
+            <VerticalStackLayout Spacing="6" HorizontalOptions="Center">
+                <Label Text="🔒" FontSize="42" HorizontalOptions="Center" />
+                <Label Text="Secure Setup" FontSize="22" HorizontalOptions="Center" />
+                <Label
+                    Text="Create a new encrypted database to store your passwords securely."
+                    FontSize="12"
+                    TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}"
+                    HorizontalTextAlignment="Center" />
+            </VerticalStackLayout>
+
+            <Label Text="Database Name" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" />
+            <Border Padding="12" Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}" Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <Entry
+                    Placeholder="e.g. Personal, Work"
+                    Text="{Binding DatabaseName}"
+                    BackgroundColor="Transparent" />
+            </Border>
+
+            <Label Text="Master Password" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" />
+            <Border Padding="12" Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}" Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <Entry
+                    Placeholder="Create a strong password"
+                    Text="{Binding MasterPassword}"
+                    IsPassword="True"
+                    BackgroundColor="Transparent" />
+            </Border>
+
+            <Label Text="Confirm Password" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" />
+            <Border Padding="12" Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}" Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <Entry
+                    Placeholder="Re-enter password"
+                    Text="{Binding ConfirmPassword}"
+                    IsPassword="True"
+                    BackgroundColor="Transparent" />
+            </Border>
+
+            <Border Padding="12" Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}" Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <Label
+                    Text="Important: If you forget your master password, your data cannot be recovered."
+                    FontSize="12"
+                    TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" />
+            </Border>
+
+            <Label
+                Text="{Binding ErrorMessage}"
+                IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotNullOrWhiteSpaceConverter}}"
+                TextColor="Red"
+                FontSize="12" />
+
+            <Button
+                Text="Create Database"
+                Command="{Binding CreateCommand}"
+                IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}"
+                BackgroundColor="{StaticResource Primary}"
+                CornerRadius="12"
+                HeightRequest="48" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

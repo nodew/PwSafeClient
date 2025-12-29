@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="PwSafeClient.Maui.Pages.VaultPage"
+    x:Name="Page"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}"
+    Shell.NavBarIsVisible="False">
+
+    <Grid Padding="24" RowDefinitions="Auto,Auto,*" RowSpacing="14">
+        <!-- Top bar -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="12">
+            <Button
+                Text="‹"
+                Command="{Binding BackCommand}"
+                BackgroundColor="Transparent"
+                Padding="0"
+                FontSize="22"
+                VerticalOptions="Center" />
+
+            <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                <Label Text="{Binding Breadcrumb}" FontSize="18" LineBreakMode="TailTruncation" />
+                <Label
+                    Text="{Binding DatabaseName}"
+                    FontSize="12"
+                    TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}"
+                    LineBreakMode="TailTruncation"
+                    IsVisible="{Binding DatabaseName, Converter={StaticResource StringNotNullOrWhiteSpaceConverter}}" />
+            </VerticalStackLayout>
+
+            <ActivityIndicator
+                Grid.Column="2"
+                IsRunning="{Binding IsBusy}"
+                IsVisible="{Binding IsBusy}"
+                VerticalOptions="Center" />
+
+            <Button
+                Grid.Column="3"
+                Text="⚙"
+                Command="{Binding OpenSettingsCommand}"
+                BackgroundColor="Transparent"
+                Padding="0"
+                FontSize="18"
+                VerticalOptions="Center" />
+        </Grid>
+
+        <!-- Search -->
+        <Border Grid.Row="1" Padding="6" Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}" StrokeThickness="0">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="14" />
+            </Border.StrokeShape>
+            <SearchBar
+                Placeholder="Search"
+                Text="{Binding SearchText}"
+                BackgroundColor="Transparent" />
+        </Border>
+
+        <!-- List -->
+        <CollectionView Grid.Row="2" ItemsSource="{Binding Items}" SelectionMode="None">
+            <CollectionView.EmptyView>
+                <Label Text="No items" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" HorizontalOptions="Center" VerticalOptions="Center" />
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border Padding="14" Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}" StrokeThickness="0" Margin="0,0,0,12">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="14" />
+                        </Border.StrokeShape>
+                        <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto" ColumnSpacing="12" RowSpacing="4">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding Source={x:Reference Page}, Path=BindingContext.OpenItemCommand}"
+                                    CommandParameter="{Binding .}" />
+                            </Grid.GestureRecognizers>
+
+                            <Label Text="{Binding Title}" FontSize="16" LineBreakMode="TailTruncation" />
+                            <Label
+                                Grid.Row="1"
+                                Text="{Binding Subtitle}"
+                                FontSize="12"
+                                TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}"
+                                LineBreakMode="TailTruncation"
+                                IsVisible="{Binding Subtitle, Converter={StaticResource StringNotNullOrWhiteSpaceConverter}}" />
+
+                            <Label
+                                Grid.Column="1"
+                                Grid.RowSpan="2"
+                                Text=">"
+                                TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}"
+                                VerticalOptions="Center" />
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Floating action button -->
+        <Button
+            Grid.Row="2"
+            Text="+"
+            Command="{Binding NewEntryCommand}"
+            WidthRequest="56"
+            HeightRequest="56"
+            CornerRadius="28"
+            Padding="0"
+            FontSize="24"
+            HorizontalOptions="End"
+            VerticalOptions="End" />
+    </Grid>
+</ContentPage>

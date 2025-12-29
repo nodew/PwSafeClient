@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="PwSafeClient.Maui.Pages.DatabaseManagement.BackupRestorePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="Backup &amp; Restore"
+    BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Close" Command="{Binding CloseCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="14">
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                <Label Text="Backup &amp; Restore" FontSize="18" VerticalOptions="Center" />
+                <ActivityIndicator
+                    Grid.Column="1"
+                    IsRunning="{Binding IsBusy}"
+                    IsVisible="{Binding IsBusy}"
+                    VerticalOptions="Center" />
+            </Grid>
+
+            <Border Padding="12" Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}" Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="14" />
+                </Border.StrokeShape>
+                <Label
+                    Text="Restore will overwrite your current database file. Make sure you have a backup."
+                    FontSize="12"
+                    TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" />
+            </Border>
+
+            <Label
+                Text="{Binding ErrorMessage}"
+                IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotNullOrWhiteSpaceConverter}}"
+                TextColor="Red"
+                FontSize="12" />
+
+            <Button
+                Text="Create Backup"
+                Command="{Binding CreateBackupCommand}"
+                IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}"
+                BackgroundColor="{StaticResource Primary}"
+                CornerRadius="12"
+                HeightRequest="48" />
+
+            <Button
+                Text="Restore from File"
+                Command="{Binding RestoreCommand}"
+                IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}"
+                BackgroundColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray900}}"
+                TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
+                CornerRadius="12"
+                HeightRequest="48" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

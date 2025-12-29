@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!--
+    Explicit MaterialComponents-based themes.
+    Some Android components inflate using Application.Context and will crash if the app theme
+    does not inherit from Theme.MaterialComponents (or descendant).
+  -->
+
+  <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <item name="colorPrimary">@color/colorPrimary</item>
+    <item name="colorPrimaryVariant">@color/colorPrimaryDark</item>
+    <item name="colorOnPrimary">@android:color/white</item>
+
+    <item name="colorSecondary">@color/colorAccent</item>
+    <item name="colorOnSecondary">@android:color/white</item>
+
+    <!-- Keep default typography/text appearances from MaterialComponents. -->
+  </style>
+
+  <style name="AppTheme.Splash" parent="AppTheme">
+    <!-- Splash screen (pre-Android 12 compatible) -->
+    <item name="android:windowBackground">@drawable/maui_splash</item>
+  </style>
+</resources>

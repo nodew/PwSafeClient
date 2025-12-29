@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="PwSafeClient.Maui.Pages.EntryDetailsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="Entry"
+    BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Edit" Command="{Binding EditCommand}" />
+        <ToolbarItem Text="Delete" Command="{Binding DeleteCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="14">
+            <Label Text="Entry" FontSize="24" />
+
+            <Label Text="Title" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" />
+            <Border Padding="12" Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}" Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <Label Text="{Binding Title}" />
+            </Border>
+
+            <Label Text="Username" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" />
+            <Border Padding="12" Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}" Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                    <Label Text="{Binding Username}" VerticalOptions="Center" />
+                    <Button
+                        Grid.Column="1"
+                        Text="Copy"
+                        Command="{Binding CopyUsernameCommand}"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray900}}"
+                        TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
+                        CornerRadius="10"
+                        HeightRequest="36"
+                        Padding="10,0" />
+                </Grid>
+            </Border>
+
+            <Label Text="Password" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" />
+            <Border Padding="12" Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}" Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
+                    <Label Text="{Binding PasswordDisplay}" VerticalOptions="Center" />
+                    <Button
+                        Grid.Column="1"
+                        Text="{Binding TogglePasswordButtonText}"
+                        Command="{Binding TogglePasswordCommand}"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray900}}"
+                        TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
+                        CornerRadius="10"
+                        HeightRequest="36"
+                        Padding="10,0" />
+                    <Button
+                        Grid.Column="2"
+                        Text="Copy"
+                        Command="{Binding CopyPasswordCommand}"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray900}}"
+                        TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
+                        CornerRadius="10"
+                        HeightRequest="36"
+                        Padding="10,0" />
+                </Grid>
+            </Border>
+
+            <Label Text="URL" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" />
+            <Border Padding="12" Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}" Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <Label Text="{Binding Url}" />
+            </Border>
+
+            <Label Text="Notes" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" />
+            <Border Padding="12" Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}" Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <Label Text="{Binding Notes}" />
+            </Border>
+
+            <Label
+                Text="{Binding ErrorMessage}"
+                IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotNullOrWhiteSpaceConverter}}"
+                TextColor="Red"
+                FontSize="12" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
