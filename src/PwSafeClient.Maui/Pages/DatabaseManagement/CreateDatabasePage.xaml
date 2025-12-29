@@ -13,7 +13,6 @@
     <ScrollView>
         <VerticalStackLayout Padding="24" Spacing="14">
             <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
-                <Label Text="New Database" FontSize="18" VerticalOptions="Center" />
                 <ActivityIndicator
                     Grid.Column="1"
                     IsRunning="{Binding IsBusy}"

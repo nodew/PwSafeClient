@@ -92,6 +92,40 @@ public sealed partial class UnlockViewModel : ObservableObject
         private set => SetProperty(ref _isBusy, value);
     }
 
+    private bool _isPasswordHidden = true;
+    public bool IsPasswordHidden
+    {
+        get => _isPasswordHidden;
+        set
+        {
+            if (SetProperty(ref _isPasswordHidden, value))
+            {
+                OnPropertyChanged(nameof(PasswordIcon));
+            }
+        }
+    }
+
+    private bool _isReadOnly;
+    public bool IsReadOnly
+    {
+        get => _isReadOnly;
+        set => SetProperty(ref _isReadOnly, value);
+    }
+
+    public string PasswordIcon => IsPasswordHidden ? "\ue907" : "\ue908";
+
+    [RelayCommand]
+    private void TogglePasswordVisibility()
+    {
+        IsPasswordHidden = !IsPasswordHidden;
+    }
+
+    [RelayCommand]
+    private async Task ForgotPasswordAsync()
+    {
+        await Shell.Current.DisplayAlertAsync("Forgot Password", "If you forgot your master password, your data is lost forever. We do not store a copy.", "OK");
+    }
+
     public void SetFilePath(string? filePath)
     {
         Alias = null;
@@ -190,7 +224,7 @@ public sealed partial class UnlockViewModel : ObservableObject
 
         try
         {
-            var result = await _vaultSession.LoadAsync(FilePath, Password, readOnly: false);
+            var result = await _vaultSession.LoadAsync(FilePath, Password, readOnly: IsReadOnly);
 
             if (!result.IsSuccess)
             {
@@ -264,7 +298,9 @@ public sealed partial class UnlockViewModel : ObservableObject
                 return;
             }
 
-            var result = await _vaultSession.LoadAsync(filePath, secret, readOnly: false);
+            Password = secret;
+
+            var result = await _vaultSession.LoadAsync(filePath, secret, readOnly: IsReadOnly);
             if (!result.IsSuccess)
             {
                 ErrorMessage = result.ErrorMessage;
