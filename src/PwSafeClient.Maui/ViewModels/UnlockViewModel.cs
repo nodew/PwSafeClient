@@ -1,7 +1,3 @@
-using System;
-using System.IO;
-using System.Threading.Tasks;
-
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -359,6 +355,28 @@ public sealed partial class UnlockViewModel : ObservableObject
     [RelayCommand]
     private Task SwitchDatabaseAsync()
     {
-        return Shell.Current.GoToAsync($"//{Routes.DatabaseList}");
+        return Shell.Current.GoToAsync(Routes.DatabaseList);
+    }
+
+    public async Task InitializeDefaultAsync()
+    {
+        try
+        {
+            var config = await _configStore.LoadAsync();
+            var alias = config.DefaultDatabase;
+
+            if (!string.IsNullOrWhiteSpace(alias))
+            {
+                await SetAliasAsync(alias);
+            }
+            else
+            {
+                await Shell.Current.GoToAsync(Routes.DatabaseList);
+            }
+        }
+        catch
+        {
+            await Shell.Current.GoToAsync(Routes.DatabaseList);
+        }
     }
 }

@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -40,6 +35,13 @@ public sealed partial class VaultViewModel : ObservableObject
         private set => SetProperty(ref _isUnlocked, value);
     }
 
+    private bool _isReadOnly;
+    public bool IsReadOnly
+    {
+        get => _isReadOnly;
+        private set => SetProperty(ref _isReadOnly, value);
+    }
+
     public ObservableCollection<VaultListItem> Items { get; } = new();
 
     private string? _searchText;
@@ -62,19 +64,13 @@ public sealed partial class VaultViewModel : ObservableObject
         private set => SetProperty(ref _breadcrumb, value);
     }
 
-    private bool _canGoUp;
-    public bool CanGoUp
-    {
-        get => _canGoUp;
-        private set => SetProperty(ref _canGoUp, value);
-    }
-
     public void Refresh()
     {
         IsUnlocked = _vaultSession.IsUnlocked;
+        IsReadOnly = _vaultSession.IsReadOnly;
         DatabaseName = string.IsNullOrWhiteSpace(_vaultSession.CurrentFilePath)
             ? null
-            : Path.GetFileName(_vaultSession.CurrentFilePath);
+            : Path.GetFileNameWithoutExtension(_vaultSession.CurrentFilePath);
 
         if (!IsUnlocked)
         {
@@ -82,7 +78,6 @@ public sealed partial class VaultViewModel : ObservableObject
             SearchText = null;
             Items.Clear();
             Breadcrumb = string.Empty;
-            CanGoUp = false;
             return;
         }
 
@@ -90,14 +85,10 @@ public sealed partial class VaultViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private Task BackAsync()
+    private async Task CloseDatabaseAsync()
     {
-        if (CanGoUp)
-        {
-            return GoUpAsync();
-        }
-
-        return Shell.Current.GoToAsync($"//{Routes.DatabaseList}");
+        _vaultSession.Unload();
+        await Shell.Current.GoToAsync($"//{Routes.Unlock}");
     }
 
     [RelayCommand]
@@ -114,15 +105,13 @@ public sealed partial class VaultViewModel : ObservableObject
         if (!_vaultSession.IsUnlocked)
         {
             Breadcrumb = string.Empty;
-            CanGoUp = false;
             return Task.CompletedTask;
         }
 
         _entriesSnapshot = _vaultSession.GetEntriesSnapshot();
 
         var prefixLen = _groupSegments.Count;
-        Breadcrumb = prefixLen == 0 ? "Personal Vault" : string.Join('.', _groupSegments);
-        CanGoUp = prefixLen > 0;
+        Breadcrumb = prefixLen == 0 ? "Vault" : string.Join('.', _groupSegments);
 
         var search = (SearchText ?? string.Empty).Trim();
         var hasSearch = !string.IsNullOrWhiteSpace(search);
@@ -178,12 +167,15 @@ public sealed partial class VaultViewModel : ObservableObject
 
             foreach (var group in childGroups)
             {
+                var groupPrefix = new List<string>(_groupSegments) { group };
+                var count = _entriesSnapshot.Count(e => StartsWith(SplitGroup(e.GroupPath), groupPrefix));
+
                 Items.Add(new VaultListItem
                 {
                     Kind = VaultListItemKind.Group,
                     GroupSegment = group,
                     Title = group,
-                    Subtitle = null
+                    Subtitle = $"{count} items"
                 });
             }
         }
@@ -224,23 +216,26 @@ public sealed partial class VaultViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private Task GoUpAsync()
+    private async Task NewEntryAsync()
     {
-        if (_groupSegments.Count > 0)
+        if (IsReadOnly)
         {
-            _groupSegments.RemoveAt(_groupSegments.Count - 1);
-            LoadCommand.Execute(null);
+            return;
         }
 
-        return Task.CompletedTask;
-    }
+        var action = await Shell.Current.DisplayActionSheetAsync("Create New", "Cancel", null, "Group", "Password Entry");
 
-    [RelayCommand]
-    private Task NewEntryAsync()
-    {
-        var group = _groupSegments.Count == 0 ? string.Empty : string.Join('.', _groupSegments);
-        var encoded = Uri.EscapeDataString(group);
-        return Shell.Current.GoToAsync($"{Routes.EntryEdit}?group={encoded}");
+        if (action == "Password Entry")
+        {
+            var group = _groupSegments.Count == 0 ? string.Empty : string.Join('.', _groupSegments);
+            var encoded = Uri.EscapeDataString(group);
+            await Shell.Current.GoToAsync($"{Routes.EntryEdit}?group={encoded}");
+        }
+        else if (action == "Group")
+        {
+            // TODO: Implement group creation
+            await Shell.Current.DisplayAlertAsync("Not Implemented", "Group creation is not yet implemented.", "OK");
+        }
     }
 
     private static string[] SplitGroup(string? groupPath)

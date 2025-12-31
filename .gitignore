@@ -6,3 +6,4 @@ nupkg
 .vscode
 .idea
 launchSettings.json
+*.user

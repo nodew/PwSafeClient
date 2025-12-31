@@ -1,5 +1,3 @@
-using System.Threading.Tasks;
-
 using PwSafeClient.AppCore.Security.Biometrics;
 
 namespace PwSafeClient.Maui.Services.Security;

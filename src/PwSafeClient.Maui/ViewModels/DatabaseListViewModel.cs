@@ -1,11 +1,9 @@
-using System;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Threading.Tasks;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using PwSafeClient.AppCore.Configuration;
 using PwSafeClient.AppCore.Databases;
 using PwSafeClient.Maui.Services;
 
@@ -15,11 +13,16 @@ public sealed partial class DatabaseListViewModel : ObservableObject
 {
     private readonly IDatabaseRegistry _databaseRegistry;
     private readonly IFilePickerService _filePicker;
+    private readonly IAppConfigurationStore _configStore;
 
-    public DatabaseListViewModel(IDatabaseRegistry databaseRegistry, IFilePickerService filePicker)
+    public DatabaseListViewModel(
+        IDatabaseRegistry databaseRegistry,
+        IFilePickerService filePicker,
+        IAppConfigurationStore configStore)
     {
         _databaseRegistry = databaseRegistry;
         _filePicker = filePicker;
+        _configStore = configStore;
     }
 
     public ObservableCollection<DatabaseRegistration> Databases { get; } = new();
@@ -77,15 +80,29 @@ public sealed partial class DatabaseListViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private Task OpenDatabaseAsync(DatabaseRegistration? database)
+    private async Task OpenDatabaseAsync(DatabaseRegistration? database)
     {
         if (database == null)
         {
-            return Task.CompletedTask;
+            return;
+        }
+
+        try
+        {
+            var config = await _configStore.LoadAsync();
+            if (config.DefaultDatabase != database.Alias)
+            {
+                config.DefaultDatabase = database.Alias;
+                await _configStore.SaveAsync(config);
+            }
+        }
+        catch
+        {
+            // Ignore configuration save errors
         }
 
         var alias = Uri.EscapeDataString(database.Alias);
-        return Shell.Current.GoToAsync($"{Routes.Unlock}?alias={alias}");
+        await Shell.Current.GoToAsync($"//{Routes.Unlock}?alias={alias}");
     }
 
     [RelayCommand]

@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 using PwSafeClient.Maui.Services;
 using PwSafeClient.Maui.ViewModels;
 
@@ -28,12 +26,25 @@ public partial class UnlockPage : ContentPage, IQueryAttributable
 
         query.TryGetValue("filePath", out var filePathObj);
         var filePath = filePathObj as string;
-        _viewModel.SetFilePath(filePath);
+
+        if (!string.IsNullOrWhiteSpace(filePath))
+        {
+            _viewModel.SetFilePath(filePath);
+        }
+        else
+        {
+            MainThread.BeginInvokeOnMainThread(async () => await _viewModel.InitializeDefaultAsync());
+        }
     }
 
     protected override void OnAppearing()
     {
         base.OnAppearing();
         _autoLock.NotifyActivity();
+
+        if (string.IsNullOrWhiteSpace(_viewModel.FilePath) && string.IsNullOrWhiteSpace(_viewModel.Alias))
+        {
+            MainThread.BeginInvokeOnMainThread(async () => await _viewModel.InitializeDefaultAsync());
+        }
     }
 }

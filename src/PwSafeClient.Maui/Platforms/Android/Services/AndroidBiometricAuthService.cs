@@ -1,7 +1,4 @@
 #if ANDROID
-using System;
-using System.Threading.Tasks;
-
 using AndroidX.Biometric;
 using AndroidX.Core.Content;
 using AndroidX.Fragment.App;

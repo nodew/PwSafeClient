@@ -1,7 +1,3 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-
 using PwSafeClient.AppCore.Configuration;
 using PwSafeClient.AppCore.Vault;
 

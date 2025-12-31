@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 using PwSafeClient.Maui.Services;
 using PwSafeClient.Maui.ViewModels;
 
@@ -16,6 +14,53 @@ public partial class EntryDetailsPage : ContentPage, IQueryAttributable
         _viewModel = viewModel;
         _autoLock = autoLock;
         BindingContext = viewModel;
+
+        Shell.SetBackButtonBehavior(this, new BackButtonBehavior
+        {
+            Command = new Command(async () => await NavigateBackToVault())
+        });
+    }
+
+    protected override bool OnBackButtonPressed()
+    {
+        _ = NavigateBackToVault();
+        return true;
+    }
+
+    private async Task NavigateBackToVault()
+    {
+        var nav = Shell.Current.Navigation;
+        var stack = nav.NavigationStack;
+
+        var vaultPage = stack.FirstOrDefault(p => p is VaultPage);
+        if (vaultPage != null)
+        {
+            var vaultIndex = -1;
+            for (int i = 0; i < stack.Count; i++)
+            {
+                if (stack[i] == vaultPage)
+                {
+                    vaultIndex = i;
+                    break;
+                }
+            }
+
+            if (vaultIndex != -1)
+            {
+                var pagesToRemove = new List<Page>();
+                for (int i = vaultIndex + 1; i < stack.Count - 1; i++)
+                {
+                    pagesToRemove.Add(stack[i]);
+                }
+
+                foreach (var page in pagesToRemove)
+                {
+                    nav.RemovePage(page);
+                }
+            }
+        }
+
+        await Shell.Current.GoToAsync("..");
     }
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)

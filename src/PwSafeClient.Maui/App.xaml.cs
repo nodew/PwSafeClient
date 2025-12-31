@@ -1,9 +1,8 @@
-﻿namespace PwSafeClient.Maui;
+namespace PwSafeClient.Maui;
 
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using System.Web;
 
 using PwSafeClient.AppCore.Configuration;
 using PwSafeClient.AppCore.Databases;

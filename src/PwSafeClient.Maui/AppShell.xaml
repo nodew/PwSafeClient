@@ -7,8 +7,8 @@
     Title="PwSafeClient">
 
     <ShellContent
-        Title="Databases"
-        ContentTemplate="{DataTemplate pages:DatabaseListPage}"
-        Route="database-list" />
+        Title=""
+        ContentTemplate="{DataTemplate pages:UnlockPage}"
+        Route="unlock" />
 
 </Shell>

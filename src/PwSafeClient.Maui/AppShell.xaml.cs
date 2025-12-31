@@ -9,7 +9,7 @@ public partial class AppShell : Shell
 	{
 		InitializeComponent();
 
-		Routing.RegisterRoute(Routes.Unlock, typeof(UnlockPage));
+        Routing.RegisterRoute(Routes.DatabaseList, typeof(DatabaseListPage));
 		Routing.RegisterRoute(Routes.CreateDatabase, typeof(CreateDatabasePage));
 		Routing.RegisterRoute(Routes.ChangeMasterPassword, typeof(ChangeMasterPasswordPage));
 		Routing.RegisterRoute(Routes.BackupRestore, typeof(BackupRestorePage));
