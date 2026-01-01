@@ -34,6 +34,16 @@ You can override the home directory (useful for automation/tests) by setting:
 - `--no-color`: Disable ANSI colors (useful for logs/CI).
 - `--debug`: Show full exception stack traces (default is a short error message).
 
+## Interactive mode
+
+Start an interactive session (prompts once for the database password, then you can run any existing subcommands):
+
+- `pwsafe interactive`
+- `pwsafe interactive -a vault`
+- `pwsafe interactive -f C:\path\to\vault.psafe3`
+
+The session exits automatically after `idleTime` minutes of no input (configured via `pwsafe config set --idle-time`).
+
 ## Non-interactive unlock
 
 Most commands that open a database support non-interactive password input:

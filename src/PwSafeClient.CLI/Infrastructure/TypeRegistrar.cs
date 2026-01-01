@@ -9,6 +9,8 @@ namespace PwSafeClient.Cli.Infrastructure;
 public sealed class TypeRegistrar : ITypeRegistrar
 {
     private readonly IServiceCollection _builder;
+    private IServiceProvider? _provider;
+    private readonly object _lock = new();
 
     public TypeRegistrar(IServiceCollection builder)
     {
@@ -17,7 +19,17 @@ public sealed class TypeRegistrar : ITypeRegistrar
 
     public ITypeResolver Build()
     {
-        return new TypeResolver(_builder.BuildServiceProvider());
+        if (_provider != null)
+        {
+            return new NonDisposingTypeResolver(_provider);
+        }
+
+        lock (_lock)
+        {
+            _provider ??= _builder.BuildServiceProvider();
+        }
+
+        return new NonDisposingTypeResolver(_provider);
     }
 
     public void Register(Type service, Type implementation)

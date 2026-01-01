@@ -192,6 +192,88 @@ public sealed class CliIntegrationTests
         StringAssert.Contains(result.Stdout, id3.ToString());
     }
 
+    [TestMethod]
+    public async Task Interactive_UsesIdleTimeAndExits()
+    {
+        using var temp = new TempDirectory();
+        var homeDir = Path.Combine(temp.Path, "home");
+        Directory.CreateDirectory(homeDir);
+
+        var dbPath = Path.Combine(temp.Path, "vault.psafe3");
+        var password = "CorrectHorseBatteryStaple!";
+        CreateEmptyDatabase(dbPath, password);
+
+        var env = new Dictionary<string, string?>
+        {
+            ["PWSAFE_HOME"] = homeDir,
+        };
+
+        Assert.AreEqual(0, (await RunCliAsync(env, "config", "init", "--no-color")).ExitCode);
+        Assert.AreEqual(0, (await RunCliAsync(env, "config", "set", "--idle-time", "0", "--no-color")).ExitCode);
+        Assert.AreEqual(0, (await RunCliAsync(env, "db", "add", "-a", "vault", "-f", dbPath, "-d", "--force", "--no-color")).ExitCode);
+
+        var result = await RunCliAsync(env, stdin: password + "\n", "interactive", "-a", "vault", "--no-color");
+
+        Assert.AreEqual(0, result.ExitCode, result.ToDebugString());
+        StringAssert.Contains(result.Stdout, "Idle timeout reached", result.ToDebugString());
+    }
+
+    [TestMethod]
+    public async Task Interactive_CanRunCommandsWithUnlockedPassword()
+    {
+        using var temp = new TempDirectory();
+        var homeDir = Path.Combine(temp.Path, "home");
+        Directory.CreateDirectory(homeDir);
+
+        var dbPath = Path.Combine(temp.Path, "vault.psafe3");
+        var password = "CorrectHorseBatteryStaple!";
+
+        var (id1, _, _) = CreateDatabaseWithMultipleEntries(dbPath, password);
+
+        var env = new Dictionary<string, string?>
+        {
+            ["PWSAFE_HOME"] = homeDir,
+        };
+
+        Assert.AreEqual(0, (await RunCliAsync(env, "config", "init", "--no-color")).ExitCode);
+        Assert.AreEqual(0, (await RunCliAsync(env, "config", "set", "--idle-time", "5", "--no-color")).ExitCode);
+        Assert.AreEqual(0, (await RunCliAsync(env, "db", "add", "-a", "vault", "-f", dbPath, "-d", "--force", "--no-color")).ExitCode);
+
+        var stdin = password + "\n" + "entry list --tree-view\n";
+        var result = await RunCliAsync(env, stdin: stdin, "interactive", "-a", "vault", "--no-color");
+
+        Assert.AreEqual(0, result.ExitCode, result.ToDebugString());
+        StringAssert.Contains(result.Stdout, "Entries", result.ToDebugString());
+        StringAssert.Contains(result.Stdout, id1.ToString(), result.ToDebugString());
+    }
+
+    [TestMethod]
+    public async Task Interactive_DbShow_DoesNotRepromptForCurrentDatabase()
+    {
+        using var temp = new TempDirectory();
+        var homeDir = Path.Combine(temp.Path, "home");
+        Directory.CreateDirectory(homeDir);
+
+        var dbPath = Path.Combine(temp.Path, "vault.psafe3");
+        var password = "CorrectHorseBatteryStaple!";
+        CreateEmptyDatabase(dbPath, password);
+
+        var env = new Dictionary<string, string?>
+        {
+            ["PWSAFE_HOME"] = homeDir,
+        };
+
+        Assert.AreEqual(0, (await RunCliAsync(env, "config", "init", "--no-color")).ExitCode);
+        Assert.AreEqual(0, (await RunCliAsync(env, "db", "add", "-a", "vault", "-f", dbPath, "-d", "--force", "--no-color")).ExitCode);
+
+        // Only one password line is provided; if db show prompts again, it would block or fail.
+        var stdin = password + "\n" + "db show --json --quiet\n";
+        var result = await RunCliAsync(env, stdin: stdin, "interactive", "-a", "vault", "--no-color");
+
+        Assert.AreEqual(0, result.ExitCode, result.ToDebugString());
+        StringAssert.Contains(result.Stdout, "\"uuid\"", result.ToDebugString());
+    }
+
     private static Guid CreateDatabaseWithSingleEntry(string dbPath, string password)
     {
         var doc = new Document(password);
@@ -267,7 +349,10 @@ public sealed class CliIntegrationTests
         doc.Save(dbPath);
     }
 
-    private static async Task<CliRunResult> RunCliAsync(IDictionary<string, string?> environment, params string[] args)
+    private static Task<CliRunResult> RunCliAsync(IDictionary<string, string?> environment, params string[] args)
+        => RunCliAsync(environment, stdin: null, args);
+
+    private static async Task<CliRunResult> RunCliAsync(IDictionary<string, string?> environment, string? stdin, params string[] args)
     {
         var solutionRoot = FindSolutionRoot();
         await EnsureCliBuiltAsync(solutionRoot);
@@ -284,6 +369,7 @@ public sealed class CliIntegrationTests
             WorkingDirectory = solutionRoot,
             RedirectStandardOutput = true,
             RedirectStandardError = true,
+            RedirectStandardInput = stdin != null,
             UseShellExecute = false,
             CreateNoWindow = true,
             StandardOutputEncoding = Encoding.UTF8,
@@ -303,6 +389,13 @@ public sealed class CliIntegrationTests
         }
 
         using var process = Process.Start(psi) ?? throw new InvalidOperationException("Failed to start dotnet process.");
+
+        if (stdin != null)
+        {
+            await process.StandardInput.WriteAsync(stdin);
+            await process.StandardInput.FlushAsync();
+            process.StandardInput.Close();
+        }
 
         var stdoutTask = process.StandardOutput.ReadToEndAsync();
         var stderrTask = process.StandardError.ReadToEndAsync();

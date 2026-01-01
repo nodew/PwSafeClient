@@ -17,12 +17,14 @@ internal class DocumentService : IDocumentService
 {
     private readonly IConfigManager configManager;
     private readonly IDatabaseManager databaseManager;
+    private readonly ICliSession session;
     private readonly Dictionary<string, Document> documentCache = new();
 
-    public DocumentService(IConfigManager configManager, IDatabaseManager databaseManager)
+    public DocumentService(IConfigManager configManager, IDatabaseManager databaseManager, ICliSession session)
     {
         this.configManager = configManager;
         this.databaseManager = databaseManager;
+        this.session = session;
     }
 
     public async Task<Document?> TryLoadDocumentAsync(string? alias, string? filepath, bool readOnly, PasswordOptions? passwordOptions = null)
@@ -67,8 +69,13 @@ internal class DocumentService : IDocumentService
         return null;
     }
 
-    private static async Task<string?> GetPasswordAsync(PasswordOptions? passwordOptions)
+    private async Task<string?> GetPasswordAsync(PasswordOptions? passwordOptions)
     {
+        if (!string.IsNullOrEmpty(passwordOptions?.Password))
+        {
+            return passwordOptions.Password;
+        }
+
         if (passwordOptions?.PasswordStdin == true)
         {
             var input = await Console.In.ReadToEndAsync();
@@ -93,6 +100,11 @@ internal class DocumentService : IDocumentService
             }
 
             return password;
+        }
+
+        if (!string.IsNullOrEmpty(session.UnlockedPassword))
+        {
+            return session.UnlockedPassword;
         }
 
         return AnsiConsole.Prompt(
@@ -159,9 +171,14 @@ internal class DocumentService : IDocumentService
             return filepath;
         }
 
+        if (!string.IsNullOrWhiteSpace(session.DefaultFilePath))
+        {
+            return session.DefaultFilePath;
+        }
+
         var config = await configManager.LoadConfigurationAsync();
 
-        var aliasToUse = alias ?? config.DefaultDatabase;
+        var aliasToUse = alias ?? session.DefaultAlias ?? config.DefaultDatabase;
 
         var database = config.Databases.FirstOrDefault(db => db.Key == aliasToUse);
 

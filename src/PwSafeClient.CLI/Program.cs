@@ -30,6 +30,9 @@ if (noColor)
 
 var registrations = new ServiceCollection();
 
+var session = new CliSession();
+registrations.AddSingleton<ICliSession>(session);
+
 registrations.AddSingleton<IEnvironmentManager, EnvironmentManager>();
 registrations.AddSingleton<IConfigManager, ConfigManager>();
 registrations.AddSingleton<IDatabaseManager, DatabaseManager>();
@@ -157,5 +160,61 @@ app.Configure(config =>
             .WithDescription("Generate a password using a policy");
     });
 });
+
+if (args.Length > 0 && string.Equals(args[0], "interactive", StringComparison.OrdinalIgnoreCase))
+{
+    var (alias, filePath, remainingArgs) = InteractiveMode.ParseInteractiveArgs(args.Skip(1).ToArray());
+    if (remainingArgs.Length > 0)
+    {
+        AnsiConsole.MarkupLine("[red]interactive mode does not accept extra arguments. Use -a/--alias or -f/--file only.[/]");
+        return ExitCodes.Error;
+    }
+
+    if (!string.IsNullOrWhiteSpace(alias) && !string.IsNullOrWhiteSpace(filePath))
+    {
+        AnsiConsole.MarkupLine("[red]Use only one of -a/--alias or -f/--file.[/]");
+        return ExitCodes.Error;
+    }
+
+    session.DefaultAlias = string.IsNullOrWhiteSpace(alias) ? null : alias;
+    session.DefaultFilePath = string.IsNullOrWhiteSpace(filePath) ? null : filePath;
+
+    session.UnlockedPassword = InteractiveMode.ReadPasswordFromConsoleOrStdin();
+    if (string.IsNullOrEmpty(session.UnlockedPassword))
+    {
+        AnsiConsole.MarkupLine("[red]No password provided.[/]");
+        return ExitCodes.Error;
+    }
+
+    var loadedConfig = await ConfigurationLoader.TryLoadAsync();
+    var idleTimeMinutes = loadedConfig?.IdleTime ?? 5;
+
+    string promptDisplayName = "pwsafe";
+    var resolver = registrar.Build();
+    try
+    {
+        var docService = resolver.Resolve(typeof(IDocumentService)) as IDocumentService;
+        if (docService != null)
+        {
+            promptDisplayName = await docService.GetDocumentDisplayNameAsync(session.DefaultAlias, session.DefaultFilePath);
+        }
+    }
+    finally
+    {
+        if (resolver is IDisposable disposable)
+        {
+            disposable.Dispose();
+        }
+    }
+
+    using var cts = new System.Threading.CancellationTokenSource();
+    Console.CancelKeyPress += (_, e) =>
+    {
+        e.Cancel = true;
+        cts.Cancel();
+    };
+
+    return await InteractiveMode.RunAsync(app, session, promptDisplayName, idleTimeMinutes, cts.Token);
+}
 
 return app.Run(args);

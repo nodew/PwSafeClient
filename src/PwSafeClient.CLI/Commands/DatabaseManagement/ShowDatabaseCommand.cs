@@ -1,12 +1,10 @@
 using System;
 using System.ComponentModel;
-using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-using Medo.Security.Cryptography.PasswordSafe;
-
 using PwSafeClient.Cli.Contracts.Services;
+using PwSafeClient.Cli.Models;
 
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -59,22 +57,24 @@ internal class ShowDatabaseCommand : AsyncCommand<ShowDatabaseCommand.Settings>
     }
 
     private readonly IConfigManager _configManager;
-    private readonly IDatabaseManager _dbManager;
+    private readonly IDocumentService _documentService;
+    private readonly ICliSession _session;
 
-    public ShowDatabaseCommand(IConfigManager configManager, IDatabaseManager databaseManager)
+    public ShowDatabaseCommand(IConfigManager configManager, IDocumentService documentService, ICliSession session)
     {
         _configManager = configManager;
-        _dbManager = databaseManager;
+        _documentService = documentService;
+        _session = session;
     }
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
-        var filepath = settings.FilePath;
-
         if (string.IsNullOrWhiteSpace(settings.Alias) && string.IsNullOrWhiteSpace(settings.FilePath))
         {
             var config = await _configManager.LoadConfigurationAsync();
-            if (string.IsNullOrWhiteSpace(config.DefaultDatabase))
+
+            var hasSessionDefault = !string.IsNullOrWhiteSpace(_session.DefaultAlias) || !string.IsNullOrWhiteSpace(_session.DefaultFilePath);
+            if (!hasSessionDefault && string.IsNullOrWhiteSpace(config.DefaultDatabase))
             {
                 if (settings.Json)
                 {
@@ -86,61 +86,30 @@ internal class ShowDatabaseCommand : AsyncCommand<ShowDatabaseCommand.Settings>
                 }
                 return 1;
             }
-
-            settings = new Settings
-            {
-                Alias = config.DefaultDatabase,
-                FilePath = null
-            };
         }
 
-        if (!string.IsNullOrWhiteSpace(settings.Alias))
+        var passwordOptions = new PasswordOptions
         {
-            filepath = await _dbManager.GetDbPathByAliasAsync(settings.Alias);
-            if (filepath is null)
-            {
-                if (settings.Json)
-                {
-                    Console.WriteLine(JsonSerializer.Serialize(new { error = $"Database with alias '{settings.Alias}' not found" }, JsonOptions));
-                }
-                else
-                {
-                    AnsiConsole.MarkupLine($"[yellow]Database with alias '{settings.Alias}' not found[/]");
-                }
-                return 1;
-            }
-        }
-
-        if (!File.Exists(filepath))
-        {
-            if (settings.Json)
-            {
-                Console.WriteLine(JsonSerializer.Serialize(new { error = $"Database file not found at '{filepath}'" }, JsonOptions));
-            }
-            else
-            {
-                AnsiConsole.MarkupLine($"[red]Database file not found at '{filepath}'[/]");
-            }
-            return 1;
-        }
-
-        var (password, passwordError) = await TryGetPasswordAsync(settings.PasswordStdin, settings.PasswordEnv);
-        if (password == null)
-        {
-            if (settings.Json)
-            {
-                Console.WriteLine(JsonSerializer.Serialize(new { error = passwordError ?? "Failed to read password" }, JsonOptions));
-            }
-            else if (!settings.Quiet)
-            {
-                AnsiConsole.MarkupLine($"[red]{passwordError ?? "Failed to read password"}[/]");
-            }
-            return 1;
-        }
+            PasswordStdin = settings.PasswordStdin,
+            PasswordEnvVar = settings.PasswordEnv,
+        };
 
         try
         {
-            var document = Document.Load(filepath, password);
+            var document = await _documentService.TryLoadDocumentAsync(settings.Alias, settings.FilePath, true, passwordOptions);
+            if (document == null)
+            {
+                if (settings.Json)
+                {
+                    Console.WriteLine(JsonSerializer.Serialize(new { error = "Invalid password or database file" }, JsonOptions));
+                }
+                else if (!settings.Quiet)
+                {
+                    AnsiConsole.MarkupLine("[red]Invalid password or database file[/]");
+                }
+
+                return 1;
+            }
 
             if (settings.Json)
             {
@@ -192,40 +161,5 @@ internal class ShowDatabaseCommand : AsyncCommand<ShowDatabaseCommand.Settings>
             }
             return 1;
         }
-
-    }
-
-    private static async Task<(string? Password, string? Error)> TryGetPasswordAsync(bool passwordStdin, string? passwordEnv)
-    {
-        if (passwordStdin)
-        {
-            var input = await Console.In.ReadToEndAsync();
-            var password = input?.TrimEnd('\r', '\n');
-
-            if (string.IsNullOrEmpty(password))
-            {
-                return (null, "No password received from stdin.");
-            }
-
-            return (password, null);
-        }
-
-        if (!string.IsNullOrWhiteSpace(passwordEnv))
-        {
-            var password = Environment.GetEnvironmentVariable(passwordEnv);
-            if (string.IsNullOrEmpty(password))
-            {
-                return (null, $"Environment variable '{passwordEnv}' is not set or empty.");
-            }
-
-            return (password, null);
-        }
-
-        var prompted = AnsiConsole.Prompt(
-            new TextPrompt<string>("Enter password:")
-                .PromptStyle("green")
-                .Secret());
-
-        return (prompted, null);
     }
 }
