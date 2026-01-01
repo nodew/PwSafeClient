@@ -1,5 +1,7 @@
 using System;
+
 using Microsoft.Extensions.DependencyInjection;
+
 using Spectre.Console.Cli;
 
 namespace PwSafeClient.Cli.Infrastructure;
