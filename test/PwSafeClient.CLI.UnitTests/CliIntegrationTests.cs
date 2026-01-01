@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Text;
+using System.Xml.Linq;
 
 using Medo.Security.Cryptography.PasswordSafe;
 
@@ -207,7 +208,7 @@ public sealed class CliIntegrationTests
         Assert.AreEqual(0, (await RunCliAsync(env, "config", "set", "--idle-time", "0", "--no-color")).ExitCode);
         Assert.AreEqual(0, (await RunCliAsync(env, "db", "add", "-a", "vault", "-f", dbPath, "-d", "--force", "--no-color")).ExitCode);
 
-        var result = await RunCliAsync(env, stdin: password + "\n", "interactive", "-a", "vault", "--no-color");
+        var result = await RunCliWithStdinAsync(env, password + "\n", "interactive", "-a", "vault", "--no-color");
 
         Assert.AreEqual(0, result.ExitCode, result.ToDebugString());
         StringAssert.Contains(result.Stdout, "Idle timeout reached", result.ToDebugString());
@@ -235,7 +236,7 @@ public sealed class CliIntegrationTests
         Assert.AreEqual(0, (await RunCliAsync(env, "db", "add", "-a", "vault", "-f", dbPath, "-d", "--force", "--no-color")).ExitCode);
 
         var stdin = password + "\n" + "entry list --tree-view\n";
-        var result = await RunCliAsync(env, stdin: stdin, "interactive", "-a", "vault", "--no-color");
+        var result = await RunCliWithStdinAsync(env, stdin, "interactive", "-a", "vault", "--no-color");
 
         Assert.AreEqual(0, result.ExitCode, result.ToDebugString());
         StringAssert.Contains(result.Stdout, "Entries", result.ToDebugString());
@@ -263,7 +264,7 @@ public sealed class CliIntegrationTests
 
         // Only one password line is provided; if db show prompts again, it would block or fail.
         var stdin = password + "\n" + "db show --json --quiet\n";
-        var result = await RunCliAsync(env, stdin: stdin, "interactive", "-a", "vault", "--no-color");
+        var result = await RunCliWithStdinAsync(env, stdin, "interactive", "-a", "vault", "--no-color");
 
         Assert.AreEqual(0, result.ExitCode, result.ToDebugString());
         StringAssert.Contains(result.Stdout, "\"uuid\"", result.ToDebugString());
@@ -345,18 +346,14 @@ public sealed class CliIntegrationTests
     }
 
     private static Task<CliRunResult> RunCliAsync(IDictionary<string, string?> environment, params string[] args)
-        => RunCliAsync(environment, stdin: null, args);
+        => RunCliWithStdinAsync(environment, stdin: null, args);
 
-    private static async Task<CliRunResult> RunCliAsync(IDictionary<string, string?> environment, string? stdin, params string[] args)
+    private static async Task<CliRunResult> RunCliWithStdinAsync(IDictionary<string, string?> environment, string? stdin, params string[] args)
     {
         var solutionRoot = FindSolutionRoot();
         await EnsureCliBuiltAsync(solutionRoot);
 
-        var cliDll = Path.Combine(solutionRoot, "src", "PwSafeClient.CLI", "bin", "Debug", "net9.0", "pwsafe.dll");
-        if (!File.Exists(cliDll))
-        {
-            throw new FileNotFoundException("CLI output not found after build.", cliDll);
-        }
+        var cliDll = GetCliDllPath(solutionRoot);
 
         var psi = new ProcessStartInfo
         {
@@ -401,6 +398,65 @@ public sealed class CliIntegrationTests
             process.ExitCode,
             await stdoutTask,
             await stderrTask);
+    }
+
+    private static string GetCliDllPath(string solutionRoot)
+    {
+        var cliProject = Path.Combine(solutionRoot, "src", "PwSafeClient.CLI", "PwSafeClient.CLI.csproj");
+        var targetFramework = TryReadTargetFramework(cliProject);
+
+        if (!string.IsNullOrWhiteSpace(targetFramework))
+        {
+            var expected = Path.Combine(solutionRoot, "src", "PwSafeClient.CLI", "bin", "Debug", targetFramework, "pwsafe.dll");
+            if (File.Exists(expected))
+            {
+                return expected;
+            }
+        }
+
+        var debugOutput = Path.Combine(solutionRoot, "src", "PwSafeClient.CLI", "bin", "Debug");
+        if (Directory.Exists(debugOutput))
+        {
+            var candidates = Directory
+                .EnumerateFiles(debugOutput, "pwsafe.dll", SearchOption.AllDirectories)
+                .Select(p => new FileInfo(p))
+                .OrderByDescending(f => f.LastWriteTimeUtc)
+                .ToList();
+
+            var newest = candidates.FirstOrDefault();
+            if (newest != null)
+            {
+                return newest.FullName;
+            }
+        }
+
+        throw new FileNotFoundException("CLI output not found after build.");
+    }
+
+    private static string? TryReadTargetFramework(string cliProjectPath)
+    {
+        if (!File.Exists(cliProjectPath))
+        {
+            return null;
+        }
+
+        var doc = XDocument.Load(cliProjectPath);
+
+        var tfm = doc.Descendants().FirstOrDefault(e => e.Name.LocalName == "TargetFramework")?.Value?.Trim();
+        if (!string.IsNullOrWhiteSpace(tfm))
+        {
+            return tfm;
+        }
+
+        var tfms = doc.Descendants().FirstOrDefault(e => e.Name.LocalName == "TargetFrameworks")?.Value;
+        if (string.IsNullOrWhiteSpace(tfms))
+        {
+            return null;
+        }
+
+        return tfms
+            .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .FirstOrDefault();
     }
 
     private static async Task EnsureCliBuiltAsync(string solutionRoot)
