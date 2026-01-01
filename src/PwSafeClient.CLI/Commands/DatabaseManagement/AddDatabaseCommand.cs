@@ -31,6 +31,10 @@ internal class AddDatabaseCommand : AsyncCommand<AddDatabaseCommand.Settings>
         [CommandOption("--force")]
         public bool ForceUpdate { get; init; }
 
+        [Description("Allow adding a database path that does not exist yet")]
+        [CommandOption("--allow-missing")]
+        public bool AllowMissing { get; init; }
+
         public override ValidationResult Validate()
         {
             if (string.IsNullOrWhiteSpace(Alias))
@@ -43,7 +47,7 @@ internal class AddDatabaseCommand : AsyncCommand<AddDatabaseCommand.Settings>
                 return ValidationResult.Error("Database path is required");
             }
 
-            if (!File.Exists(DatabasePath))
+            if (!AllowMissing && !File.Exists(DatabasePath))
             {
                 return ValidationResult.Error("Database file does not exist");
             }
@@ -74,14 +78,15 @@ internal class AddDatabaseCommand : AsyncCommand<AddDatabaseCommand.Settings>
                 }
             }
 
-            await _dbManager.AddDatabaseAsync(settings.Alias, settings.DatabasePath, settings.IsDefault);
+            var fullPath = Path.GetFullPath(Environment.ExpandEnvironmentVariables(settings.DatabasePath));
+            await _dbManager.AddDatabaseAsync(settings.Alias, fullPath, settings.IsDefault, forceUpdate: settings.ForceUpdate);
 
             return 0;
         }
         catch (Exception e)
         {
-            AnsiConsole.WriteException(e);
-            return 1;
+            CliError.WriteException(e);
+            return ExitCodes.Error;
         }
     }
 }

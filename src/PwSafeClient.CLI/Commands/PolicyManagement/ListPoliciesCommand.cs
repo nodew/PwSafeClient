@@ -1,11 +1,14 @@
 using System;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 using Medo.Security.Cryptography.PasswordSafe;
 
 using PwSafeClient.Cli.Contracts.Services;
+using PwSafeClient.Cli.Models;
 using PwSafeClient.Shared;
 
 using Spectre.Console;
@@ -15,6 +18,12 @@ namespace PwSafeClient.Cli.Commands;
 
 internal sealed class ListPoliciesCommand : AsyncCommand<ListPoliciesCommand.Settings>
 {
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        WriteIndented = true
+    };
+
     internal sealed class Settings : CommandSettings
     {
         [Description("Alias for the database")]
@@ -25,11 +34,32 @@ internal sealed class ListPoliciesCommand : AsyncCommand<ListPoliciesCommand.Set
         [CommandOption("-f|--file <PATH>")]
         public string? FilePath { get; init; }
 
+        [Description("Output results as JSON")]
+        [CommandOption("--json")]
+        public bool Json { get; init; }
+
+        [Description("Suppress non-essential output")]
+        [CommandOption("--quiet")]
+        public bool Quiet { get; init; }
+
+        [Description("Read database password from stdin")]
+        [CommandOption("--password-stdin")]
+        public bool PasswordStdin { get; init; }
+
+        [Description("Read database password from environment variable")]
+        [CommandOption("--password-env <VAR>")]
+        public string? PasswordEnv { get; init; }
+
         public override ValidationResult Validate()
         {
             if (FilePath != null && !File.Exists(FilePath))
             {
                 return ValidationResult.Error("Database file does not exist");
+            }
+
+            if (PasswordStdin && !string.IsNullOrWhiteSpace(PasswordEnv))
+            {
+                return ValidationResult.Error("Use only one of --password-stdin or --password-env");
             }
 
             return ValidationResult.Success();
@@ -47,7 +77,13 @@ internal sealed class ListPoliciesCommand : AsyncCommand<ListPoliciesCommand.Set
     {
         try
         {
-            var document = await _documentService.TryLoadDocumentAsync(settings.Alias, settings.FilePath, false);
+            var passwordOptions = new PasswordOptions
+            {
+                PasswordStdin = settings.PasswordStdin,
+                PasswordEnvVar = settings.PasswordEnv,
+            };
+
+            var document = await _documentService.TryLoadDocumentAsync(settings.Alias, settings.FilePath, true, passwordOptions);
 
             if (document == null)
             {
@@ -57,8 +93,54 @@ internal sealed class ListPoliciesCommand : AsyncCommand<ListPoliciesCommand.Set
 
             if (document.NamedPasswordPolicies.Count == 0)
             {
-                AnsiConsole.MarkupLine("[yellow]No password policies found.[/]");
-                return 1;
+                if (settings.Json)
+                {
+                    Console.WriteLine("[]");
+                }
+                else if (!settings.Quiet)
+                {
+                    AnsiConsole.MarkupLine("[yellow]No password policies found.[/]");
+                }
+
+                return 0;
+            }
+
+            if (settings.Json)
+            {
+                var results = document.NamedPasswordPolicies.Select(policy =>
+                {
+                    var isPronounceable = policy.Style.HasFlag(PasswordPolicyStyle.MakePronounceable);
+                    var useLowercase = policy.Style.HasFlag(PasswordPolicyStyle.UseLowercase);
+                    var useUppercase = policy.Style.HasFlag(PasswordPolicyStyle.UseUppercase);
+                    var useDigits = policy.Style.HasFlag(PasswordPolicyStyle.UseDigits);
+                    var useSymbols = policy.Style.HasFlag(PasswordPolicyStyle.UseSymbols);
+                    var useHexDigits = policy.Style.HasFlag(PasswordPolicyStyle.UseHexDigits);
+                    var useEasyVision = policy.Style.HasFlag(PasswordPolicyStyle.UseEasyVision);
+
+                    var symbols = policy.GetSpecialSymbolSet();
+                    var symbolSet = symbols.Length == 0 ? string.Empty : string.Join("", symbols);
+
+                    return new
+                    {
+                        name = policy.Name,
+                        length = policy.TotalPasswordLength,
+                        pronounceable = isPronounceable,
+                        useLowercase,
+                        minimumLowercaseCount = isPronounceable ? 0 : policy.MinimumLowercaseCount,
+                        useUppercase,
+                        minimumUppercaseCount = isPronounceable ? 0 : policy.MinimumUppercaseCount,
+                        useDigits,
+                        minimumDigitCount = isPronounceable ? 0 : policy.MinimumDigitCount,
+                        useSymbols,
+                        minimumSymbolCount = isPronounceable ? 0 : policy.MinimumSymbolCount,
+                        symbolSet,
+                        useEasyVision,
+                        useHexDigits,
+                    };
+                });
+
+                Console.WriteLine(JsonSerializer.Serialize(results, JsonOptions));
+                return 0;
             }
 
             foreach (var policy in document.NamedPasswordPolicies)
@@ -100,8 +182,8 @@ internal sealed class ListPoliciesCommand : AsyncCommand<ListPoliciesCommand.Set
         }
         catch (Exception ex)
         {
-            AnsiConsole.WriteException(ex);
-            return 1;
+            CliError.WriteException(ex);
+            return ExitCodes.Error;
         }
     }
 

@@ -45,8 +45,8 @@ internal class RemoveDatabaseCommand : AsyncCommand<RemoveDatabaseCommand.Settin
         }
         catch (Exception e)
         {
-            AnsiConsole.WriteException(e);
-            return 1;
+            CliError.WriteException(e);
+            return ExitCodes.Error;
         }
     }
 }

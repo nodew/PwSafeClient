@@ -50,8 +50,8 @@ internal class SetDatabaseCommand : AsyncCommand<SetDatabaseCommand.Settings>
         }
         catch (Exception e)
         {
-            AnsiConsole.WriteException(e, ExceptionFormats.NoStackTrace);
-            return 1;
+            CliError.WriteException(e);
+            return ExitCodes.Error;
         }
     }
 }

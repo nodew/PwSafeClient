@@ -28,8 +28,8 @@ internal sealed class InitConfigCommand : AsyncCommand
         }
         catch (Exception e)
         {
-            AnsiConsole.WriteException(e);
-            return 1;
+            CliError.WriteException(e);
+            return ExitCodes.Error;
         }
     }
 }

@@ -45,7 +45,8 @@ internal class CreateDatabaseCommand : AsyncCommand<CreateDatabaseCommand.Settin
     {
         try
         {
-            var alias = settings.Alias ?? Path.GetFileNameWithoutExtension(settings.FilePath);
+            var fullPath = Path.GetFullPath(Environment.ExpandEnvironmentVariables(settings.FilePath));
+            var alias = settings.Alias ?? Path.GetFileNameWithoutExtension(fullPath);
 
             var dbs = await _dbManager.ListDatabasesAsync();
 
@@ -55,7 +56,7 @@ internal class CreateDatabaseCommand : AsyncCommand<CreateDatabaseCommand.Settin
                 return 1;
             }
 
-            if (File.Exists(settings.FilePath))
+            if (File.Exists(fullPath))
             {
                 if (!settings.ForceCreate)
                 {
@@ -74,16 +75,16 @@ internal class CreateDatabaseCommand : AsyncCommand<CreateDatabaseCommand.Settin
 
             var document = new Document(password);
 
-            document.Save(settings.FilePath);
+            document.Save(fullPath);
 
-            await _dbManager.AddDatabaseAsync(alias, settings.FilePath, settings.IsDefault);
+            await _dbManager.AddDatabaseAsync(alias, fullPath, settings.IsDefault);
 
             return 0;
         }
         catch (Exception e)
         {
-            AnsiConsole.WriteException(e);
-            return 1;
+            CliError.WriteException(e);
+            return ExitCodes.Error;
         }
     }
 }

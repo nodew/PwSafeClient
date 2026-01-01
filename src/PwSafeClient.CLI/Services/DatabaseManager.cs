@@ -55,6 +55,13 @@ namespace PwSafeClient.Cli.Services
         {
             var configuration = await _configManager.LoadConfigurationAsync();
             configuration.Databases.Remove(alias);
+
+            if (!string.IsNullOrWhiteSpace(configuration.DefaultDatabase) &&
+                alias.Equals(configuration.DefaultDatabase, StringComparison.OrdinalIgnoreCase))
+            {
+                configuration.DefaultDatabase = null;
+            }
+
             await _configManager.SaveConfigurationAsync(configuration);
         }
 

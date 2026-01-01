@@ -38,6 +38,10 @@ internal class ConfigManager : IConfigManager
         configFileAbsolutePath = Path.Combine(configFolderAbsolutePath, configFilename);
     }
 
+    public string GetConfigFilePath() => configFileAbsolutePath;
+
+    public string GetConfigFolderPath() => configFolderAbsolutePath;
+
     public bool IsConfigurationExists()
     {
         return File.Exists(configFileAbsolutePath);
@@ -50,6 +54,17 @@ internal class ConfigManager : IConfigManager
             throw new ConfigurationAlreadyExistsException($"\"{configFileAbsolutePath}\" already exists.");
         }
 
+        if (!Directory.Exists(configFolderAbsolutePath))
+        {
+            Directory.CreateDirectory(configFolderAbsolutePath);
+        }
+
+        var config = new Configuration();
+        await SaveConfigurationAsync(config);
+    }
+
+    public async Task ResetConfigurationAsync()
+    {
         if (!Directory.Exists(configFolderAbsolutePath))
         {
             Directory.CreateDirectory(configFolderAbsolutePath);
@@ -89,6 +104,11 @@ internal class ConfigManager : IConfigManager
     {
         try
         {
+            if (!Directory.Exists(configFolderAbsolutePath))
+            {
+                Directory.CreateDirectory(configFolderAbsolutePath);
+            }
+
             var json = JsonSerializer.Serialize(configuration, options);
             File.WriteAllText(configFileAbsolutePath, json);
             return Task.CompletedTask;

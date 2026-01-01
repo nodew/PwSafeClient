@@ -1,3 +1,6 @@
+using System;
+using System.Linq;
+
 using Microsoft.Extensions.DependencyInjection;
 
 using PwSafeClient.Cli.Commands;
@@ -5,7 +8,25 @@ using PwSafeClient.Cli.Contracts.Services;
 using PwSafeClient.Cli.Infrastructure;
 using PwSafeClient.Cli.Services;
 
+using Spectre.Console;
 using Spectre.Console.Cli;
+
+var debug = args.Any(a => string.Equals(a, "--debug", StringComparison.OrdinalIgnoreCase));
+if (debug)
+{
+    CliRuntime.DebugEnabled = true;
+    args = args.Where(a => !string.Equals(a, "--debug", StringComparison.OrdinalIgnoreCase)).ToArray();
+}
+
+var noColor = args.Any(a => string.Equals(a, "--no-color", StringComparison.OrdinalIgnoreCase));
+if (noColor)
+{
+    args = args.Where(a => !string.Equals(a, "--no-color", StringComparison.OrdinalIgnoreCase)).ToArray();
+    AnsiConsole.Console = AnsiConsole.Create(new AnsiConsoleSettings
+    {
+        Ansi = AnsiSupport.No,
+    });
+}
 
 var registrations = new ServiceCollection();
 
@@ -25,12 +46,38 @@ app.Configure(config =>
     config.ValidateExamples();
 #endif
 
+    if (debug)
+    {
+        config.PropagateExceptions();
+    }
+
+    config.SetExceptionHandler((ex, _) =>
+    {
+        CliError.WriteException(ex);
+        return ExitCodes.Error;
+    });
+
     config.AddBranch("config", cmd =>
     {
         cmd.SetDescription("Manage the configuration");
 
         cmd.AddCommand<InitConfigCommand>("init")
             .WithDescription("Initialize the configuration file");
+
+        cmd.AddCommand<ConfigPathCommand>("path")
+            .WithDescription("Print the configuration file path");
+
+        cmd.AddCommand<ShowConfigCommand>("show")
+            .WithDescription("Show current configuration");
+
+        cmd.AddCommand<SetConfigCommand>("set")
+            .WithDescription("Update configuration values");
+
+        cmd.AddCommand<EditConfigCommand>("edit")
+            .WithDescription("Open the configuration file in an editor");
+
+        cmd.AddCommand<ResetConfigCommand>("reset")
+            .WithDescription("Reset the configuration file (overwrite)");
     });
 
     config.AddBranch("db", cmd =>
@@ -71,6 +118,9 @@ app.Configure(config =>
         cmd.AddCommand<ListEntriesCommand>("list")
             .WithAlias("ls")
             .WithDescription("List all entries in the database");
+
+        cmd.AddCommand<SearchEntriesCommand>("search")
+            .WithDescription("Search entries by title/username/url/notes");
 
         cmd.AddCommand<NewEntryCommand>("new")
             .WithDescription("Create a new entry in the database");

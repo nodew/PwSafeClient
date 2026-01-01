@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Medo.Security.Cryptography.PasswordSafe;
 
 using PwSafeClient.Cli.Contracts.Services;
+using PwSafeClient.Cli.Models;
 using PwSafeClient.Shared;
 
 using Spectre.Console;
@@ -41,6 +42,10 @@ internal sealed class NewEntryCommand : AsyncCommand<NewEntryCommand.Settings>
         [Description("Notes for the entry")]
         [CommandOption("-n|--notes <NOTES>")]
         public string? Notes { get; init; }
+
+        [Description("Group path for the entry")]
+        [CommandOption("-g|--group <GROUP>")]
+        public string? Group { get; init; }
 
         [Description("Minimum password length")]
         [CommandOption("--min-length <LENGTH>")]
@@ -80,6 +85,14 @@ internal sealed class NewEntryCommand : AsyncCommand<NewEntryCommand.Settings>
         [CommandOption("-f|--file <PATH>")]
         public string? FilePath { get; init; }
 
+        [Description("Read database password from stdin")]
+        [CommandOption("--password-stdin")]
+        public bool PasswordStdin { get; init; }
+
+        [Description("Read database password from environment variable")]
+        [CommandOption("--password-env <VAR>")]
+        public string? PasswordEnv { get; init; }
+
         public override ValidationResult Validate()
         {
             if (string.IsNullOrWhiteSpace(Title))
@@ -87,9 +100,43 @@ internal sealed class NewEntryCommand : AsyncCommand<NewEntryCommand.Settings>
                 return ValidationResult.Error("Title is required");
             }
 
+            if (MinLength < 6)
+            {
+                return ValidationResult.Error("--min-length must be at least 6");
+            }
+
+            if (MaxLength < MinLength)
+            {
+                return ValidationResult.Error("--max-length must be greater than or equal to --min-length");
+            }
+
+            if (string.IsNullOrWhiteSpace(Password) && string.IsNullOrWhiteSpace(Policy))
+            {
+                var enabledCategories = 0;
+                if (IncludeLowercase) enabledCategories++;
+                if (IncludeUppercase) enabledCategories++;
+                if (IncludeDigits) enabledCategories++;
+                if (IncludeSpecial) enabledCategories++;
+
+                if (enabledCategories == 0)
+                {
+                    return ValidationResult.Error("At least one of --lowercase/--uppercase/--digits/--special must be enabled when generating a password");
+                }
+
+                if (MinLength < enabledCategories)
+                {
+                    return ValidationResult.Error($"--min-length must be >= number of enabled character categories ({enabledCategories})");
+                }
+            }
+
             if (FilePath != null && !File.Exists(FilePath))
             {
                 return ValidationResult.Error("Database file does not exist");
+            }
+
+            if (PasswordStdin && !string.IsNullOrWhiteSpace(PasswordEnv))
+            {
+                return ValidationResult.Error("Use only one of --password-stdin or --password-env");
             }
 
             return ValidationResult.Success();
@@ -107,7 +154,13 @@ internal sealed class NewEntryCommand : AsyncCommand<NewEntryCommand.Settings>
     {
         try
         {
-            var document = await _documentService.TryLoadDocumentAsync(settings.Alias, settings.FilePath, false);
+            var passwordOptions = new PasswordOptions
+            {
+                PasswordStdin = settings.PasswordStdin,
+                PasswordEnvVar = settings.PasswordEnv,
+            };
+
+            var document = await _documentService.TryLoadDocumentAsync(settings.Alias, settings.FilePath, false, passwordOptions);
 
             if (document == null)
             {
@@ -119,6 +172,7 @@ internal sealed class NewEntryCommand : AsyncCommand<NewEntryCommand.Settings>
             {
                 Title = settings.Title,
                 UserName = settings.Username ?? string.Empty,
+                Group = settings.Group ?? string.Empty,
                 Url = settings.Url ?? string.Empty,
                 Notes = settings.Notes ?? string.Empty,
                 CreationTime = DateTime.Now,
@@ -154,6 +208,28 @@ internal sealed class NewEntryCommand : AsyncCommand<NewEntryCommand.Settings>
 
                     entry.Password = newPassword;
                 }
+                else
+                {
+                    var passwordPolicy = BuildPasswordPolicy(settings);
+                    var newPassword = new PasswordGenerator(passwordPolicy).GeneratePassword();
+
+                    if (string.IsNullOrWhiteSpace(newPassword))
+                    {
+                        AnsiConsole.MarkupLine("[red]Failed to generate password with the provided options.[/]");
+                        return 1;
+                    }
+
+                    entry.PasswordPolicy.TotalPasswordLength = passwordPolicy.TotalPasswordLength;
+                    entry.PasswordPolicy.MinimumLowercaseCount = passwordPolicy.MinimumLowercaseCount;
+                    entry.PasswordPolicy.MinimumUppercaseCount = passwordPolicy.MinimumUppercaseCount;
+                    entry.PasswordPolicy.MinimumDigitCount = passwordPolicy.MinimumDigitCount;
+                    entry.PasswordPolicy.MinimumSymbolCount = passwordPolicy.MinimumSymbolCount;
+                    entry.PasswordPolicy.Style = passwordPolicy.Style;
+                    entry.PasswordPolicy.SetSpecialSymbolSet(passwordPolicy.GetSpecialSymbolSet());
+
+                    entry.PasswordPolicyName = string.Empty;
+                    entry.Password = newPassword;
+                }
             }
             else
             {
@@ -183,8 +259,45 @@ internal sealed class NewEntryCommand : AsyncCommand<NewEntryCommand.Settings>
         }
         catch (Exception ex)
         {
-            AnsiConsole.WriteException(ex);
-            return 1;
+            CliError.WriteException(ex);
+            return ExitCodes.Error;
         }
+    }
+
+    private static PasswordPolicy BuildPasswordPolicy(Settings settings)
+    {
+        var min = settings.MinLength;
+        var max = settings.MaxLength;
+        var length = min == max ? min : Random.Shared.Next(min, max + 1);
+
+        PasswordPolicyStyle style = 0;
+        if (settings.IncludeLowercase) style |= PasswordPolicyStyle.UseLowercase;
+        if (settings.IncludeUppercase) style |= PasswordPolicyStyle.UseUppercase;
+        if (settings.IncludeDigits) style |= PasswordPolicyStyle.UseDigits;
+        if (settings.IncludeSpecial) style |= PasswordPolicyStyle.UseSymbols;
+
+        var policy = new PasswordPolicy(length)
+        {
+            Style = style,
+            MinimumLowercaseCount = settings.IncludeLowercase ? 1 : 0,
+            MinimumUppercaseCount = settings.IncludeUppercase ? 1 : 0,
+            MinimumDigitCount = settings.IncludeDigits ? 1 : 0,
+            MinimumSymbolCount = settings.IncludeSpecial ? 1 : 0,
+        };
+
+        // Ensure the sum of minimums doesn't exceed total length.
+        var totalMinimum = policy.MinimumLowercaseCount + policy.MinimumUppercaseCount + policy.MinimumDigitCount + policy.MinimumSymbolCount;
+        while (totalMinimum > policy.TotalPasswordLength)
+        {
+            if (policy.MinimumSymbolCount > 0) policy.MinimumSymbolCount--;
+            else if (policy.MinimumDigitCount > 0) policy.MinimumDigitCount--;
+            else if (policy.MinimumUppercaseCount > 0) policy.MinimumUppercaseCount--;
+            else if (policy.MinimumLowercaseCount > 0) policy.MinimumLowercaseCount--;
+
+            totalMinimum = policy.MinimumLowercaseCount + policy.MinimumUppercaseCount + policy.MinimumDigitCount + policy.MinimumSymbolCount;
+        }
+
+        policy.SetSpecialSymbolSet(PwCharPool.StdSymbolChars);
+        return policy;
     }
 }

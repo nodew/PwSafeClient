@@ -1,4 +1,7 @@
 using System;
+using System.ComponentModel;
+using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 using PwSafeClient.Cli.Contracts.Services;
@@ -8,8 +11,25 @@ using Spectre.Console.Cli;
 
 namespace PwSafeClient.Cli.Commands;
 
-internal class ListDatabaseCommand : AsyncCommand
+internal class ListDatabaseCommand : AsyncCommand<ListDatabaseCommand.Settings>
 {
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        WriteIndented = true
+    };
+
+    internal sealed class Settings : CommandSettings
+    {
+        [Description("Output results as JSON")]
+        [CommandOption("--json")]
+        public bool Json { get; init; }
+
+        [Description("Suppress non-essential output")]
+        [CommandOption("--quiet")]
+        public bool Quiet { get; init; }
+    }
+
     private readonly IDatabaseManager _dbManager;
 
     public ListDatabaseCommand(IDatabaseManager databaseManager)
@@ -17,7 +37,7 @@ internal class ListDatabaseCommand : AsyncCommand
         _dbManager = databaseManager;
     }
 
-    public override async Task<int> ExecuteAsync(CommandContext context)
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
         try
         {
@@ -25,7 +45,29 @@ internal class ListDatabaseCommand : AsyncCommand
 
             if (databases.Count == 0)
             {
-                AnsiConsole.MarkupLine("[yellow]No database found[/]");
+                if (settings.Json)
+                {
+                    Console.WriteLine("[]");
+                    return 0;
+                }
+
+                if (!settings.Quiet)
+                {
+                    AnsiConsole.MarkupLine("[yellow]No database found[/]");
+                }
+                return 0;
+            }
+
+            if (settings.Json)
+            {
+                var results = databases.Select(db => new
+                {
+                    alias = db.Alias,
+                    path = db.Path,
+                    isDefault = db.IsDefault,
+                });
+
+                Console.WriteLine(JsonSerializer.Serialize(results, JsonOptions));
                 return 0;
             }
 
@@ -45,8 +87,8 @@ internal class ListDatabaseCommand : AsyncCommand
         }
         catch (Exception e)
         {
-            AnsiConsole.WriteException(e);
-            return 1;
+            CliError.WriteException(e);
+            return ExitCodes.Error;
         }
     }
 }
