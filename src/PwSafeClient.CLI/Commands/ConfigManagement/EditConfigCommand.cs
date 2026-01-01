@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 using PwSafeClient.Cli.Contracts.Services;
@@ -28,7 +29,7 @@ internal sealed class EditConfigCommand : AsyncCommand<EditConfigCommand.Setting
         _configManager = configManager;
     }
 
-    public override async Task<int> ExecuteAsync([NotNull] CommandContext context, Settings settings)
+    public override async Task<int> ExecuteAsync([NotNull] CommandContext context, Settings settings, CancellationToken cancellationToken)
     {
         try
         {

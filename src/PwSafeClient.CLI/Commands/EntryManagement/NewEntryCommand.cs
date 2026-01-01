@@ -150,7 +150,7 @@ internal sealed class NewEntryCommand : AsyncCommand<NewEntryCommand.Settings>
         _documentService = documentService;
     }
 
-    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings, System.Threading.CancellationToken cancellationToken)
     {
         try
         {

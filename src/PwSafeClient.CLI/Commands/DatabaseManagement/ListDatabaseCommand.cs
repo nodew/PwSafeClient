@@ -37,7 +37,7 @@ internal class ListDatabaseCommand : AsyncCommand<ListDatabaseCommand.Settings>
         _dbManager = databaseManager;
     }
 
-    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings, System.Threading.CancellationToken cancellationToken)
     {
         try
         {

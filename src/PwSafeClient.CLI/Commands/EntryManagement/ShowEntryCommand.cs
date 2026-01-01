@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 using PwSafeClient.Cli.Contracts.Services;
@@ -74,7 +75,7 @@ internal sealed class ShowEntryCommand : AsyncCommand<ShowEntryCommand.Settings>
         _documentService = documentService;
     }
 
-    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings, CancellationToken cancellationToken)
     {
         try
         {

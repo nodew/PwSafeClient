@@ -101,7 +101,7 @@ internal sealed class GetPasswordCommand : AsyncCommand<GetPasswordCommand.Setti
         _documentService = documentService;
     }
 
-    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings, System.Threading.CancellationToken cancellationToken)
     {
         try
         {

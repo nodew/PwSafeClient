@@ -41,7 +41,7 @@ internal class CreateDatabaseCommand : AsyncCommand<CreateDatabaseCommand.Settin
         _dbManager = databaseManager;
     }
 
-    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings, System.Threading.CancellationToken cancellationToken)
     {
         try
         {

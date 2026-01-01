@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
 
 using PwSafeClient.Cli.Contracts.Services;
@@ -18,7 +19,7 @@ internal sealed class ConfigPathCommand : AsyncCommand
         _configManager = configManager;
     }
 
-    public override Task<int> ExecuteAsync([NotNull] CommandContext context)
+    public override Task<int> ExecuteAsync([NotNull] CommandContext context, CancellationToken cancellationToken)
     {
         try
         {

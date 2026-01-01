@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 using PwSafeClient.Cli.Contracts.Services;
 using PwSafeClient.Cli.Models;
-using PwSafeClient.Shared;
 
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -88,7 +87,7 @@ internal sealed class UpdateEntryCommand : AsyncCommand<UpdateEntryCommand.Setti
         _documentService = documentService;
     }
 
-    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings, System.Threading.CancellationToken cancellationToken)
     {
         try
         {

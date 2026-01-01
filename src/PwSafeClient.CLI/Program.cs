@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -207,7 +208,7 @@ if (args.Length > 0 && string.Equals(args[0], "interactive", StringComparison.Or
         }
     }
 
-    using var cts = new System.Threading.CancellationTokenSource();
+    using var cts = new CancellationTokenSource();
     Console.CancelKeyPress += (_, e) =>
     {
         e.Cancel = true;
