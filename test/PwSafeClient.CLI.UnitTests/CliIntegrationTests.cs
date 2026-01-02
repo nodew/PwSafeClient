@@ -208,7 +208,8 @@ public sealed class CliIntegrationTests
         Assert.AreEqual(0, (await RunCliAsync(env, "config", "set", "--idle-time", "0", "--no-color")).ExitCode);
         Assert.AreEqual(0, (await RunCliAsync(env, "db", "add", "-a", "vault", "-f", dbPath, "-d", "--force", "--no-color")).ExitCode);
 
-        var result = await RunCliWithStdinAsync(env, password + "\n", "interactive", "-a", "vault", "--no-color");
+        // Keep stdin open so interactive mode doesn't exit via EOF before the idle-timeout logic runs.
+        var result = await RunCliWithStdinAsync(env, password + "\n", closeStdin: false, "interactive", "-a", "vault", "--no-color");
 
         Assert.AreEqual(0, result.ExitCode, result.ToDebugString());
         StringAssert.Contains(result.Stdout, "Idle timeout reached", result.ToDebugString());
@@ -346,9 +347,12 @@ public sealed class CliIntegrationTests
     }
 
     private static Task<CliRunResult> RunCliAsync(IDictionary<string, string?> environment, params string[] args)
-        => RunCliWithStdinAsync(environment, stdin: null, args);
+        => RunCliWithStdinAsync(environment, stdin: null, closeStdin: true, args);
 
-    private static async Task<CliRunResult> RunCliWithStdinAsync(IDictionary<string, string?> environment, string? stdin, params string[] args)
+    private static Task<CliRunResult> RunCliWithStdinAsync(IDictionary<string, string?> environment, string? stdin, params string[] args)
+        => RunCliWithStdinAsync(environment, stdin, closeStdin: true, args);
+
+    private static async Task<CliRunResult> RunCliWithStdinAsync(IDictionary<string, string?> environment, string? stdin, bool closeStdin, params string[] args)
     {
         var solutionRoot = FindSolutionRoot();
         await EnsureCliBuiltAsync(solutionRoot);
@@ -386,7 +390,11 @@ public sealed class CliIntegrationTests
         {
             await process.StandardInput.WriteAsync(stdin);
             await process.StandardInput.FlushAsync();
-            process.StandardInput.Close();
+
+            if (closeStdin)
+            {
+                process.StandardInput.Close();
+            }
         }
 
         var stdoutTask = process.StandardOutput.ReadToEndAsync();
