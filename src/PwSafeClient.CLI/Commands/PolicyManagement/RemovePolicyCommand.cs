@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using PwSafeClient.Cli.Contracts.Services;
+using PwSafeClient.Cli.Models;
 
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -23,6 +24,14 @@ internal sealed class RemovePolicyCommand : AsyncCommand<RemovePolicyCommand.Set
         [CommandOption("-f|--file <PATH>")]
         public string? FilePath { get; init; }
 
+        [Description("Read database password from stdin")]
+        [CommandOption("--password-stdin")]
+        public bool PasswordStdin { get; init; }
+
+        [Description("Read database password from environment variable")]
+        [CommandOption("--password-env <VAR>")]
+        public string? PasswordEnv { get; init; }
+
         [Description("Name of the password policy to remove")]
         [CommandArgument(0, "<NAME>")]
         public string Name { get; init; } = string.Empty;
@@ -32,6 +41,11 @@ internal sealed class RemovePolicyCommand : AsyncCommand<RemovePolicyCommand.Set
             if (FilePath != null && !File.Exists(FilePath))
             {
                 return ValidationResult.Error("Database file does not exist");
+            }
+
+            if (PasswordStdin && !string.IsNullOrWhiteSpace(PasswordEnv))
+            {
+                return ValidationResult.Error("Use only one of --password-stdin or --password-env");
             }
 
             if (string.IsNullOrWhiteSpace(Name))
@@ -50,11 +64,17 @@ internal sealed class RemovePolicyCommand : AsyncCommand<RemovePolicyCommand.Set
         _documentService = documentService;
     }
 
-    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings, System.Threading.CancellationToken cancellationToken)
     {
         try
         {
-            var document = await _documentService.TryLoadDocumentAsync(settings.Alias, settings.FilePath, true);
+            var passwordOptions = new PasswordOptions
+            {
+                PasswordStdin = settings.PasswordStdin,
+                PasswordEnvVar = settings.PasswordEnv,
+            };
+
+            var document = await _documentService.TryLoadDocumentAsync(settings.Alias, settings.FilePath, false, passwordOptions);
 
             if (document == null)
             {
@@ -77,8 +97,8 @@ internal sealed class RemovePolicyCommand : AsyncCommand<RemovePolicyCommand.Set
         }
         catch (Exception ex)
         {
-            AnsiConsole.WriteException(ex);
-            return 1;
+            CliError.WriteException(ex);
+            return ExitCodes.Error;
         }
     }
 }

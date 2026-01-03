@@ -35,7 +35,7 @@ internal class SetDatabaseCommand : AsyncCommand<SetDatabaseCommand.Settings>
         _dbManager = databaseManager;
     }
 
-    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings, System.Threading.CancellationToken cancellationToken)
     {
         try
         {
@@ -50,8 +50,8 @@ internal class SetDatabaseCommand : AsyncCommand<SetDatabaseCommand.Settings>
         }
         catch (Exception e)
         {
-            AnsiConsole.WriteException(e, ExceptionFormats.NoStackTrace);
-            return 1;
+            CliError.WriteException(e);
+            return ExitCodes.Error;
         }
     }
 }

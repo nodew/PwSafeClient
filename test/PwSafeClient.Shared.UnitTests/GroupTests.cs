@@ -57,7 +57,7 @@ public class GroupTests
         var group1 = root.Children[0];
 
         Assert.IsNotNull(group1);
-        Assert.AreEqual(2, group1.Children.Count);
+        Assert.HasCount(2, group1.Children);
         Assert.AreEqual("group2", group1.Children[0].Name);
         Assert.AreEqual("group4", group1.Children[1].Name);
     }
@@ -75,7 +75,7 @@ public class GroupTests
 
         // Assert
         Assert.IsNotNull(targetGroup);
-        Assert.AreEqual(2, targetGroup.Children.Count);
+        Assert.HasCount(2, targetGroup.Children);
         Assert.AreEqual("group2", targetGroup.Name);
     }
 
@@ -92,7 +92,7 @@ public class GroupTests
 
         // Assert
         Assert.IsNotNull(targetGroup);
-        Assert.AreEqual(2, targetGroup.Children.Count);
+        Assert.HasCount(2, targetGroup.Children);
         Assert.AreEqual("group2", targetGroup.Name);
     }
 }

@@ -1,14 +1,11 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
-using Medo.Security.Cryptography.PasswordSafe;
-
 using PwSafeClient.Cli.Contracts.Services;
+using PwSafeClient.Cli.Json;
+using PwSafeClient.Cli.Models;
 
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -26,49 +23,109 @@ internal class ShowDatabaseCommand : AsyncCommand<ShowDatabaseCommand.Settings>
         [Description("Path to the database file")]
         [CommandOption("-f|--file <FILE_PATH>")]
         public string? FilePath { get; init; }
+
+        [Description("Output results as JSON")]
+        [CommandOption("--json")]
+        public bool Json { get; init; }
+
+        [Description("Suppress non-essential output")]
+        [CommandOption("--quiet")]
+        public bool Quiet { get; init; }
+
+        [Description("Read database password from stdin")]
+        [CommandOption("--password-stdin")]
+        public bool PasswordStdin { get; init; }
+
+        [Description("Read database password from environment variable")]
+        [CommandOption("--password-env <VAR>")]
+        public string? PasswordEnv { get; init; }
+
+        public override ValidationResult Validate()
+        {
+            if (PasswordStdin && !string.IsNullOrWhiteSpace(PasswordEnv))
+            {
+                return ValidationResult.Error("Use only one of --password-stdin or --password-env");
+            }
+
+            return ValidationResult.Success();
+        }
     }
 
-    private readonly IDatabaseManager _dbManager;
+    private readonly IConfigManager _configManager;
+    private readonly IDocumentService _documentService;
+    private readonly ICliSession _session;
 
-    public ShowDatabaseCommand(IDatabaseManager databaseManager)
+    public ShowDatabaseCommand(IConfigManager configManager, IDocumentService documentService, ICliSession session)
     {
-        _dbManager = databaseManager;
+        _configManager = configManager;
+        _documentService = documentService;
+        _session = session;
     }
 
-    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings, System.Threading.CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(settings.Alias) && string.IsNullOrWhiteSpace(settings.FilePath))
         {
-            AnsiConsole.MarkupLine("[red]Either alias or file path is required[/]");
-            return 1;
-        }
+            var config = await _configManager.LoadConfigurationAsync();
 
-        var filepath = settings.FilePath;
-
-        if (!string.IsNullOrWhiteSpace(settings.Alias))
-        {
-            filepath = await _dbManager.GetDbPathByAliasAsync(settings.Alias);
-            if (filepath is null)
+            var hasSessionDefault = !string.IsNullOrWhiteSpace(_session.DefaultAlias) || !string.IsNullOrWhiteSpace(_session.DefaultFilePath);
+            if (!hasSessionDefault && string.IsNullOrWhiteSpace(config.DefaultDatabase))
             {
-                AnsiConsole.MarkupLine($"[yellow]Database with alias '{settings.Alias}' not found[/]");
+                if (settings.Json)
+                {
+                    Console.WriteLine(JsonSerializer.Serialize(
+                        new ErrorResponse("No database specified and no default database configured."),
+                        CliJsonContext.Default.ErrorResponse));
+                }
+                else
+                {
+                    AnsiConsole.MarkupLine("[red]No database specified and no default database configured. Use 'pwsafe db set -a <ALIAS>' or pass '--alias/--file'.[/]");
+                }
                 return 1;
             }
         }
 
-        if (!File.Exists(filepath))
+        var passwordOptions = new PasswordOptions
         {
-            AnsiConsole.MarkupLine($"[red]Database file not found at '{filepath}'[/]");
-            return 1;
-        }
-
-        var password = AnsiConsole.Prompt(
-            new TextPrompt<string>("Enter password:")
-                .PromptStyle("green")
-                .Secret());
+            PasswordStdin = settings.PasswordStdin,
+            PasswordEnvVar = settings.PasswordEnv,
+        };
 
         try
         {
-            var document = Document.Load(filepath, password);
+            var document = await _documentService.TryLoadDocumentAsync(settings.Alias, settings.FilePath, true, passwordOptions);
+            if (document == null)
+            {
+                if (settings.Json)
+                {
+                    Console.WriteLine(JsonSerializer.Serialize(
+                        new ErrorResponse("Invalid password or database file"),
+                        CliJsonContext.Default.ErrorResponse));
+                }
+                else if (!settings.Quiet)
+                {
+                    AnsiConsole.MarkupLine("[red]Invalid password or database file[/]");
+                }
+
+                return 1;
+            }
+
+            if (settings.Json)
+            {
+                var result = new DatabaseInfoResponse(
+                    document.Uuid,
+                    document.Name ?? string.Empty,
+                    document.Description ?? string.Empty,
+                    document.Version.ToString(),
+                    document.LastSaveUser,
+                    document.LastSaveTime,
+                    document.LastSaveApplication,
+                    document.LastSaveHost,
+                    document.Entries.Count);
+
+                Console.WriteLine(JsonSerializer.Serialize(result, CliJsonContext.Default.DatabaseInfoResponse));
+                return 0;
+            }
 
             var grid = new Grid();
 
@@ -91,9 +148,17 @@ internal class ShowDatabaseCommand : AsyncCommand<ShowDatabaseCommand.Settings>
         }
         catch (Exception)
         {
-            AnsiConsole.MarkupLine("[red]Invalid password or database file[/]");
+            if (settings.Json)
+            {
+                Console.WriteLine(JsonSerializer.Serialize(
+                    new ErrorResponse("Invalid password or database file"),
+                    CliJsonContext.Default.ErrorResponse));
+            }
+            else if (!settings.Quiet)
+            {
+                AnsiConsole.MarkupLine("[red]Invalid password or database file[/]");
+            }
             return 1;
         }
-
     }
 }

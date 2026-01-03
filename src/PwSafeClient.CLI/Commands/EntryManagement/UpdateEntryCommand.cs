@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using PwSafeClient.Cli.Contracts.Services;
-using PwSafeClient.Shared;
+using PwSafeClient.Cli.Models;
 
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -44,6 +44,10 @@ internal sealed class UpdateEntryCommand : AsyncCommand<UpdateEntryCommand.Setti
         [CommandOption("--policy <POLICY>")]
         public string? Policy { get; init; }
 
+        [Description("Group path for the entry")]
+        [CommandOption("-g|--group <GROUP>")]
+        public string? Group { get; init; }
+
         [Description("Alias for the database")]
         [CommandOption("-a|--alias <ALIAS>")]
         public string? Alias { get; init; }
@@ -52,11 +56,24 @@ internal sealed class UpdateEntryCommand : AsyncCommand<UpdateEntryCommand.Setti
         [CommandOption("-f|--file <PATH>")]
         public string? FilePath { get; init; }
 
+        [Description("Read database password from stdin")]
+        [CommandOption("--password-stdin")]
+        public bool PasswordStdin { get; init; }
+
+        [Description("Read database password from environment variable")]
+        [CommandOption("--password-env <VAR>")]
+        public string? PasswordEnv { get; init; }
+
         public override ValidationResult Validate()
         {
             if (FilePath != null && !File.Exists(FilePath))
             {
                 return ValidationResult.Error("Database file does not exist");
+            }
+
+            if (PasswordStdin && !string.IsNullOrWhiteSpace(PasswordEnv))
+            {
+                return ValidationResult.Error("Use only one of --password-stdin or --password-env");
             }
 
             return ValidationResult.Success();
@@ -70,11 +87,17 @@ internal sealed class UpdateEntryCommand : AsyncCommand<UpdateEntryCommand.Setti
         _documentService = documentService;
     }
 
-    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings, System.Threading.CancellationToken cancellationToken)
     {
         try
         {
-            var document = await _documentService.TryLoadDocumentAsync(settings.Alias, settings.FilePath, true);
+            var passwordOptions = new PasswordOptions
+            {
+                PasswordStdin = settings.PasswordStdin,
+                PasswordEnvVar = settings.PasswordEnv,
+            };
+
+            var document = await _documentService.TryLoadDocumentAsync(settings.Alias, settings.FilePath, false, passwordOptions);
 
             if (document == null)
             {
@@ -149,6 +172,11 @@ internal sealed class UpdateEntryCommand : AsyncCommand<UpdateEntryCommand.Setti
                 entry.Notes = settings.Notes;
             }
 
+            if (settings.Group != null)
+            {
+                entry.Group = settings.Group;
+            }
+
             entry.LastModificationTime = DateTime.Now;
 
             await _documentService.SaveDocumentAsync(document, settings.Alias, settings.FilePath);
@@ -172,8 +200,8 @@ internal sealed class UpdateEntryCommand : AsyncCommand<UpdateEntryCommand.Setti
         }
         catch (Exception ex)
         {
-            AnsiConsole.WriteException(ex);
-            return 1;
+            CliError.WriteException(ex);
+            return ExitCodes.Error;
         }
     }
 }

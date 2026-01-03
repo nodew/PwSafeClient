@@ -3,7 +3,10 @@ name: Release assets
 on:
   push:
     tags:
-      - 'v*'
+      - 'cli-v*'
+
+permissions:
+  contents: write
 
 jobs:
   publish:
@@ -15,18 +18,15 @@ jobs:
           - os: ubuntu-latest
             runtime: linux-x64
             artifact_name: pwsafe
-            asset_name: pwsafe-linux-amd64
           - os: windows-latest
             runtime: win-x64
             artifact_name: pwsafe.exe
-            asset_name: pwsafe-windows-amd64.exe
           - os: macos-latest
             runtime: osx-x64
             artifact_name: pwsafe
-            asset_name: pwsafe-macos-amd64
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Extract Version
       working-directory: .
@@ -40,20 +40,21 @@ jobs:
       working-directory: .
       if: ${{ runner.os == 'Linux' || runner.os == 'macOS' }}
       run: |
-        version=$(./build/extract_version.sh "${GITHUB_REF#refs/tags/}")
+        version=$(bash ./build/extract_version.sh "${GITHUB_REF#refs/tags/}")
         echo "VERSION=$version" >> $GITHUB_ENV
 
     - name: Setup .NET
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 9.0.x
+        dotnet-version: '10.0.x'
+        dotnet-quality: 'preview'
 
     - name: Restore dependencies
       run: dotnet restore
 
     - name: Bundle exe
       run: >-
-        dotnet publish src/PwSafeClient.CLI -c Release -r ${{ matrix.runtime }} --self-contained true -p:PackageVersion=$VERSION -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:PublishTrimmed=True -o release
+        dotnet publish src/PwSafeClient.CLI/PwSafeClient.CLI.csproj -c Release -r ${{ matrix.runtime }} -p:Version=${{ env.VERSION }} -p:EnableTrimming=true -o release
       env:
         Runtime: ${{ matrix.runtime }}
     - name: Upload binaries to release
@@ -61,5 +62,5 @@ jobs:
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         file: release/${{ matrix.artifact_name }}
-        asset_name: ${{ matrix.asset_name }}
+        asset_name: pwsafe-${{ env.VERSION }}-${{ matrix.runtime }}${{ runner.os == 'Windows' && '.exe' || '' }}
         tag: ${{ github.ref }}

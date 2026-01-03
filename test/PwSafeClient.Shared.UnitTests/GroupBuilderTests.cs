@@ -30,16 +30,16 @@ public class GroupBuilderTests
         var group = groupBuilder.Build();
 
         // Assert
-        Assert.AreEqual(2, group.Children.Count);
+        Assert.HasCount(2, group.Children);
         Assert.AreEqual("group1", group.Children[0].Name);
         Assert.AreEqual("group2", group.Children[1].Name);
 
         var group1 = group.Children[0];
-        Assert.AreEqual(2, group1.Children.Count);
+        Assert.HasCount(2, group1.Children);
         Assert.AreEqual("group1-1", group1.Children[0].Name);
         Assert.AreEqual("group1-2", group1.Children[1].Name);
 
         var group2 = group.Children[1];
-        Assert.AreEqual(1, group2.Children.Count);
+        Assert.HasCount(1, group2.Children);
     }
 }

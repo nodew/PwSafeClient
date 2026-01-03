@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,6 +7,7 @@ using System.Threading.Tasks;
 using Medo.Security.Cryptography.PasswordSafe;
 
 using PwSafeClient.Cli.Contracts.Services;
+using PwSafeClient.Cli.Models;
 
 using Spectre.Console;
 
@@ -15,24 +17,29 @@ internal class DocumentService : IDocumentService
 {
     private readonly IConfigManager configManager;
     private readonly IDatabaseManager databaseManager;
-    private static Document? document;
+    private readonly ICliSession session;
+    private readonly Dictionary<string, Document> documentCache = new();
 
-    public DocumentService(IConfigManager configManager, IDatabaseManager databaseManager)
+    public DocumentService(IConfigManager configManager, IDatabaseManager databaseManager, ICliSession session)
     {
         this.configManager = configManager;
         this.databaseManager = databaseManager;
+        this.session = session;
     }
 
-    public async Task<Document?> TryLoadDocumentAsync(string? alias, string? filepath, bool readOnly)
+    public async Task<Document?> TryLoadDocumentAsync(string? alias, string? filepath, bool readOnly, PasswordOptions? passwordOptions = null)
     {
-        if (document != null)
-        {
-            return document;
-        }
-
         try
         {
             filepath = await GetDocumentFilePathAsync(alias, filepath);
+            if (filepath == null)
+                return null;
+
+            if (documentCache.TryGetValue(filepath, out var cachedDoc))
+            {
+                cachedDoc.IsReadOnly = readOnly;
+                return cachedDoc;
+            }
 
             if (!File.Exists(filepath))
             {
@@ -40,13 +47,16 @@ internal class DocumentService : IDocumentService
                 return null;
             }
 
-            var password = AnsiConsole.Prompt(
-                new TextPrompt<string>("Enter password:")
-                    .PromptStyle("green")
-                    .Secret());
+            var password = await GetPasswordAsync(passwordOptions);
+            if (password == null)
+            {
+                return null;
+            }
 
-            document = Document.Load(filepath, password);
+            var document = Document.Load(filepath, password);
             document.IsReadOnly = readOnly;
+            documentCache[filepath] = document;
+            return document;
         }
         catch (FormatException)
         {
@@ -56,17 +66,60 @@ internal class DocumentService : IDocumentService
         {
             AnsiConsole.MarkupLine($"[red]Error loading file: {ex.Message}[/]");
         }
+        return null;
+    }
 
-        return document;
+    private async Task<string?> GetPasswordAsync(PasswordOptions? passwordOptions)
+    {
+        if (!string.IsNullOrEmpty(passwordOptions?.Password))
+        {
+            return passwordOptions.Password;
+        }
+
+        if (passwordOptions?.PasswordStdin == true)
+        {
+            var input = await Console.In.ReadToEndAsync();
+            var password = input?.TrimEnd('\r', '\n');
+
+            if (string.IsNullOrEmpty(password))
+            {
+                AnsiConsole.MarkupLine("[red]No password received from stdin.[/]");
+                return null;
+            }
+
+            return password;
+        }
+
+        if (!string.IsNullOrWhiteSpace(passwordOptions?.PasswordEnvVar))
+        {
+            var password = Environment.GetEnvironmentVariable(passwordOptions.PasswordEnvVar);
+            if (string.IsNullOrEmpty(password))
+            {
+                AnsiConsole.MarkupLine($"[red]Environment variable '{passwordOptions.PasswordEnvVar}' is not set or empty.[/]");
+                return null;
+            }
+
+            return password;
+        }
+
+        if (!string.IsNullOrEmpty(session.UnlockedPassword))
+        {
+            return session.UnlockedPassword;
+        }
+
+        return AnsiConsole.Prompt(
+            new TextPrompt<string>("Enter password:")
+                .PromptStyle("green")
+                .Secret());
     }
 
     public async Task SaveDocumentAsync(string? alias, string? filepath)
     {
-        if (document == null)
-        {
+        filepath = await GetDocumentFilePathAsync(alias, filepath);
+        if (filepath == null)
             return;
-        }
-
+        if (!documentCache.TryGetValue(filepath, out var document))
+            return;
         await SaveDocumentAsync(document, alias, filepath);
     }
 
@@ -118,9 +171,14 @@ internal class DocumentService : IDocumentService
             return filepath;
         }
 
+        if (!string.IsNullOrWhiteSpace(session.DefaultFilePath))
+        {
+            return session.DefaultFilePath;
+        }
+
         var config = await configManager.LoadConfigurationAsync();
 
-        var aliasToUse = alias ?? config.DefaultDatabase;
+        var aliasToUse = alias ?? session.DefaultAlias ?? config.DefaultDatabase;
 
         var database = config.Databases.FirstOrDefault(db => db.Key == aliasToUse);
 

@@ -2,9 +2,12 @@ using System;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 using PwSafeClient.Cli.Contracts.Services;
+using PwSafeClient.Cli.Json;
+using PwSafeClient.Cli.Models;
 
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -24,14 +27,62 @@ internal sealed class GetPasswordCommand : AsyncCommand<GetPasswordCommand.Setti
         public string? Alias { get; init; }
 
         [Description("Path to the database file")]
-        [CommandOption("-p|--path <PATH>")]
+        [CommandOption("-f|--file|-p|--path <PATH>")]
         public string? FilePath { get; init; }
+
+        [Description("Read database password from stdin")]
+        [CommandOption("--password-stdin")]
+        public bool PasswordStdin { get; init; }
+
+        [Description("Read database password from environment variable")]
+        [CommandOption("--password-env <VAR>")]
+        public string? PasswordEnv { get; init; }
+
+        [Description("Output results as JSON")]
+        [CommandOption("--json")]
+        public bool Json { get; init; }
+
+        [Description("Suppress non-essential output")]
+        [CommandOption("--quiet")]
+        public bool Quiet { get; init; }
+
+        [Description("Print the password to stdout")]
+        [CommandOption("--print")]
+        public bool Print { get; init; }
+
+        [Description("Do not copy the password to the clipboard")]
+        [CommandOption("--no-clipboard")]
+        public bool NoClipboard { get; init; }
+
+        [Description("Clear the clipboard after N seconds (requires clipboard copy)")]
+        [CommandOption("--clear-after <SECONDS>")]
+        public int? ClearAfterSeconds { get; init; }
 
         public override ValidationResult Validate()
         {
             if (FilePath != null && !File.Exists(FilePath))
             {
                 return ValidationResult.Error("Database file does not exist");
+            }
+
+            if (PasswordStdin && !string.IsNullOrWhiteSpace(PasswordEnv))
+            {
+                return ValidationResult.Error("Use only one of --password-stdin or --password-env");
+            }
+
+            if (Json && Print)
+            {
+                return ValidationResult.Error("Use only one of --json or --print");
+            }
+
+            if (NoClipboard && ClearAfterSeconds is not null)
+            {
+                return ValidationResult.Error("--clear-after requires clipboard copy (do not use with --no-clipboard)");
+            }
+
+            if (ClearAfterSeconds is not null && ClearAfterSeconds <= 0)
+            {
+                return ValidationResult.Error("--clear-after must be a positive number of seconds");
             }
 
             return ValidationResult.Success();
@@ -45,15 +96,30 @@ internal sealed class GetPasswordCommand : AsyncCommand<GetPasswordCommand.Setti
         _documentService = documentService;
     }
 
-    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings, System.Threading.CancellationToken cancellationToken)
     {
         try
         {
-            var document = await _documentService.TryLoadDocumentAsync(settings.Alias, settings.FilePath, true);
+            var passwordOptions = new PasswordOptions
+            {
+                PasswordStdin = settings.PasswordStdin,
+                PasswordEnvVar = settings.PasswordEnv,
+            };
+
+            var document = await _documentService.TryLoadDocumentAsync(settings.Alias, settings.FilePath, true, passwordOptions);
 
             if (document == null)
             {
-                AnsiConsole.MarkupLine("[red]Failed to load document.[/]");
+                if (settings.Json)
+                {
+                    Console.WriteLine(JsonSerializer.Serialize(
+                        new ErrorResponse("Failed to load document"),
+                        CliJsonContext.Default.ErrorResponse));
+                }
+                else
+                {
+                    AnsiConsole.MarkupLine("[red]Failed to load document.[/]");
+                }
                 return 1;
             }
 
@@ -61,18 +127,72 @@ internal sealed class GetPasswordCommand : AsyncCommand<GetPasswordCommand.Setti
 
             if (entry == null)
             {
-                AnsiConsole.MarkupLine($"[red]Entry with ID '{settings.Id}' not found.[/]");
+                if (settings.Json)
+                {
+                    Console.WriteLine(JsonSerializer.Serialize(
+                        new ErrorResponse($"Entry with ID '{settings.Id}' not found"),
+                        CliJsonContext.Default.ErrorResponse));
+                }
+                else
+                {
+                    AnsiConsole.MarkupLine($"[red]Entry with ID '{settings.Id}' not found.[/]");
+                }
                 return 1;
             }
 
-            await TextCopy.ClipboardService.SetTextAsync(entry.Password);
-            AnsiConsole.MarkupLine("[green]Password copied to clipboard.[/]");
+            var copiedToClipboard = false;
+
+            if (!settings.NoClipboard)
+            {
+                await TextCopy.ClipboardService.SetTextAsync(entry.Password);
+                copiedToClipboard = true;
+
+                if (settings.ClearAfterSeconds is not null)
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(settings.ClearAfterSeconds.Value));
+                    await TextCopy.ClipboardService.SetTextAsync(string.Empty);
+                }
+            }
+
+            if (settings.Json)
+            {
+                Console.WriteLine(JsonSerializer.Serialize(
+                    new GetPasswordResponse(entry.Uuid, copiedToClipboard),
+                    CliJsonContext.Default.GetPasswordResponse));
+                return 0;
+            }
+
+            if (settings.Print)
+            {
+                Console.WriteLine(entry.Password);
+            }
+
+            if (!settings.Quiet)
+            {
+                if (copiedToClipboard)
+                {
+                    AnsiConsole.MarkupLine("[green]Password copied to clipboard.[/]");
+                }
+                else
+                {
+                    AnsiConsole.MarkupLine("[grey]Clipboard copy disabled.[/]");
+                }
+            }
             return 0;
         }
         catch (Exception ex)
         {
-            AnsiConsole.WriteException(ex);
-            return 1;
+            if (settings.Json)
+            {
+                Console.WriteLine(JsonSerializer.Serialize(
+                    new ErrorResponse(ex.Message),
+                    CliJsonContext.Default.ErrorResponse));
+            }
+            else
+            {
+                CliError.WriteException(ex);
+            }
+            return ExitCodes.Error;
         }
     }
 }

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Medo.Security.Cryptography.PasswordSafe;
 
 using PwSafeClient.Cli.Contracts.Services;
+using PwSafeClient.Cli.Models;
 using PwSafeClient.Shared;
 
 using Spectre.Console;
@@ -25,6 +26,14 @@ internal sealed class UpdatePolicyCommand : AsyncCommand<UpdatePolicyCommand.Set
         [Description("Path to the database file")]
         [CommandOption("-f|--file <PATH>")]
         public string? FilePath { get; init; }
+
+        [Description("Read database password from stdin")]
+        [CommandOption("--password-stdin")]
+        public bool PasswordStdin { get; init; }
+
+        [Description("Read database password from environment variable")]
+        [CommandOption("--password-env <VAR>")]
+        public string? PasswordEnv { get; init; }
 
         [Description("Name of the password policy")]
         [CommandOption("-n|--name <NAME>")]
@@ -82,6 +91,11 @@ internal sealed class UpdatePolicyCommand : AsyncCommand<UpdatePolicyCommand.Set
                 return ValidationResult.Error("Database file does not exist");
             }
 
+            if (PasswordStdin && !string.IsNullOrWhiteSpace(PasswordEnv))
+            {
+                return ValidationResult.Error("Use only one of --password-stdin or --password-env");
+            }
+
             if (string.IsNullOrWhiteSpace(Name))
             {
                 return ValidationResult.Error("Policy name is required");
@@ -131,7 +145,7 @@ internal sealed class UpdatePolicyCommand : AsyncCommand<UpdatePolicyCommand.Set
         _documentService = documentService;
     }
 
-    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings, System.Threading.CancellationToken cancellationToken)
     {
         try
         {
@@ -144,7 +158,13 @@ internal sealed class UpdatePolicyCommand : AsyncCommand<UpdatePolicyCommand.Set
                 }
             }
 
-            var document = await _documentService.TryLoadDocumentAsync(settings.Alias, settings.FilePath, true);
+            var passwordOptions = new PasswordOptions
+            {
+                PasswordStdin = settings.PasswordStdin,
+                PasswordEnvVar = settings.PasswordEnv,
+            };
+
+            var document = await _documentService.TryLoadDocumentAsync(settings.Alias, settings.FilePath, false, passwordOptions);
 
             if (document == null)
             {
@@ -244,8 +264,8 @@ internal sealed class UpdatePolicyCommand : AsyncCommand<UpdatePolicyCommand.Set
         }
         catch (Exception ex)
         {
-            AnsiConsole.WriteException(ex);
-            return 1;
+            CliError.WriteException(ex);
+            return ExitCodes.Error;
         }
     }
 }

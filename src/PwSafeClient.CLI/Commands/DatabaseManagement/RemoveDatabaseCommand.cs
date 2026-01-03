@@ -35,7 +35,7 @@ internal class RemoveDatabaseCommand : AsyncCommand<RemoveDatabaseCommand.Settin
         _dbManager = databaseManager;
     }
 
-    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings, System.Threading.CancellationToken cancellationToken)
     {
         try
         {
@@ -45,8 +45,8 @@ internal class RemoveDatabaseCommand : AsyncCommand<RemoveDatabaseCommand.Settin
         }
         catch (Exception e)
         {
-            AnsiConsole.WriteException(e);
-            return 1;
+            CliError.WriteException(e);
+            return ExitCodes.Error;
         }
     }
 }

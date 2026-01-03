@@ -2,9 +2,13 @@ using System;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 using PwSafeClient.Cli.Contracts.Services;
+using PwSafeClient.Cli.Json;
+using PwSafeClient.Cli.Models;
 
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -24,14 +28,35 @@ internal sealed class ShowEntryCommand : AsyncCommand<ShowEntryCommand.Settings>
         public string? Alias { get; init; }
 
         [Description("Path to the database file")]
-        [CommandOption("-p|--path <PATH>")]
+        [CommandOption("-f|--file|-p|--path <PATH>")]
         public string? FilePath { get; init; }
+
+        [Description("Output results as JSON")]
+        [CommandOption("--json")]
+        public bool Json { get; init; }
+
+        [Description("Suppress non-essential output")]
+        [CommandOption("--quiet")]
+        public bool Quiet { get; init; }
+
+        [Description("Read database password from stdin")]
+        [CommandOption("--password-stdin")]
+        public bool PasswordStdin { get; init; }
+
+        [Description("Read database password from environment variable")]
+        [CommandOption("--password-env <VAR>")]
+        public string? PasswordEnv { get; init; }
 
         public override ValidationResult Validate()
         {
             if (FilePath != null && !File.Exists(FilePath))
             {
                 return ValidationResult.Error("Database file does not exist");
+            }
+
+            if (PasswordStdin && !string.IsNullOrWhiteSpace(PasswordEnv))
+            {
+                return ValidationResult.Error("Use only one of --password-stdin or --password-env");
             }
 
             return ValidationResult.Success();
@@ -45,11 +70,17 @@ internal sealed class ShowEntryCommand : AsyncCommand<ShowEntryCommand.Settings>
         _documentService = documentService;
     }
 
-    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings, CancellationToken cancellationToken)
     {
         try
         {
-            var document = await _documentService.TryLoadDocumentAsync(settings.Alias, settings.FilePath, true);
+            var passwordOptions = new PasswordOptions
+            {
+                PasswordStdin = settings.PasswordStdin,
+                PasswordEnvVar = settings.PasswordEnv,
+            };
+
+            var document = await _documentService.TryLoadDocumentAsync(settings.Alias, settings.FilePath, true, passwordOptions);
 
             if (document == null)
             {
@@ -63,6 +94,24 @@ internal sealed class ShowEntryCommand : AsyncCommand<ShowEntryCommand.Settings>
             {
                 AnsiConsole.MarkupLine($"[red]Entry with ID '{settings.Id}' not found.[/]");
                 return 1;
+            }
+
+            if (settings.Json)
+            {
+                var result = new EntryDetailsResponse(
+                    entry.Uuid,
+                    entry.Group?.ToString() ?? string.Empty,
+                    entry.Title ?? string.Empty,
+                    entry.UserName ?? string.Empty,
+                    entry.Url ?? string.Empty,
+                    entry.Notes ?? string.Empty,
+                    entry.PasswordPolicyName ?? string.Empty,
+                    entry.CreationTime,
+                    entry.LastModificationTime,
+                    !string.IsNullOrEmpty(entry.Password));
+
+                Console.WriteLine(JsonSerializer.Serialize(result, CliJsonContext.Default.EntryDetailsResponse));
+                return 0;
             }
 
             var table = new Table();
@@ -85,8 +134,8 @@ internal sealed class ShowEntryCommand : AsyncCommand<ShowEntryCommand.Settings>
         }
         catch (Exception ex)
         {
-            AnsiConsole.WriteException(ex);
-            return 1;
+            CliError.WriteException(ex);
+            return ExitCodes.Error;
         }
     }
 }

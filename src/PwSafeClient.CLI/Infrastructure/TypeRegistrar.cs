@@ -1,5 +1,8 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
+
 using Microsoft.Extensions.DependencyInjection;
+
 using Spectre.Console.Cli;
 
 namespace PwSafeClient.Cli.Infrastructure;
@@ -7,6 +10,8 @@ namespace PwSafeClient.Cli.Infrastructure;
 public sealed class TypeRegistrar : ITypeRegistrar
 {
     private readonly IServiceCollection _builder;
+    private IServiceProvider? _provider;
+    private readonly object _lock = new();
 
     public TypeRegistrar(IServiceCollection builder)
     {
@@ -15,9 +20,23 @@ public sealed class TypeRegistrar : ITypeRegistrar
 
     public ITypeResolver Build()
     {
-        return new TypeResolver(_builder.BuildServiceProvider());
+        if (_provider != null)
+        {
+            return new NonDisposingTypeResolver(_provider);
+        }
+
+        lock (_lock)
+        {
+            _provider ??= _builder.BuildServiceProvider();
+        }
+
+        return new NonDisposingTypeResolver(_provider);
     }
 
+    [UnconditionalSuppressMessage(
+        "Trimming",
+        "IL2067",
+        Justification = "Spectre.Console.Cli registers known command/service types; constructors are required at runtime and are preserved by references in the app.")]
     public void Register(Type service, Type implementation)
     {
         _builder.AddSingleton(service, implementation);

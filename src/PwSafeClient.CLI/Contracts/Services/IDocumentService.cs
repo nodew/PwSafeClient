@@ -1,7 +1,8 @@
-using System.IO;
 using System.Threading.Tasks;
 
 using Medo.Security.Cryptography.PasswordSafe;
+
+using PwSafeClient.Cli.Models;
 
 namespace PwSafeClient.Cli.Contracts.Services;
 
@@ -14,7 +15,7 @@ internal interface IDocumentService
     /// <param name="filepath">The file info of database</param>
     /// <param name="readOnly">Whether to load the document as readonly</param>
     /// <returns>The document</returns>
-    Task<Document?> TryLoadDocumentAsync(string? alias, string? filepath, bool readOnly);
+    Task<Document?> TryLoadDocumentAsync(string? alias, string? filepath, bool readOnly, PasswordOptions? passwordOptions = null);
 
     /// <summary>
     /// Save the document to given alias or file path.
