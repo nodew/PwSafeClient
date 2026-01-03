@@ -37,7 +37,7 @@ jobs:
       working-directory: .
       if: ${{ runner.os == 'Linux' || runner.os == 'macOS' }}
       run: |
-        version=$(./build/extract_version.sh "${GITHUB_REF#refs/tags/}")
+        version=$(bash ./build/extract_version.sh "${GITHUB_REF#refs/tags/}")
         echo "VERSION=$version" >> $GITHUB_ENV
 
     - name: Setup .NET
