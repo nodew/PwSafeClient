@@ -54,7 +54,7 @@ jobs:
 
     - name: Bundle exe
       run: >-
-        dotnet publish src/PwSafeClient.CLI/PwSafeClient.CLI.csproj -c Release -r ${{ matrix.runtime }} -p:Version=$VERSION -p:EnableTrimming=true -o release
+        dotnet publish src/PwSafeClient.CLI/PwSafeClient.CLI.csproj -c Release -r ${{ matrix.runtime }} -p:Version=${{ env.VERSION }} -p:EnableTrimming=true -o release
       env:
         Runtime: ${{ matrix.runtime }}
     - name: Upload binaries to release
