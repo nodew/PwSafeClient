@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,6 +16,10 @@ public sealed class NonDisposingTypeResolver : ITypeResolver, IDisposable
         _provider = provider ?? throw new ArgumentNullException(nameof(provider));
     }
 
+    [UnconditionalSuppressMessage(
+        "Trimming",
+        "IL2067",
+        Justification = "Spectre.Console.Cli passes concrete command types; ActivatorUtilities requires constructors which are preserved by references in the app.")]
     public object? Resolve(Type? type)
     {
         if (type == null)

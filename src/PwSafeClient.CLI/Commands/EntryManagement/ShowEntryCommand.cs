@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using PwSafeClient.Cli.Contracts.Services;
+using PwSafeClient.Cli.Json;
 using PwSafeClient.Cli.Models;
 
 using Spectre.Console;
@@ -16,12 +17,6 @@ namespace PwSafeClient.Cli.Commands;
 
 internal sealed class ShowEntryCommand : AsyncCommand<ShowEntryCommand.Settings>
 {
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        WriteIndented = true
-    };
-
     internal sealed class Settings : CommandSettings
     {
         [Description("The ID of the entry")]
@@ -103,21 +98,19 @@ internal sealed class ShowEntryCommand : AsyncCommand<ShowEntryCommand.Settings>
 
             if (settings.Json)
             {
-                var result = new
-                {
-                    id = entry.Uuid,
-                    group = entry.Group?.ToString() ?? string.Empty,
-                    title = entry.Title ?? string.Empty,
-                    username = entry.UserName ?? string.Empty,
-                    url = entry.Url ?? string.Empty,
-                    notes = entry.Notes ?? string.Empty,
-                    passwordPolicy = entry.PasswordPolicyName ?? string.Empty,
-                    created = entry.CreationTime,
-                    modified = entry.LastModificationTime,
-                    hasPassword = !string.IsNullOrEmpty(entry.Password),
-                };
+                var result = new EntryDetailsResponse(
+                    entry.Uuid,
+                    entry.Group?.ToString() ?? string.Empty,
+                    entry.Title ?? string.Empty,
+                    entry.UserName ?? string.Empty,
+                    entry.Url ?? string.Empty,
+                    entry.Notes ?? string.Empty,
+                    entry.PasswordPolicyName ?? string.Empty,
+                    entry.CreationTime,
+                    entry.LastModificationTime,
+                    !string.IsNullOrEmpty(entry.Password));
 
-                Console.WriteLine(JsonSerializer.Serialize(result, JsonOptions));
+                Console.WriteLine(JsonSerializer.Serialize(result, CliJsonContext.Default.EntryDetailsResponse));
                 return 0;
             }
 

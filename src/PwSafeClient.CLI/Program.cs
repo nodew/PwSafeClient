@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using System.Linq;
 using System.Threading;
 
@@ -11,6 +12,19 @@ using PwSafeClient.Cli.Services;
 
 using Spectre.Console;
 using Spectre.Console.Cli;
+
+if (OperatingSystem.IsWindows())
+{
+    try
+    {
+        Console.InputEncoding = Encoding.UTF8;
+        Console.OutputEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
+    }
+    catch
+    {
+        // Ignore encoding failures (some hosts disallow changes).
+    }
+}
 
 var debug = args.Any(a => string.Equals(a, "--debug", StringComparison.OrdinalIgnoreCase));
 if (debug)

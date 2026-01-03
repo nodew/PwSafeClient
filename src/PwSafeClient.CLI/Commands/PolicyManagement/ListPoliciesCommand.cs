@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Medo.Security.Cryptography.PasswordSafe;
 
 using PwSafeClient.Cli.Contracts.Services;
+using PwSafeClient.Cli.Json;
 using PwSafeClient.Cli.Models;
 using PwSafeClient.Shared;
 
@@ -18,12 +19,6 @@ namespace PwSafeClient.Cli.Commands;
 
 internal sealed class ListPoliciesCommand : AsyncCommand<ListPoliciesCommand.Settings>
 {
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        WriteIndented = true
-    };
-
     internal sealed class Settings : CommandSettings
     {
         [Description("Alias for the database")]
@@ -120,26 +115,24 @@ internal sealed class ListPoliciesCommand : AsyncCommand<ListPoliciesCommand.Set
                     var symbols = policy.GetSpecialSymbolSet();
                     var symbolSet = symbols.Length == 0 ? string.Empty : string.Join("", symbols);
 
-                    return new
-                    {
-                        name = policy.Name,
-                        length = policy.TotalPasswordLength,
-                        pronounceable = isPronounceable,
+                    return new PolicyListItem(
+                        policy.Name,
+                        policy.TotalPasswordLength,
+                        isPronounceable,
                         useLowercase,
-                        minimumLowercaseCount = isPronounceable ? 0 : policy.MinimumLowercaseCount,
+                        isPronounceable ? 0 : policy.MinimumLowercaseCount,
                         useUppercase,
-                        minimumUppercaseCount = isPronounceable ? 0 : policy.MinimumUppercaseCount,
+                        isPronounceable ? 0 : policy.MinimumUppercaseCount,
                         useDigits,
-                        minimumDigitCount = isPronounceable ? 0 : policy.MinimumDigitCount,
+                        isPronounceable ? 0 : policy.MinimumDigitCount,
                         useSymbols,
-                        minimumSymbolCount = isPronounceable ? 0 : policy.MinimumSymbolCount,
+                        isPronounceable ? 0 : policy.MinimumSymbolCount,
                         symbolSet,
                         useEasyVision,
-                        useHexDigits,
-                    };
-                });
+                        useHexDigits);
+                }).ToList();
 
-                Console.WriteLine(JsonSerializer.Serialize(results, JsonOptions));
+                Console.WriteLine(JsonSerializer.Serialize(results, CliJsonContext.Default.PolicyList));
                 return 0;
             }
 

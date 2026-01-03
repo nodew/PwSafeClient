@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 
 using PwSafeClient.Cli.Contracts.Services;
+using PwSafeClient.Cli.Json;
 
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -13,12 +14,6 @@ namespace PwSafeClient.Cli.Commands;
 
 internal class ListDatabaseCommand : AsyncCommand<ListDatabaseCommand.Settings>
 {
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        WriteIndented = true
-    };
-
     internal sealed class Settings : CommandSettings
     {
         [Description("Output results as JSON")]
@@ -60,14 +55,11 @@ internal class ListDatabaseCommand : AsyncCommand<ListDatabaseCommand.Settings>
 
             if (settings.Json)
             {
-                var results = databases.Select(db => new
-                {
-                    alias = db.Alias,
-                    path = db.Path,
-                    isDefault = db.IsDefault,
-                });
+                var results = databases
+                    .Select(db => new DatabaseListItem(db.Alias, db.Path, db.IsDefault))
+                    .ToList();
 
-                Console.WriteLine(JsonSerializer.Serialize(results, JsonOptions));
+                Console.WriteLine(JsonSerializer.Serialize(results, CliJsonContext.Default.DatabaseList));
                 return 0;
             }
 

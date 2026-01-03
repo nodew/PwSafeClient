@@ -5,18 +5,13 @@ using System.Threading.Tasks;
 
 using PwSafeClient.Cli.Contracts.Services;
 using PwSafeClient.Cli.Exceptions;
+using PwSafeClient.Cli.Json;
 using PwSafeClient.Cli.Models;
 
 namespace PwSafeClient.Cli.Services;
 
 internal class ConfigManager : IConfigManager
 {
-    private static readonly JsonSerializerOptions options = new()
-    {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        WriteIndented = true
-    };
-
     private const string configFolder = ".pwsafe";
     private const string configFilename = "config.json";
 
@@ -87,7 +82,7 @@ internal class ConfigManager : IConfigManager
             using var reader = new StreamReader(fileStream);
             var json = await reader.ReadToEndAsync();
 
-            var config = JsonSerializer.Deserialize<Configuration>(json, options);
+            var config = JsonSerializer.Deserialize(json, CliJsonContext.Default.Configuration);
             return config ?? new Configuration();
         }
         catch (JsonException)
@@ -109,7 +104,7 @@ internal class ConfigManager : IConfigManager
                 Directory.CreateDirectory(configFolderAbsolutePath);
             }
 
-            var json = JsonSerializer.Serialize(configuration, options);
+            var json = JsonSerializer.Serialize(configuration, CliJsonContext.Default.Configuration);
             File.WriteAllText(configFileAbsolutePath, json);
             return Task.CompletedTask;
         }

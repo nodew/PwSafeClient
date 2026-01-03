@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Medo.Security.Cryptography.PasswordSafe;
 
 using PwSafeClient.Cli.Contracts.Services;
+using PwSafeClient.Cli.Json;
 using PwSafeClient.Cli.Models;
 
 using Spectre.Console;
@@ -18,12 +19,6 @@ namespace PwSafeClient.Cli.Commands;
 
 internal sealed class ListEntriesCommand : AsyncCommand<ListEntriesCommand.Settings>
 {
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        WriteIndented = true
-    };
-
     internal sealed class Settings : CommandSettings
     {
         [Description("Alias for the database")]
@@ -167,18 +162,18 @@ internal sealed class ListEntriesCommand : AsyncCommand<ListEntriesCommand.Setti
 
             if (settings.Json)
             {
-                var results = entryList.Select(entry => new
-                {
-                    id = entry.Uuid,
-                    group = entry.Group?.ToString() ?? string.Empty,
-                    title = entry.Title ?? string.Empty,
-                    username = entry.UserName ?? string.Empty,
-                    url = entry.Url ?? string.Empty,
-                    created = entry.CreationTime,
-                    modified = entry.LastModificationTime,
-                });
+                var results = entryList
+                    .Select(entry => new EntryListItem(
+                        entry.Uuid,
+                        entry.Group?.ToString() ?? string.Empty,
+                        entry.Title ?? string.Empty,
+                        entry.UserName ?? string.Empty,
+                        entry.Url ?? string.Empty,
+                        entry.CreationTime,
+                        entry.LastModificationTime))
+                    .ToList();
 
-                Console.WriteLine(JsonSerializer.Serialize(results, JsonOptions));
+                Console.WriteLine(JsonSerializer.Serialize(results, CliJsonContext.Default.EntryList));
                 return 0;
             }
 

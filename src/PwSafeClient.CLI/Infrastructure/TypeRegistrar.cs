@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -32,6 +33,10 @@ public sealed class TypeRegistrar : ITypeRegistrar
         return new NonDisposingTypeResolver(_provider);
     }
 
+    [UnconditionalSuppressMessage(
+        "Trimming",
+        "IL2067",
+        Justification = "Spectre.Console.Cli registers known command/service types; constructors are required at runtime and are preserved by references in the app.")]
     public void Register(Type service, Type implementation)
     {
         _builder.AddSingleton(service, implementation);

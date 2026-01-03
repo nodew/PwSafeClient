@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 
 using PwSafeClient.Cli.Contracts.Services;
+using PwSafeClient.Cli.Json;
 using PwSafeClient.Cli.Models;
 
 using Spectre.Console;
@@ -15,12 +16,6 @@ namespace PwSafeClient.Cli.Commands;
 
 internal sealed class GetPasswordCommand : AsyncCommand<GetPasswordCommand.Settings>
 {
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        WriteIndented = true
-    };
-
     internal sealed class Settings : CommandSettings
     {
         [Description("The ID of the entry")]
@@ -117,7 +112,9 @@ internal sealed class GetPasswordCommand : AsyncCommand<GetPasswordCommand.Setti
             {
                 if (settings.Json)
                 {
-                    Console.WriteLine(JsonSerializer.Serialize(new { error = "Failed to load document" }, JsonOptions));
+                    Console.WriteLine(JsonSerializer.Serialize(
+                        new ErrorResponse("Failed to load document"),
+                        CliJsonContext.Default.ErrorResponse));
                 }
                 else
                 {
@@ -132,7 +129,9 @@ internal sealed class GetPasswordCommand : AsyncCommand<GetPasswordCommand.Setti
             {
                 if (settings.Json)
                 {
-                    Console.WriteLine(JsonSerializer.Serialize(new { error = $"Entry with ID '{settings.Id}' not found" }, JsonOptions));
+                    Console.WriteLine(JsonSerializer.Serialize(
+                        new ErrorResponse($"Entry with ID '{settings.Id}' not found"),
+                        CliJsonContext.Default.ErrorResponse));
                 }
                 else
                 {
@@ -157,7 +156,9 @@ internal sealed class GetPasswordCommand : AsyncCommand<GetPasswordCommand.Setti
 
             if (settings.Json)
             {
-                Console.WriteLine(JsonSerializer.Serialize(new { id = entry.Uuid, copiedToClipboard }, JsonOptions));
+                Console.WriteLine(JsonSerializer.Serialize(
+                    new GetPasswordResponse(entry.Uuid, copiedToClipboard),
+                    CliJsonContext.Default.GetPasswordResponse));
                 return 0;
             }
 
@@ -183,7 +184,9 @@ internal sealed class GetPasswordCommand : AsyncCommand<GetPasswordCommand.Setti
         {
             if (settings.Json)
             {
-                Console.WriteLine(JsonSerializer.Serialize(new { error = ex.Message }, JsonOptions));
+                Console.WriteLine(JsonSerializer.Serialize(
+                    new ErrorResponse(ex.Message),
+                    CliJsonContext.Default.ErrorResponse));
             }
             else
             {

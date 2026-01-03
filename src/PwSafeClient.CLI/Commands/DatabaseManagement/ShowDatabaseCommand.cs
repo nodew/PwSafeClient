@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 
 using PwSafeClient.Cli.Contracts.Services;
+using PwSafeClient.Cli.Json;
 using PwSafeClient.Cli.Models;
 
 using Spectre.Console;
@@ -13,12 +14,6 @@ namespace PwSafeClient.Cli.Commands;
 
 internal class ShowDatabaseCommand : AsyncCommand<ShowDatabaseCommand.Settings>
 {
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        WriteIndented = true
-    };
-
     internal class Settings : CommandSettings
     {
         [Description("Alias of the database")]
@@ -78,7 +73,9 @@ internal class ShowDatabaseCommand : AsyncCommand<ShowDatabaseCommand.Settings>
             {
                 if (settings.Json)
                 {
-                    Console.WriteLine(JsonSerializer.Serialize(new { error = "No database specified and no default database configured." }, JsonOptions));
+                    Console.WriteLine(JsonSerializer.Serialize(
+                        new ErrorResponse("No database specified and no default database configured."),
+                        CliJsonContext.Default.ErrorResponse));
                 }
                 else
                 {
@@ -101,7 +98,9 @@ internal class ShowDatabaseCommand : AsyncCommand<ShowDatabaseCommand.Settings>
             {
                 if (settings.Json)
                 {
-                    Console.WriteLine(JsonSerializer.Serialize(new { error = "Invalid password or database file" }, JsonOptions));
+                    Console.WriteLine(JsonSerializer.Serialize(
+                        new ErrorResponse("Invalid password or database file"),
+                        CliJsonContext.Default.ErrorResponse));
                 }
                 else if (!settings.Quiet)
                 {
@@ -113,20 +112,18 @@ internal class ShowDatabaseCommand : AsyncCommand<ShowDatabaseCommand.Settings>
 
             if (settings.Json)
             {
-                var result = new
-                {
-                    uuid = document.Uuid,
-                    name = document.Name ?? string.Empty,
-                    description = document.Description ?? string.Empty,
-                    version = document.Version.ToString(),
-                    lastSavedBy = document.LastSaveUser,
-                    lastSavedOn = document.LastSaveTime,
-                    lastSavedApplication = document.LastSaveApplication,
-                    lastSavedMachine = document.LastSaveHost,
-                    itemCount = document.Entries.Count,
-                };
+                var result = new DatabaseInfoResponse(
+                    document.Uuid,
+                    document.Name ?? string.Empty,
+                    document.Description ?? string.Empty,
+                    document.Version.ToString(),
+                    document.LastSaveUser,
+                    document.LastSaveTime,
+                    document.LastSaveApplication,
+                    document.LastSaveHost,
+                    document.Entries.Count);
 
-                Console.WriteLine(JsonSerializer.Serialize(result, JsonOptions));
+                Console.WriteLine(JsonSerializer.Serialize(result, CliJsonContext.Default.DatabaseInfoResponse));
                 return 0;
             }
 
@@ -153,7 +150,9 @@ internal class ShowDatabaseCommand : AsyncCommand<ShowDatabaseCommand.Settings>
         {
             if (settings.Json)
             {
-                Console.WriteLine(JsonSerializer.Serialize(new { error = "Invalid password or database file" }, JsonOptions));
+                Console.WriteLine(JsonSerializer.Serialize(
+                    new ErrorResponse("Invalid password or database file"),
+                    CliJsonContext.Default.ErrorResponse));
             }
             else if (!settings.Quiet)
             {

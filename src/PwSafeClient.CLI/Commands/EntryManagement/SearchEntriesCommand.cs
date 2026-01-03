@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 using PwSafeClient.Cli.Contracts.Services;
+using PwSafeClient.Cli.Json;
 using PwSafeClient.Cli.Models;
 
 using Spectre.Console;
@@ -16,21 +17,6 @@ namespace PwSafeClient.Cli.Commands;
 
 internal sealed class SearchEntriesCommand : AsyncCommand<SearchEntriesCommand.Settings>
 {
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        WriteIndented = true
-    };
-
-    private sealed record EntrySearchResult(
-        Guid Id,
-        string Group,
-        string Title,
-        string Username,
-        string Url,
-        DateTime Created,
-        DateTime Modified);
-
     internal sealed class Settings : CommandSettings
     {
         [Description("Search query (plain text or regex pattern)")]
@@ -217,7 +203,7 @@ internal sealed class SearchEntriesCommand : AsyncCommand<SearchEntriesCommand.S
 
             if (settings.Json)
             {
-                Console.WriteLine(JsonSerializer.Serialize(matchesList, JsonOptions));
+                Console.WriteLine(JsonSerializer.Serialize(matchesList, CliJsonContext.Default.EntrySearchResults));
                 return 0;
             }
 

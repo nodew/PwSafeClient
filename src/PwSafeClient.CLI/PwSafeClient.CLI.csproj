@@ -18,6 +18,7 @@
   <PropertyGroup Condition="'$(RuntimeIdentifier)' != '' and '$(EnableTrimming)' == 'true'">
     <PublishTrimmed>true</PublishTrimmed>
     <TrimMode>partial</TrimMode>
+    <NoWarn>$(NoWarn);IL2104</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup>
