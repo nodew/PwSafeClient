@@ -30,7 +30,7 @@
 
   <PropertyGroup>
     <PackageId>PasswordSafe.Cli</PackageId>
-    <Version>2.0.0</Version>
+    <Version>2.0.1</Version>
     <Authors>Qiao Wang</Authors>
     <Description>Command-line interface for Password Safe.</Description>
     <Copyright>Copyright 2024 Qiao Wang &lt;wangqiao11@hotmail.com&gt;</Copyright>

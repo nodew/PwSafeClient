@@ -25,15 +25,28 @@ jobs:
       - name: Restore
         run: dotnet restore
 
+      - name: Extract Version
+        shell: bash
+        run: |
+          tag="${GITHUB_REF#refs/tags/}"
+          version="${tag#cli-v}"
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+
       - name: Test
         run: |
           dotnet test test/PwSafeClient.Shared.UnitTests/PwSafeClient.Shared.UnitTests.csproj -c Release --no-restore
           dotnet test test/PwSafeClient.CLI.UnitTests/PwSafeClient.CLI.UnitTests.csproj -c Release --no-restore
 
       - name: Pack
-        run: dotnet pack src/PwSafeClient.CLI/PwSafeClient.CLI.csproj -c Release --no-restore
+        run: dotnet pack src/PwSafeClient.CLI/PwSafeClient.CLI.csproj -c Release --no-restore -p:Version=${{ env.VERSION }}
+
+      - name: Verify NuGet API key
+        shell: bash
+        run: |
+          if [ -z "${{ secrets.NUGET_API_KEY }}" ]; then
+            echo "NUGET_API_KEY secret is not set. Add it in repo Settings -> Secrets and variables -> Actions."
+            exit 1
+          fi
 
       - name: Publish to NuGet
-        env:
-          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-        run: dotnet nuget push "src/PwSafeClient.CLI/nupkg/*.nupkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
+        run: dotnet nuget push "src/PwSafeClient.CLI/nupkg/PasswordSafe.Cli.${{ env.VERSION }}.nupkg" --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
