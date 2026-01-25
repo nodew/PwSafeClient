@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Redesigned Settings</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#007AFF", // iOS Blue
+                        "background-light": "#F2F2F7", // iOS Grouped Background Light
+                        "background-dark": "#000000", // iOS Grouped Background Dark
+                        "surface-light": "#FFFFFF",
+                        "surface-dark": "#1C1C1E",
+                        "separator-light": "#C6C6C8",
+                        "separator-dark": "#38383A",
+                    },
+                    fontFamily: {
+                        display: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "10px",
+                    },
+                },
+            },
+        };
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-base text-black dark:text-white antialiased transition-colors duration-200">
+<header class="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-separator-light dark:border-separator-dark">
+<div class="max-w-md mx-auto px-4 h-14 flex items-center justify-center relative">
+<h1 class="text-[17px] font-semibold">Settings</h1>
+</div>
+</header>
+<main class="max-w-md mx-auto pt-6 pb-12 px-4 space-y-6">
+<section>
+<h2 class="text-[13px] uppercase text-gray-500 dark:text-gray-400 font-medium mb-2 pl-4">General</h2>
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl overflow-hidden shadow-sm">
+<div class="flex items-center justify-between p-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors cursor-pointer border-b border-gray-200 dark:border-gray-700 last:border-0">
+<span class="text-[17px]">Language</span>
+<div class="flex items-center text-gray-500 dark:text-gray-400">
+<span class="text-[17px] mr-2">English</span>
+<span class="material-icons-outlined text-gray-400 dark:text-gray-500 text-lg">arrow_forward_ios</span>
+</div>
+</div>
+<div class="flex items-center justify-between p-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors cursor-pointer border-b border-gray-200 dark:border-gray-700 last:border-0">
+<span class="text-[17px]">Appearance</span>
+<div class="flex items-center text-gray-500 dark:text-gray-400">
+<span class="text-[17px] mr-2">System</span>
+<span class="material-icons-outlined text-gray-400 dark:text-gray-500 text-lg">arrow_forward_ios</span>
+</div>
+</div>
+<div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 last:border-0">
+<span class="text-[17px]">Haptic Feedback</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-[51px] h-[31px] bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[27px] after:w-[27px] after:transition-all dark:border-gray-600 peer-checked:bg-green-500"></div>
+</label>
+</div>
+</div>
+</section>
+<section>
+<h2 class="text-[13px] uppercase text-gray-500 dark:text-gray-400 font-medium mb-2 pl-4">Security</h2>
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl overflow-hidden shadow-sm">
+<div class="flex items-center justify-between p-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors cursor-pointer border-b border-gray-200 dark:border-gray-700 last:border-0">
+<span class="text-[17px]">Change App Master Password</span>
+<span class="material-icons-outlined text-gray-400 dark:text-gray-500 text-lg">arrow_forward_ios</span>
+</div>
+<div class="flex items-center justify-between p-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors cursor-pointer border-b border-gray-200 dark:border-gray-700 last:border-0">
+<span class="text-[17px]">Auto-lock Timeout</span>
+<div class="flex items-center text-gray-500 dark:text-gray-400">
+<span class="text-[17px] mr-2">5 minutes</span>
+<span class="material-icons-outlined text-gray-400 dark:text-gray-500 text-lg">arrow_forward_ios</span>
+</div>
+</div>
+</div>
+</section>
+<section>
+<h2 class="text-[13px] uppercase text-gray-500 dark:text-gray-400 font-medium mb-2 pl-4">Database Management</h2>
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl overflow-hidden shadow-sm">
+<div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 last:border-0">
+<span class="text-[17px]">Active Database</span>
+<span class="text-[17px] text-gray-500 dark:text-gray-400">My_Vault</span>
+</div>
+<div class="flex items-center justify-between p-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors cursor-pointer border-b border-gray-200 dark:border-gray-700 last:border-0">
+<span class="text-[17px]">Change Database Password</span>
+<span class="material-icons-outlined text-gray-400 dark:text-gray-500 text-lg">arrow_forward_ios</span>
+</div>
+</div>
+</section>
+<section>
+<h2 class="text-[13px] uppercase text-gray-500 dark:text-gray-400 font-medium mb-2 pl-4">Backup &amp; Export</h2>
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl overflow-hidden shadow-sm">
+<div class="flex items-center justify-between p-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors cursor-pointer border-b border-gray-200 dark:border-gray-700 last:border-0">
+<span class="text-[17px] text-primary">Backup Now</span>
+<span class="material-icons-outlined text-gray-400 dark:text-gray-500 text-lg">arrow_forward_ios</span>
+</div>
+<div class="flex items-center justify-between p-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors cursor-pointer border-b border-gray-200 dark:border-gray-700 last:border-0">
+<span class="text-[17px]">Backup Schedule</span>
+<div class="flex items-center text-gray-500 dark:text-gray-400">
+<span class="text-[17px] mr-2">Weekly</span>
+<span class="material-icons-outlined text-gray-400 dark:text-gray-500 text-lg">arrow_forward_ios</span>
+</div>
+</div>
+<div class="flex items-center justify-between p-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors cursor-pointer border-b border-gray-200 dark:border-gray-700 last:border-0">
+<span class="text-[17px]">Cloud Backup Settings</span>
+<span class="material-icons-outlined text-gray-400 dark:text-gray-500 text-lg">arrow_forward_ios</span>
+</div>
+<div class="flex items-center justify-between p-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors cursor-pointer border-b border-gray-200 dark:border-gray-700 last:border-0">
+<span class="text-[17px]">Export Data</span>
+<span class="material-icons-outlined text-gray-400 dark:text-gray-500 text-lg">arrow_forward_ios</span>
+</div>
+<div class="flex items-center justify-between p-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors cursor-pointer border-b border-gray-200 dark:border-gray-700 last:border-0">
+<span class="text-[17px]">Import Data</span>
+<span class="material-icons-outlined text-gray-400 dark:text-gray-500 text-lg">arrow_forward_ios</span>
+</div>
+</div>
+</section>
+<section>
+<h2 class="text-[13px] uppercase text-gray-500 dark:text-gray-400 font-medium mb-2 pl-4">Legal &amp; About</h2>
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl overflow-hidden shadow-sm">
+<div class="flex items-center justify-between p-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors cursor-pointer border-b border-gray-200 dark:border-gray-700 last:border-0">
+<span class="text-[17px]">About Password Safe</span>
+<span class="material-icons-outlined text-gray-400 dark:text-gray-500 text-lg">arrow_forward_ios</span>
+</div>
+<div class="flex items-center justify-between p-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors cursor-pointer border-b border-gray-200 dark:border-gray-700 last:border-0">
+<span class="text-[17px]">Privacy Policy</span>
+<span class="material-icons-outlined text-gray-400 dark:text-gray-500 text-lg">arrow_forward_ios</span>
+</div>
+<div class="flex items-center justify-between p-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors cursor-pointer border-b border-gray-200 dark:border-gray-700 last:border-0">
+<span class="text-[17px]">Terms of Service</span>
+<span class="material-icons-outlined text-gray-400 dark:text-gray-500 text-lg">arrow_forward_ios</span>
+</div>
+</div>
+<p class="mt-4 text-center text-[13px] text-gray-400 dark:text-gray-600">
+                Password Safe v2.4.1 (Build 2023)
+            </p>
+</section>
+</main>
+
+</body></html>

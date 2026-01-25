@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Database List</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    "primary": "#1773cf",
+                    "background-light": "#F3F4F6","surface-light": "#ffffff",
+                    "text-main": "#111827","text-sub": "#6B7280","border-light": "#E5E7EB",
+                },
+                fontFamily: {
+                    "display": ["Manrope", "sans-serif"]
+                },
+                borderRadius: {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+                },
+                boxShadow: {
+                    'soft': '0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02)',
+                }
+            },
+        },
+    }
+</script>
+<style>
+    body {
+        min-height: max(884px, 100dvh);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+    ::-webkit-scrollbar {
+        width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: #D1D5DB;
+        border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: #9CA3AF;
+    }
+</style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light font-display text-text-main overflow-x-hidden min-h-screen">
+<div class="relative flex h-full min-h-screen w-full flex-col max-w-md mx-auto shadow-2xl overflow-hidden bg-background-light">
+<header class="sticky top-0 z-20 bg-background-light/95 backdrop-blur-md px-4 py-3 flex items-center justify-between border-b border-border-light">
+<h2 class="text-text-main text-3xl font-extrabold leading-tight tracking-tight">Databases</h2>
+<button class="flex items-center justify-center rounded-full w-10 h-10 hover:bg-black/5 transition-colors active:scale-95">
+<span class="material-symbols-outlined text-text-main" style="font-size: 24px;">settings</span>
+</button>
+</header>
+<div class="px-4 py-4 sticky top-[65px] z-10 bg-background-light">
+<div class="flex w-full items-center rounded-xl h-12 bg-white shadow-sm ring-1 ring-gray-200 focus-within:ring-2 focus-within:ring-primary/80 transition-all">
+<div class="flex items-center justify-center pl-4 text-gray-400">
+<span class="material-symbols-outlined" style="font-size: 24px;">search</span>
+</div>
+<input aria-label="Search databases" class="flex w-full bg-transparent border-none focus:ring-0 text-base font-medium text-text-main placeholder:text-gray-400 h-full px-3 rounded-r-xl" placeholder="Search..."/>
+</div>
+</div>
+<div class="flex-1 px-4 flex flex-col gap-3 pb-24">
+<div class="group flex items-center gap-4 bg-surface-light p-4 rounded-xl shadow-soft border border-border-light cursor-pointer hover:border-primary/30 transition-all active:scale-[0.98]">
+<div class="flex flex-col flex-1 min-w-0">
+<p class="text-text-main text-[17px] font-bold leading-snug truncate">Personal Safe</p>
+<p class="text-text-sub text-sm font-medium leading-normal truncate">Last synced: Today, 10:43 AM</p>
+</div>
+<div class="shrink-0 text-gray-300 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined" style="font-size: 24px;">chevron_right</span>
+</div>
+</div>
+<div class="group flex items-center gap-4 bg-surface-light p-4 rounded-xl shadow-soft border border-border-light cursor-pointer hover:border-primary/30 transition-all active:scale-[0.98]">
+<div class="flex flex-col flex-1 min-w-0">
+<p class="text-text-main text-[17px] font-bold leading-snug truncate">Work Credentials</p>
+<p class="text-text-sub text-sm font-medium leading-normal truncate">Last synced: Yesterday</p>
+</div>
+<div class="shrink-0 text-gray-300 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined" style="font-size: 24px;">chevron_right</span>
+</div>
+</div>
+<div class="group flex items-center gap-4 bg-surface-light p-4 rounded-xl shadow-soft border border-border-light cursor-pointer hover:border-primary/30 transition-all active:scale-[0.98]">
+<div class="flex flex-col flex-1 min-w-0">
+<p class="text-text-main text-[17px] font-bold leading-snug truncate">Backup 2023</p>
+<p class="text-text-sub text-sm font-medium leading-normal truncate">Local only</p>
+</div>
+<div class="shrink-0 text-gray-300 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined" style="font-size: 24px;">chevron_right</span>
+</div>
+</div>
+<div class="group flex items-center gap-4 bg-surface-light p-4 rounded-xl shadow-soft border border-border-light cursor-pointer hover:border-primary/30 transition-all active:scale-[0.98]">
+<div class="flex flex-col flex-1 min-w-0">
+<p class="text-text-main text-[17px] font-bold leading-snug truncate">Family Shared</p>
+<p class="text-text-sub text-sm font-medium leading-normal truncate">Last synced: 2 days ago</p>
+</div>
+<div class="shrink-0 text-gray-300 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined" style="font-size: 24px;">chevron_right</span>
+</div>
+</div>
+<div class="pt-6 flex justify-center">
+<p class="text-xs text-text-sub/60 font-semibold tracking-wide uppercase">Password Safe v4.2.0</p>
+</div>
+</div>
+<div class="fixed bottom-6 right-6 z-20">
+<button aria-label="Add new database" class="flex items-center justify-center w-14 h-14 bg-primary text-white rounded-full shadow-lg shadow-blue-500/30 hover:shadow-xl hover:bg-blue-600 transition-all active:scale-95 focus:outline-none focus:ring-4 focus:ring-primary/20">
+<span class="material-symbols-outlined" style="font-size: 32px;">add</span>
+</button>
+</div>
+</div>
+
+</body></html>

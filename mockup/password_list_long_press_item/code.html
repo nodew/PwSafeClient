@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Password List</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#007AFF",
+                        "background": "#F2F2F7",
+                        "surface": "#FFFFFF",
+                        "surface-highlight": "#E5E5EA",
+                        "text-primary": "#000000",
+                        "text-secondary": "#3C3C4399", 
+                        "separator": "#C6C6C8",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #C1C1C1;
+            border-radius: 3px;
+        }
+        body {
+            min-height: max(884px, 100dvh);
+            -webkit-tap-highlight-color: transparent;
+        }
+        .long-press-target:active {
+            animation: press 0.5s forwards;
+        }
+        @keyframes press {
+            0% { transform: scale(1); background-color: transparent; }
+            100% { transform: scale(0.98); background-color: rgba(0,0,0,0.05); }
+        }
+        .animate-slide-up {
+            animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background font-display text-text-primary antialiased overflow-hidden">
+<div class="relative mx-auto flex h-screen w-full max-w-[480px] flex-col overflow-hidden bg-background shadow-xl">
+<header class="flex-none bg-background px-4 pb-2 pt-6 z-20">
+<div class="flex items-center justify-between h-14">
+<button class="flex size-10 items-center justify-center rounded-full text-primary hover:bg-black/5 transition-colors">
+<span class="material-symbols-outlined text-2xl">arrow_back_ios_new</span>
+</button>
+<div class="flex flex-col items-center">
+<h1 class="text-lg font-bold leading-tight tracking-tight text-text-primary">Personal Vault</h1>
+<span class="text-xs font-medium text-text-secondary">Locked • Root</span>
+</div>
+<button class="flex size-10 items-center justify-center rounded-full text-primary hover:bg-black/5 transition-colors">
+<span class="material-symbols-outlined text-2xl">settings</span>
+</button>
+</div>
+</header>
+<div class="flex-none px-4 py-2 z-10 bg-background sticky top-0">
+<div class="relative flex w-full items-center">
+<div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-text-secondary">
+<span class="material-symbols-outlined text-xl">search</span>
+</div>
+<input class="block w-full rounded-xl border-none bg-[#E3E3E8] py-2.5 pl-10 pr-4 text-sm text-text-primary placeholder-text-secondary focus:ring-2 focus:ring-primary focus:outline-none transition-shadow" placeholder="Search entries..." type="text"/>
+</div>
+</div>
+<div class="flex-none px-5 py-2 flex items-center gap-2 text-xs font-medium text-text-secondary bg-background border-b border-separator/30">
+<span class="material-symbols-outlined text-base text-primary">home</span>
+<span class="material-symbols-outlined text-sm text-text-secondary">chevron_right</span>
+<span class="text-text-primary">Root</span>
+</div>
+<main class="flex-1 overflow-y-auto pb-24 bg-surface relative">
+<button class="group w-full flex items-center gap-4 px-5 py-3.5 border-b border-separator/20 hover:bg-background transition-colors text-left">
+<span class="material-symbols-outlined text-2xl text-[#FFCC00]">folder</span>
+<div class="flex-1">
+<p class="text-base font-medium text-text-primary">Banking</p>
+<p class="text-xs text-text-secondary">3 items</p>
+</div>
+<span class="material-symbols-outlined text-text-secondary/50">chevron_right</span>
+</button>
+<button class="group w-full flex items-center gap-4 px-5 py-3.5 border-b border-separator/20 hover:bg-background transition-colors text-left">
+<span class="material-symbols-outlined text-2xl text-[#FFCC00]">folder</span>
+<div class="flex-1">
+<p class="text-base font-medium text-text-primary">Email Accounts</p>
+<p class="text-xs text-text-secondary">2 items</p>
+</div>
+<span class="material-symbols-outlined text-text-secondary/50">chevron_right</span>
+</button>
+<button class="group w-full flex items-center gap-4 px-5 py-3.5 border-b border-separator/20 hover:bg-background transition-colors text-left">
+<span class="material-symbols-outlined text-2xl text-[#FFCC00]">folder</span>
+<div class="flex-1">
+<p class="text-base font-medium text-text-primary">Social Media</p>
+<p class="text-xs text-text-secondary">5 items</p>
+</div>
+<span class="material-symbols-outlined text-text-secondary/50">chevron_right</span>
+</button>
+<div class="group relative select-none flex items-center gap-4 px-5 py-3.5 border-b border-separator/20 active:bg-surface-highlight transition-colors long-press-target cursor-pointer">
+<div class="flex size-10 items-center justify-center rounded-full bg-blue-50 text-blue-500">
+<span class="material-symbols-outlined text-2xl">vpn_key</span>
+</div>
+<div class="flex-1 min-w-0">
+<p class="text-base font-semibold text-text-primary truncate">Apple ID</p>
+<p class="text-xs font-normal text-text-secondary truncate">user@icloud.com</p>
+</div>
+<div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-gray-300 text-xl">more_horiz</span>
+</div>
+</div>
+<div class="group relative select-none flex items-center gap-4 px-5 py-3.5 border-b border-separator/20 active:bg-surface-highlight transition-colors long-press-target cursor-pointer bg-blue-50/50">
+<div class="flex size-10 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+<span class="material-symbols-outlined text-2xl">router</span>
+</div>
+<div class="flex-1 min-w-0">
+<p class="text-base font-semibold text-text-primary truncate">Home Router</p>
+<p class="text-xs font-normal text-text-secondary truncate">admin</p>
+</div>
+<div class="flex items-center gap-1">
+</div>
+</div>
+<div class="group relative select-none flex items-center gap-4 px-5 py-3.5 border-b border-separator/20 active:bg-surface-highlight transition-colors long-press-target cursor-pointer">
+<div class="flex size-10 items-center justify-center rounded-full bg-gray-100 text-gray-500">
+<span class="material-symbols-outlined text-2xl">vpn_key</span>
+</div>
+<div class="flex-1 min-w-0">
+<p class="text-base font-semibold text-text-primary truncate">Netflix</p>
+<p class="text-xs font-normal text-text-secondary truncate">family_plan</p>
+</div>
+</div>
+<div class="h-16"></div>
+</main>
+<div class="absolute bottom-6 right-6 z-30">
+<button class="flex size-14 items-center justify-center rounded-full bg-primary text-white shadow-lg shadow-primary/30 hover:bg-blue-600 active:scale-90 transition-all">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+</div>
+<div class="pointer-events-none absolute bottom-8 left-1/2 z-40 flex -translate-x-1/2 transform items-center gap-2 rounded-full bg-gray-800/90 px-4 py-2 text-sm font-medium text-white shadow-xl opacity-0 transition-opacity duration-300">
+<span class="material-symbols-outlined text-lg text-green-400">check_circle</span>
+            Password copied
+        </div>
+<div class="absolute inset-0 z-50 flex items-end justify-center bg-black/20 backdrop-blur-[2px]">
+<div class="w-full max-w-[480px] bg-background rounded-t-2xl shadow-2xl p-4 animate-slide-up pb-8">
+<div class="flex justify-center mb-4">
+<div class="w-12 h-1.5 bg-gray-300 rounded-full"></div>
+</div>
+<div class="mb-6 flex items-center gap-3 px-2">
+<div class="flex size-12 items-center justify-center rounded-full bg-white shadow-sm border border-gray-100">
+<span class="material-symbols-outlined text-3xl text-blue-600">router</span>
+</div>
+<div class="flex-1 min-w-0">
+<h3 class="text-xl font-bold text-text-primary truncate">Home Router</h3>
+<p class="text-sm text-text-secondary truncate">admin</p>
+</div>
+<button class="text-primary font-semibold text-sm">View</button>
+</div>
+<div class="space-y-3">
+<div class="overflow-hidden rounded-xl bg-surface shadow-sm">
+<button class="flex w-full items-center gap-3 px-4 py-3.5 text-left active:bg-gray-50 transition-colors border-b border-separator/20">
+<span class="material-symbols-outlined text-primary text-2xl">content_copy</span>
+<div class="flex flex-col flex-1">
+<span class="font-semibold text-text-primary text-base">Copy Username</span>
+</div>
+</button>
+<button class="flex w-full items-center gap-3 px-4 py-3.5 text-left active:bg-gray-50 transition-colors">
+<span class="material-symbols-outlined text-primary text-2xl">key</span>
+<div class="flex flex-col flex-1">
+<span class="font-semibold text-text-primary text-base">Copy Password</span>
+</div>
+</button>
+</div>
+<div class="overflow-hidden rounded-xl bg-surface shadow-sm">
+<button class="flex w-full items-center gap-3 px-4 py-3.5 text-left active:bg-gray-50 transition-colors">
+<span class="material-symbols-outlined text-text-secondary text-2xl">edit</span>
+<span class="flex-1 font-medium text-text-primary text-base">Edit Entry</span>
+</button>
+</div>
+</div>
+<div class="mt-4">
+<button class="w-full rounded-xl bg-white py-3.5 font-bold text-primary active:bg-gray-50 transition-all shadow-sm">
+                        Cancel
+                    </button>
+</div>
+</div>
+</div>
+</div>
+
+</body></html>
