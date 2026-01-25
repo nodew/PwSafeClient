@@ -9,45 +9,40 @@
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#1773cf",
-                        "background-light": "#f6f7f8",
-                        "background-dark": "#111921",
-                        "surface-dark": "#1c252e",
-                    },
-                    fontFamily: {
-                        "display": ["Manrope", "sans-serif"]
-                    },
-                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    "primary": "#1773cf",
+                    "background-light": "#f6f7f8",
+                    "background-dark": "#111921",
+                    "surface-dark": "#1c252e",
                 },
+                fontFamily: {
+                    "display": ["Manrope", "sans-serif"]
+                },
+                borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
             },
-        }
-    </script>
-<style>
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #d1d5db;
-            border-radius: 3px;
-        }
-        body {
-            min-height: max(884px, 100dvh);
-        }
-    </style>
-<style>
-    body {
-      min-height: max(884px, 100dvh);
+        },
     }
-  </style>
-  </head>
+</script>
+<style>
+    ::-webkit-scrollbar {
+        width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: #d1d5db;
+        border-radius: 3px;
+    }
+    body {
+        min-height: max(884px, 100dvh);
+    }
+</style>
+</head>
 <body class="bg-background-light font-display text-gray-900 antialiased overflow-hidden">
 <div class="relative mx-auto flex h-screen w-full max-w-[480px] flex-col overflow-hidden bg-background-light shadow-xl">
 <header class="flex-none bg-background-light px-4 pb-2 pt-6 z-20">
@@ -57,7 +52,7 @@
 </a>
 <div class="flex flex-col items-center">
 <h1 class="text-lg font-bold leading-tight tracking-tight">Personal Vault</h1>
-<span class="text-xs font-medium text-gray-500">Locked • Root</span>
+<span class="text-xs font-medium text-gray-500">Unlocked • Root</span>
 </div>
 <a class="flex size-10 items-center justify-center rounded-full text-gray-900 hover:bg-black/5 transition-colors" href="../settings_database/code.html">
 <span class="material-symbols-outlined text-2xl">settings</span>
@@ -102,7 +97,7 @@
 </div>
 <span class="material-symbols-outlined text-gray-500">chevron_right</span>
 </button>
-<div class="group flex items-center gap-4 px-5 py-3 border-b border-gray-200 hover:bg-gray-50 transition-colors">
+<a class="group flex items-center gap-4 px-5 py-3 border-b border-gray-200 hover:bg-gray-50 transition-colors" href="../entry_detail/code.html">
 <span class="material-symbols-outlined text-2xl text-gray-500">vpn_key</span>
 <div class="flex-1 min-w-0">
 <p class="text-sm font-bold text-gray-900 truncate">Apple ID</p>
@@ -116,8 +111,8 @@
 <span class="material-symbols-outlined text-xl">key</span>
 </button>
 </div>
-</div>
-<div class="group flex items-center gap-4 px-5 py-3 border-b border-gray-200 hover:bg-gray-50 transition-colors">
+</a>
+<a class="group flex items-center gap-4 px-5 py-3 border-b border-gray-200 hover:bg-gray-50 transition-colors" href="../entry_detail/code.html">
 <span class="material-symbols-outlined text-2xl text-gray-500">vpn_key</span>
 <div class="flex-1 min-w-0">
 <p class="text-sm font-bold text-gray-900 truncate">Home Router</p>
@@ -131,8 +126,8 @@
 <span class="material-symbols-outlined text-xl">key</span>
 </button>
 </div>
-</div>
-<div class="group flex items-center gap-4 px-5 py-3 border-b border-gray-200 hover:bg-gray-50 transition-colors">
+</a>
+<a class="group flex items-center gap-4 px-5 py-3 border-b border-gray-200 hover:bg-gray-50 transition-colors" href="../entry_detail/code.html">
 <span class="material-symbols-outlined text-2xl text-gray-500">description</span>
 <div class="flex-1 min-w-0">
 <p class="text-sm font-bold text-gray-900 truncate">WiFi Backup Codes</p>
@@ -143,45 +138,17 @@
 <span class="material-symbols-outlined text-xl">content_copy</span>
 </button>
 </div>
-</div>
+</a>
 <div class="h-16"></div>
 </main>
-<div class="absolute inset-0 z-40 bg-black/40 backdrop-blur-[1px] flex flex-col justify-end">
-<div class="w-full bg-white rounded-t-2xl shadow-2xl animate-slide-up border-t border-gray-200">
-<div class="flex justify-center pt-3 pb-1">
-<div class="w-10 h-1 rounded-full bg-gray-300"></div>
-</div>
-<div class="p-5 pb-8 space-y-3">
-<h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider px-2 mb-2">Create New</h3>
-<a class="w-full flex items-center gap-4 p-4 rounded-xl bg-gray-50 active:bg-gray-100 transition-colors border border-gray-200 text-left" href="../create_new_database/code.html">
-<div class="flex size-10 items-center justify-center rounded-full bg-yellow-100 text-yellow-600">
-<span class="material-symbols-outlined text-2xl">create_new_folder</span>
-</div>
-<div class="flex-1">
-<p class="text-base font-bold text-gray-900">Add Group (Folder)</p>
-<p class="text-xs text-gray-500">Create a new folder to organize entries</p>
-</div>
-</a>
-<a class="w-full flex items-center gap-4 p-4 rounded-xl bg-gray-50 active:bg-gray-100 transition-colors border border-gray-200 text-left" href="../add_password_entry/code.html">
-<div class="flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary">
-<span class="material-symbols-outlined text-2xl">password</span>
-</div>
-<div class="flex-1">
-<p class="text-base font-bold text-gray-900">Add Password Entry</p>
-<p class="text-xs text-gray-500">Save a new login credential</p>
-</div>
+<div class="absolute bottom-6 right-6 z-30">
+<a class="flex size-14 items-center justify-center rounded-full bg-primary text-white shadow-lg shadow-primary/30 hover:bg-blue-600 active:scale-90 transition-all" href="../add_password_entry/code.html">
+<span class="material-symbols-outlined text-3xl">add</span>
 </a>
 </div>
-<div class="p-4 border-t border-gray-100 flex justify-center">
-<a class="size-12 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 transition-colors" href="../password_list/code.html">
-<span class="material-symbols-outlined text-2xl">close</span>
-</a>
-</div>
-</div>
-</div>
-<div class="pointer-events-none absolute bottom-8 left-1/2 z-50 flex -translate-x-1/2 transform items-center gap-2 rounded-full bg-gray-900/90 px-4 py-2 text-sm font-medium text-white shadow-xl opacity-0 transition-opacity duration-300">
+<div class="pointer-events-none absolute bottom-8 left-1/2 z-40 flex -translate-x-1/2 transform items-center gap-2 rounded-full bg-gray-900/90 px-4 py-2 text-sm font-medium text-white shadow-xl opacity-0 transition-opacity duration-300">
 <span class="material-symbols-outlined text-lg text-green-400">check_circle</span>
-        Password copied
-    </div>
+    Password copied
+</div>
 </div>
 </body></html>
