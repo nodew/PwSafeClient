@@ -67,8 +67,9 @@
   </style>
   </head>
 <body class="bg-background-light dark:bg-background-dark text-gray-900 dark:text-white font-display antialiased min-h-screen flex flex-col overflow-x-hidden selection:bg-primary/30">
+<div class="relative mx-auto flex h-screen w-full max-w-[480px] flex-col overflow-hidden bg-background-light dark:bg-background-dark shadow-xl">
 <header class="sticky top-0 z-50 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md border-b border-border-light dark:border-border-dark">
-<div class="flex items-center justify-between px-4 py-3 max-w-3xl mx-auto w-full">
+<div class="flex items-center justify-between px-4 py-3 w-full">
 <a class="text-base font-medium text-text-secondary-light dark:text-text-secondary-dark hover:text-gray-900 dark:hover:text-white transition-colors" href="../password_list/code.html">
                 Cancel
             </a>
@@ -78,7 +79,7 @@
             </a>
 </div>
 </header>
-<main class="flex-1 w-full max-w-3xl mx-auto p-4 flex flex-col gap-6 pt-6">
+<main class="flex-1 w-full p-4 flex flex-col gap-6 pt-6 overflow-y-auto">
 <div class="flex flex-col gap-5">
 <div class="flex flex-col gap-2">
 <label class="text-sm font-semibold text-gray-700 dark:text-gray-200 ml-1" for="title">Title</label>
@@ -125,5 +126,5 @@
 </div>
 <div class="h-10"></div>
 </main>
-
+</div>
 </body></html>

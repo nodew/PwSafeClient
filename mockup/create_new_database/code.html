@@ -37,6 +37,7 @@
   </style>
   </head>
 <body class="bg-background-light font-display text-slate-900 antialiased overflow-x-hidden min-h-screen flex flex-col">
+<div class="relative mx-auto flex h-screen w-full max-w-[480px] flex-col overflow-hidden bg-background-light shadow-xl">
 <header class="sticky top-0 z-30 bg-background-light/90 backdrop-blur-md border-b border-slate-200/80 px-4 py-3 flex items-center justify-between transition-colors">
 <a class="text-primary text-[17px] font-normal leading-normal tracking-tight shrink-0 active:opacity-60 transition-opacity" href="../database_list/code.html">
             Cancel
@@ -46,7 +47,7 @@
         </h2>
 <div class="w-12"></div> 
 </header>
-<main class="flex-1 w-full max-w-md mx-auto flex flex-col p-4 pb-32">
+<main class="flex-1 w-full flex flex-col p-4 pb-32 overflow-y-auto">
 <div class="flex flex-col items-center justify-center py-8 text-center">
 <div class="w-20 h-20 rounded-full bg-white shadow-soft flex items-center justify-center mb-5 border border-slate-100">
 <span class="material-symbols-outlined text-primary" style="font-size: 40px;">lock_open</span>
@@ -103,13 +104,13 @@
 </div>
 </form>
 </main>
-<div class="fixed bottom-0 left-0 w-full bg-white/80 backdrop-blur-xl border-t border-slate-200 z-20 safe-area-bottom">
-<div class="max-w-md mx-auto w-full p-4">
+<div class="absolute bottom-0 left-0 w-full bg-white/80 backdrop-blur-xl border-t border-slate-200 z-20 safe-area-bottom">
+<div class="w-full p-4">
 <a class="w-full bg-primary hover:bg-blue-600 text-white font-semibold text-[17px] h-[52px] rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-blue-500/25 active:scale-[0.98] transition-all" href="../master_password_entry/code.html">
 <span>Create Database</span>
 <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
 </a>
 </div>
 </div>
-
+</div>
 </body></html>
