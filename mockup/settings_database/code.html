@@ -2,40 +2,40 @@
 <html lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Redesigned Settings</title>
+<title>Settings (Database)</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
 <script>
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        primary: "#007AFF", // iOS Blue
-                        "background-light": "#F2F2F7", // iOS Grouped Background Light
-                        "background-dark": "#000000", // iOS Grouped Background Dark
-                        "surface-light": "#FFFFFF",
-                        "surface-dark": "#1C1C1E",
-                        "separator-light": "#C6C6C8",
-                        "separator-dark": "#38383A",
-                    },
-                    fontFamily: {
-                        display: ["Inter", "sans-serif"],
-                    },
-                    borderRadius: {
-                        DEFAULT: "10px",
-                    },
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    primary: "#007AFF",
+                    "background-light": "#F2F2F7",
+                    "background-dark": "#000000",
+                    "surface-light": "#FFFFFF",
+                    "surface-dark": "#1C1C1E",
+                    "separator-light": "#C6C6C8",
+                    "separator-dark": "#38383A",
+                },
+                fontFamily: {
+                    display: ["Inter", "sans-serif"],
+                },
+                borderRadius: {
+                    DEFAULT: "10px",
                 },
             },
-        };
-    </script>
+        },
+    };
+</script>
 <style>
-    body {
-      min-height: max(884px, 100dvh);
-    }
-  </style>
-  </head>
+  body {
+    min-height: max(884px, 100dvh);
+  }
+</style>
+</head>
 <body class="bg-background-light dark:bg-background-dark font-display text-base text-black dark:text-white antialiased transition-colors duration-200">
 <header class="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-separator-light dark:border-separator-dark">
 <div class="max-w-md mx-auto px-4 h-14 flex items-center justify-center relative">
@@ -73,37 +73,11 @@
 </div>
 </section>
 <section>
-<h2 class="text-[13px] uppercase text-gray-500 dark:text-gray-400 font-medium mb-2 pl-4">App Security</h2>
-<div class="bg-surface-light dark:bg-surface-dark rounded-xl overflow-hidden shadow-sm">
-<div class="flex items-center justify-between p-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors cursor-pointer border-b border-gray-200 dark:border-gray-700 last:border-0">
-<span class="text-[17px]">Biometric Unlock</span>
-<div class="flex items-center text-gray-500 dark:text-gray-400">
-<span class="text-[17px] mr-2">Face ID</span>
-<span class="material-icons-outlined text-gray-400 dark:text-gray-500 text-lg">arrow_forward_ios</span>
-</div>
-</div>
-<div class="flex items-center justify-between p-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors cursor-pointer border-b border-gray-200 dark:border-gray-700 last:border-0">
-<span class="text-[17px]">Auto-lock Timeout</span>
-<div class="flex items-center text-gray-500 dark:text-gray-400">
-<span class="text-[17px] mr-2">5 minutes</span>
-<span class="material-icons-outlined text-gray-400 dark:text-gray-500 text-lg">arrow_forward_ios</span>
-</div>
-</div>
-<div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 last:border-0">
-<span class="text-[17px]">Clipboard Clear</span>
-<div class="flex items-center text-gray-500 dark:text-gray-400">
-<span class="text-[17px] mr-2">30 seconds</span>
-<span class="material-icons-outlined text-gray-400 dark:text-gray-500 text-lg">arrow_forward_ios</span>
-</div>
-</div>
-</div>
-</section>
-<section>
 <h2 class="text-[13px] uppercase text-gray-500 dark:text-gray-400 font-medium mb-2 pl-4">Database</h2>
 <div class="bg-surface-light dark:bg-surface-dark rounded-xl overflow-hidden shadow-sm">
 <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 last:border-0">
 <span class="text-[17px]">Active Database</span>
-<span class="text-[17px] text-gray-500 dark:text-gray-400">My_Vault</span>
+<span class="text-[17px] text-gray-500 dark:text-gray-400">Personal Vault</span>
 </div>
 <a class="flex items-center justify-between p-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors cursor-pointer border-b border-gray-200 dark:border-gray-700 last:border-0" href="../change_master_password/code.html">
 <span class="text-[17px]">Change Master Password</span>
@@ -180,9 +154,8 @@
 </div>
 </div>
 <p class="mt-4 text-center text-[13px] text-gray-400 dark:text-gray-600">
-                Password Safe v2.4.1 (Build 2023)
-            </p>
+        Password Safe v2.4.1 (Build 2023)
+    </p>
 </section>
 </main>
-
 </body></html>
