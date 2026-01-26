@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="PwSafeClient.Maui.Pages.VaultPage"
+    x:Name="Page"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}"
+    Shell.NavBarIsVisible="True">
+
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior IsVisible="False" IsEnabled="False" />
+    </Shell.BackButtonBehavior>
+
+    <Shell.TitleView>
+        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12" VerticalOptions="Center" Margin="0,0,12,0">
+            <VerticalStackLayout Grid.Column="0" Spacing="0" VerticalOptions="Center">
+                <Label Text="{Binding Breadcrumb}" FontSize="16" LineBreakMode="TailTruncation" TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource White}}" FontAttributes="Bold" />
+                <Label
+                    Text="{Binding DatabaseName}"
+                    FontSize="10"
+                    TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}"
+                    LineBreakMode="TailTruncation"
+                    IsVisible="{Binding DatabaseName, Converter={StaticResource StringNotNullOrWhiteSpaceConverter}}" />
+            </VerticalStackLayout>
+
+            <ActivityIndicator
+                Grid.Column="1"
+                IsRunning="{Binding IsBusy}"
+                IsVisible="{Binding IsBusy}"
+                VerticalOptions="Center"
+                Color="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource White}}" />
+        </Grid>
+    </Shell.TitleView>
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Command="{Binding CloseDatabaseCommand}">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource FontFamily="IconFont" Glyph="&#xe902;" Size="24" Color="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource White}}" />
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
+        <ToolbarItem Command="{Binding OpenSettingsCommand}">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource FontFamily="IconFont" Glyph="&#xe912;" Size="24" Color="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource White}}" />
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
+    </ContentPage.ToolbarItems>
+
+    <Grid Padding="24" RowDefinitions="Auto,*" RowSpacing="14">
+
+        <!-- Search -->
+        <Border Grid.Row="0" Padding="6" Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}" StrokeThickness="0">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="14" />
+            </Border.StrokeShape>
+            <SearchBar
+                Placeholder="Search"
+                Text="{Binding SearchText}"
+                BackgroundColor="Transparent" />
+        </Border>
+
+        <!-- List -->
+        <CollectionView Grid.Row="1" ItemsSource="{Binding Items}" SelectionMode="None">
+            <CollectionView.EmptyView>
+                <Label Text="No items" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" HorizontalOptions="Center" VerticalOptions="Center" />
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border Padding="14" Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}" StrokeThickness="0" Margin="0,0,0,12">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="14" />
+                        </Border.StrokeShape>
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="16">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding Source={x:Reference Page}, Path=BindingContext.OpenItemCommand}"
+                                    CommandParameter="{Binding .}" />
+                            </Grid.GestureRecognizers>
+
+                            <Label Grid.Column="0"
+                                   FontFamily="IconFont"
+                                   FontSize="24"
+                                   VerticalOptions="Center">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding Kind}" Value="Group">
+                                        <Setter Property="Text" Value="&#xe90a;" />
+                                        <Setter Property="TextColor" Value="#F59E0B" />
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="Label" Binding="{Binding Kind}" Value="Entry">
+                                        <Setter Property="Text" Value="&#xe90c;" />
+                                        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                                <Label Text="{Binding Title}" FontSize="16" LineBreakMode="TailTruncation" />
+                                <Label Text="{Binding Subtitle}"
+                                       FontSize="12"
+                                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}"
+                                       LineBreakMode="TailTruncation"
+                                       IsVisible="{Binding Subtitle, Converter={StaticResource StringNotNullOrWhiteSpaceConverter}}" />
+                            </VerticalStackLayout>
+
+                            <Label Grid.Column="2"
+                                   Text="&#xe901;"
+                                   FontFamily="IconFont"
+                                   FontSize="16"
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}"
+                                   VerticalOptions="Center" />
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Floating action button -->
+        <Button
+            Grid.Row="1"
+            Text="&#xe90e;"
+            FontFamily="IconFont"
+            Command="{Binding NewEntryCommand}"
+            IsVisible="{Binding IsReadOnly, Converter={StaticResource InverseBooleanConverter}}"
+            WidthRequest="56"
+            HeightRequest="56"
+            CornerRadius="28"
+            Padding="0"
+            FontSize="24"
+            HorizontalOptions="End"
+            VerticalOptions="End" />
+    </Grid>
+</ContentPage>

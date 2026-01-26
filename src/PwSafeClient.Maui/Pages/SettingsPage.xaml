@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="PwSafeClient.Maui.Pages.SettingsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="Settings">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Close" Command="{Binding CloseCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="16">
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                <Label Text="Settings" FontSize="24" TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" VerticalOptions="Center" />
+                <ActivityIndicator
+                    Grid.Column="1"
+                    IsRunning="{Binding IsBusy}"
+                    IsVisible="{Binding IsBusy}"
+                    VerticalOptions="Center" />
+            </Grid>
+
+            <!-- GENERAL -->
+            <Label Text="GENERAL" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" />
+            <Border Padding="0" Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="14" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="0">
+                    <Grid Padding="14" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
+                        <Label Text="Language" TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="{Binding LanguageDisplayName}" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" VerticalOptions="Center" />
+                        <Label Grid.Column="2" Text=">" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" VerticalOptions="Center" />
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding EditLanguageCommand}" />
+                        </Grid.GestureRecognizers>
+                    </Grid>
+                    <BoxView HeightRequest="1" BackgroundColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}" />
+                    <Grid Padding="14" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
+                        <Label Text="Appearance" TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="{Binding ThemeDisplayName}" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" VerticalOptions="Center" />
+                        <Label Grid.Column="2" Text=">" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" VerticalOptions="Center" />
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding SelectThemeCommand}" />
+                        </Grid.GestureRecognizers>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- SECURITY -->
+            <Label Text="SECURITY" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" />
+            <Border Padding="0" Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="14" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="0">
+                    <Grid Padding="14" ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                        <Label Text="Biometric unlock" TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" VerticalOptions="Center" />
+                        <Switch Grid.Column="1" IsToggled="{Binding IsBiometricUnlockEnabled}" VerticalOptions="Center" />
+                    </Grid>
+                    <BoxView HeightRequest="1" BackgroundColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}" />
+                    <Grid Padding="14" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
+                        <Label Text="Auto-lock timeout" TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="{Binding AutoLockDisplayName}" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" VerticalOptions="Center" />
+                        <Label Grid.Column="2" Text=">" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" VerticalOptions="Center" />
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding EditAutoLockCommand}" />
+                        </Grid.GestureRecognizers>
+                    </Grid>
+                    <BoxView HeightRequest="1" BackgroundColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}" />
+                    <Grid Padding="14" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
+                        <Label Text="Clear clipboard" TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="{Binding ClipboardClearDisplayName}" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" VerticalOptions="Center" />
+                        <Label Grid.Column="2" Text=">" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" VerticalOptions="Center" />
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding EditClipboardClearCommand}" />
+                        </Grid.GestureRecognizers>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- DATABASE MANAGEMENT -->
+            <Label Text="DATABASE MANAGEMENT" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" />
+            <Border Padding="0" Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="14" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="0">
+                    <Grid Padding="14" ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                        <Label Text="Change app master password" TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text=">" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" VerticalOptions="Center" />
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding OpenChangeMasterPasswordCommand}" />
+                        </Grid.GestureRecognizers>
+                    </Grid>
+                    <BoxView HeightRequest="1" BackgroundColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}" />
+                    <Grid Padding="14" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
+                        <Label Text="Max backup count" TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="{Binding MaxBackupCountDisplayName}" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" VerticalOptions="Center" />
+                        <Label Grid.Column="2" Text=">" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" VerticalOptions="Center" />
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding EditMaxBackupCountCommand}" />
+                        </Grid.GestureRecognizers>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- BACKUP & EXPORT -->
+            <Label Text="BACKUP &amp; EXPORT" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" />
+            <Border Padding="0" Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="14" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="0">
+                    <Grid Padding="14" ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                        <Label Text="Backup &amp; restore" TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text=">" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" VerticalOptions="Center" />
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding OpenBackupRestoreCommand}" />
+                        </Grid.GestureRecognizers>
+                    </Grid>
+                    <BoxView HeightRequest="1" BackgroundColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}" />
+                    <Grid Padding="14" ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                        <Label Text="Export data" TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text=">" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" VerticalOptions="Center" />
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding OpenExportDataCommand}" />
+                        </Grid.GestureRecognizers>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="{Binding ErrorMessage}" TextColor="Red" FontSize="12" />
+
+            <Button
+                Text="Save"
+                Command="{Binding SaveCommand}"
+                CornerRadius="12"
+                HeightRequest="48" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
