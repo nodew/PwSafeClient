@@ -27,8 +27,8 @@ This document provides a concise summary of all UI/UX issues found in the PwSafe
 ## High Priority Issues
 
 ### 4. Background Color Variations
-- Four different background-light values across pages: `#F3F4F6`, `#f6f7f8`, `#f8fafc`, `#F2F2F7`
-- Creates jarring transitions between pages
+- Previously used four background-light values (`#F3F4F6`, `#f6f7f8`, `#f8fafc`, `#F2F2F7`)
+- **Updated:** standardized to `#F2F2F7` across mockups to avoid jarring transitions
 - **Fix:** Use single background color value
 
 ### 5. Inconsistent Border Radius
@@ -74,7 +74,7 @@ This document provides a concise summary of all UI/UX issues found in the PwSafe
 
 ### 14. Generate Password Feature Duplication
 - Some pages have icon in input, others have separate button
-- Different icons used (casino vs autorenew)
+- **Updated:** standardized on the autorenew icon in input fields
 - **Fix:** Standardize on autorenew icon in input field
 
 ### 15. Delete Operation Lacks Confirmation
@@ -98,6 +98,7 @@ This document provides a concise summary of all UI/UX issues found in the PwSafe
 
 ### 19. Inconsistent Back Button Style
 - Some pages use icon, some use "Cancel" text
+- **Updated:** standardized navigation to icon back buttons and modal actions to text labels
 - **Fix:** Establish pattern (modal=text, navigation=icon)
 
 ### 20. FAB Position May Conflict

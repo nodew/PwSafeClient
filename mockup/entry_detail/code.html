@@ -5,6 +5,7 @@
 <title>Entry Detail</title>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="../design-system.css" rel="stylesheet"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script id="tailwind-config">
     tailwind.config = {
@@ -13,19 +14,19 @@
             extend: {
                 colors: {
                     "primary": "#1773cf",
-                    "background-light": "#f6f7f8",
-                    "background-dark": "#111921",
+                    "background-light": "#f2f2f7",
+                    "background-dark": "#0b1118",
                     "surface-dark": "#1E2832",
                     "surface-light": "#FFFFFF",
                     "border-light": "#e5e7eb",
                     "border-dark": "#3c4753",
-                    "text-secondary-dark": "#9dabb8",
-                    "text-secondary-light": "#6b7280",
+                    "text-secondary-dark": "#cbd5f5",
+                    "text-secondary-light": "#4b5563",
                 },
                 fontFamily: {
                     "display": ["Manrope", "sans-serif"]
                 },
-                borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                borderRadius: {"DEFAULT": "0.5rem", "lg": "0.75rem", "xl": "1rem", "full": "9999px"},
             },
         },
     }
@@ -54,14 +55,14 @@
 </style>
 </head>
 <body class="bg-background-light dark:bg-background-dark text-gray-900 dark:text-white font-display antialiased min-h-screen flex flex-col overflow-x-hidden selection:bg-primary/30">
-<div class="relative mx-auto flex h-screen w-full max-w-[480px] flex-col overflow-hidden bg-background-light dark:bg-background-dark shadow-xl">
+<div class="screen-frame relative mx-auto flex h-screen w-full flex-col overflow-hidden bg-background-light dark:bg-background-dark shadow-xl">
 <header class="sticky top-0 z-50 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md border-b border-border-light dark:border-border-dark">
 <div class="flex items-center justify-between px-4 py-3 w-full">
-<a class="text-base font-medium text-text-secondary-light dark:text-text-secondary-dark hover:text-gray-900 dark:hover:text-white transition-colors" href="../password_list/code.html">
+<a class="touch-target text-base font-medium text-text-secondary-light dark:text-text-secondary-dark hover:text-gray-900 dark:hover:text-white transition-colors" href="../password_list/code.html" aria-label="Back to password list">
 <span class="material-symbols-outlined text-[22px] align-middle">arrow_back_ios_new</span>
 </a>
 <h1 class="text-lg font-bold leading-tight tracking-tight">Entry Details</h1>
-<a class="text-base font-bold text-primary hover:text-primary/80 transition-colors" href="../edit_password_entry/code.html">
+<a class="touch-target text-base font-bold text-primary hover:text-primary/80 transition-colors" href="../edit_password_entry/code.html" aria-label="Edit entry">
     Edit
 </a>
 </div>
@@ -70,7 +71,7 @@
 <section class="bg-surface-light dark:bg-surface-dark rounded-xl border border-border-light dark:border-border-dark p-5 shadow-sm flex flex-col gap-4">
 <div class="flex items-center gap-4">
 <div class="flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary">
-<span class="material-symbols-outlined text-[26px]">vpn_key</span>
+<span class="material-symbols-outlined text-[26px]" aria-hidden="true">vpn_key</span>
 </div>
 <div class="flex-1 min-w-0">
 <h2 class="text-xl font-bold truncate">Netflix</h2>
@@ -83,8 +84,8 @@
 <span class="text-xs uppercase text-text-secondary-light dark:text-text-secondary-dark font-semibold">Username</span>
 <div class="flex items-center gap-2">
 <p class="flex-1 text-base font-medium">family.plan@icloud.com</p>
-<button class="flex items-center gap-1 text-primary text-sm font-semibold px-3 py-1 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors">
-<span class="material-symbols-outlined text-[18px]">content_copy</span>
+<button class="touch-target flex items-center gap-1 text-primary text-sm font-semibold px-3 py-1 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors" aria-label="Copy username" title="Copy username">
+<span class="material-symbols-outlined text-[18px]" aria-hidden="true">content_copy</span>
 Copy
 </button>
 </div>
@@ -92,19 +93,21 @@ Copy
 <div class="flex flex-col gap-2">
 <span class="text-xs uppercase text-text-secondary-light dark:text-text-secondary-dark font-semibold">Password</span>
 <div class="flex items-center gap-2">
-<p class="flex-1 text-base font-mono tracking-wide">••••••••••••</p>
-<button class="flex items-center gap-1 text-primary text-sm font-semibold px-3 py-1 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors">
-<span class="material-symbols-outlined text-[18px]">visibility</span>
-Show
+<p class="flex-1 text-base font-mono tracking-wide" title="Hidden password">••••••••••••</p>
+<button class="touch-target flex items-center justify-center text-primary text-sm font-semibold px-3 py-1 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors" aria-label="Toggle password visibility" title="Show or hide password">
+<span class="material-symbols-outlined text-[18px]" aria-hidden="true">visibility</span>
 </button>
-<button class="flex items-center gap-1 text-primary text-sm font-semibold px-3 py-1 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors">
-<span class="material-symbols-outlined text-[18px]">content_copy</span>
+<button class="touch-target flex items-center gap-1 text-primary text-sm font-semibold px-3 py-1 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors" aria-label="Copy password" title="Copy password">
+<span class="material-symbols-outlined text-[18px]" aria-hidden="true">content_copy</span>
 Copy
 </button>
 </div>
-<div class="flex items-center gap-2">
-<div class="flex-1 h-2 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
-<div class="h-full w-4/5 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full"></div>
+<div class="flex items-center gap-2" aria-label="Password strength">
+<div class="flex-1 flex items-center gap-1">
+<div class="h-1.5 flex-1 rounded-full bg-green-500"></div>
+<div class="h-1.5 flex-1 rounded-full bg-green-500"></div>
+<div class="h-1.5 flex-1 rounded-full bg-green-400"></div>
+<div class="h-1.5 flex-1 rounded-full bg-gray-200 dark:bg-gray-700"></div>
 </div>
 <span class="text-xs font-semibold text-green-600">Strong</span>
 </div>
@@ -112,9 +115,9 @@ Copy
 <div class="flex flex-col gap-2">
 <span class="text-xs uppercase text-text-secondary-light dark:text-text-secondary-dark font-semibold">Website</span>
 <div class="flex items-center gap-2">
-<a class="text-base font-medium text-primary hover:text-primary/80 transition-colors" href="#">https://netflix.com/login</a>
-<button class="flex items-center gap-1 text-primary text-sm font-semibold px-3 py-1 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors">
-<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+<a class="text-base font-medium text-primary hover:text-primary/80 transition-colors" href="#" title="https://netflix.com/login">https://netflix.com/login</a>
+<button class="touch-target flex items-center gap-1 text-primary text-sm font-semibold px-3 py-1 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors" aria-label="Open website" title="Open website">
+<span class="material-symbols-outlined text-[18px]" aria-hidden="true">open_in_new</span>
 Open
 </button>
 </div>
@@ -127,20 +130,20 @@ Open
 <span class="text-xs text-text-secondary-light dark:text-text-secondary-dark">Last updated 2 days ago</span>
 </div>
 <div class="grid grid-cols-2 gap-3">
-<button class="flex flex-col items-center gap-2 rounded-xl border border-border-light dark:border-border-dark p-3 hover:border-primary/40 transition-colors">
-<span class="material-symbols-outlined text-[22px] text-primary">content_copy</span>
+<button class="touch-target flex flex-col items-center gap-2 rounded-xl border border-border-light dark:border-border-dark p-3 hover:border-primary/40 transition-colors" aria-label="Copy username" title="Copy username">
+<span class="material-symbols-outlined text-[22px] text-primary" aria-hidden="true">content_copy</span>
 <span class="text-sm font-semibold">Copy Username</span>
 </button>
-<button class="flex flex-col items-center gap-2 rounded-xl border border-border-light dark:border-border-dark p-3 hover:border-primary/40 transition-colors">
-<span class="material-symbols-outlined text-[22px] text-primary">key</span>
+<button class="touch-target flex flex-col items-center gap-2 rounded-xl border border-border-light dark:border-border-dark p-3 hover:border-primary/40 transition-colors" aria-label="Copy password" title="Copy password">
+<span class="material-symbols-outlined text-[22px] text-primary" aria-hidden="true">key</span>
 <span class="text-sm font-semibold">Copy Password</span>
 </button>
-<a class="flex flex-col items-center gap-2 rounded-xl border border-border-light dark:border-border-dark p-3 hover:border-primary/40 transition-colors" href="../edit_password_entry/code.html">
-<span class="material-symbols-outlined text-[22px] text-primary">edit</span>
+<a class="touch-target flex flex-col items-center gap-2 rounded-xl border border-border-light dark:border-border-dark p-3 hover:border-primary/40 transition-colors" href="../edit_password_entry/code.html" aria-label="Edit entry">
+<span class="material-symbols-outlined text-[22px] text-primary" aria-hidden="true">edit</span>
 <span class="text-sm font-semibold">Edit Entry</span>
 </a>
-<button class="flex flex-col items-center gap-2 rounded-xl border border-border-light dark:border-border-dark p-3 hover:border-primary/40 transition-colors">
-<span class="material-symbols-outlined text-[22px] text-primary">delete</span>
+<button class="touch-target flex flex-col items-center gap-2 rounded-xl border border-border-light dark:border-border-dark p-3 hover:border-primary/40 transition-colors" aria-label="Delete entry">
+<span class="material-symbols-outlined text-[22px] text-primary" aria-hidden="true">delete</span>
 <span class="text-sm font-semibold">Delete</span>
 </button>
 </div>
@@ -150,6 +153,19 @@ Open
 <p class="text-sm text-text-secondary-light dark:text-text-secondary-dark leading-relaxed">
     Shared with the family plan. Update billing card details once per quarter.
 </p>
+</section>
+<section class="bg-surface-light dark:bg-surface-dark rounded-xl border border-border-light dark:border-border-dark p-4">
+<div class="flex items-start gap-3 text-sm text-text-secondary-light dark:text-text-secondary-dark">
+<span class="material-symbols-outlined text-lg text-primary" aria-hidden="true">cloud</span>
+<div>
+<p class="font-semibold text-gray-900 dark:text-white">Sync Status</p>
+<p>Last synced 10 minutes ago • Local storage only</p>
+</div>
+</div>
+</section>
+<section class="bg-red-50/60 border border-red-100 rounded-xl p-4 text-sm text-red-600 flex items-start gap-2" role="alert">
+<span class="material-symbols-outlined text-[18px]" aria-hidden="true">warning</span>
+Deleting an entry is permanent. Confirm before continuing.
 </section>
 </main>
 </div>

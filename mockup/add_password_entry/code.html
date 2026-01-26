@@ -7,6 +7,7 @@
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="../design-system.css" rel="stylesheet"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script id="tailwind-config">
         tailwind.config = {
@@ -15,19 +16,19 @@
                 extend: {
                     colors: {
                         "primary": "#1773cf",
-                        "background-light": "#f6f7f8",
-                        "background-dark": "#111921",
+                        "background-light": "#f2f2f7",
+                        "background-dark": "#0b1118",
                         "surface-dark": "#1E2832",
                         "surface-light": "#FFFFFF",
                         "border-dark": "#3c4753",
                         "border-light": "#e5e7eb",
-                        "text-secondary-dark": "#9dabb8",
-                        "text-secondary-light": "#6b7280",
+                        "text-secondary-dark": "#cbd5f5",
+                        "text-secondary-light": "#4b5563",
                     },
                     fontFamily: {
                         "display": ["Manrope", "sans-serif"]
                     },
-                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "0.75rem", "xl": "1rem", "full": "9999px"},
                 },
             },
         }
@@ -67,61 +68,70 @@
   </style>
   </head>
 <body class="bg-background-light dark:bg-background-dark text-gray-900 dark:text-white font-display antialiased min-h-screen flex flex-col overflow-x-hidden selection:bg-primary/30">
-<div class="relative mx-auto flex h-screen w-full max-w-[480px] flex-col overflow-hidden bg-background-light dark:bg-background-dark shadow-xl">
+<div class="screen-frame relative mx-auto flex h-screen w-full flex-col overflow-hidden bg-background-light dark:bg-background-dark shadow-xl">
 <header class="sticky top-0 z-50 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md border-b border-border-light dark:border-border-dark">
 <div class="flex items-center justify-between px-4 py-3 w-full">
-<a class="text-base font-medium text-text-secondary-light dark:text-text-secondary-dark hover:text-gray-900 dark:hover:text-white transition-colors" href="../password_list/code.html">
+<a class="text-base font-medium text-text-secondary-light dark:text-text-secondary-dark hover:text-gray-900 dark:hover:text-white transition-colors touch-target flex items-center justify-center" href="../password_list/code.html" aria-label="Cancel entry creation">
                 Cancel
             </a>
 <h1 class="text-lg font-bold leading-tight tracking-tight">New Entry</h1>
-<a class="text-base font-bold text-primary hover:text-primary/80 transition-colors" href="../password_list/code.html">
-                Save
-            </a>
+<a class="text-base font-bold text-primary hover:text-primary/80 transition-colors inline-flex items-center gap-2 touch-target" href="../password_list/code.html" data-loading="true" aria-label="Save new entry">
+<span class="button-label">Save</span>
+<span class="material-symbols-outlined button-spinner animate-spin text-base" aria-hidden="true">progress_activity</span>
+</a>
 </div>
 </header>
 <main class="flex-1 w-full p-4 flex flex-col gap-6 pt-6 overflow-y-auto">
+<div class="rounded-xl border border-border-light dark:border-border-dark bg-white/70 dark:bg-surface-dark/70 p-4 text-sm text-text-secondary-light dark:text-text-secondary-dark flex items-start gap-3" role="status">
+<span class="material-symbols-outlined text-primary text-xl" aria-hidden="true">info</span>
+Fill in the required fields to save this entry.
+</div>
 <div class="flex flex-col gap-5">
 <div class="flex flex-col gap-2">
 <label class="text-sm font-semibold text-gray-700 dark:text-gray-200 ml-1" for="title">Title</label>
 <div class="relative">
-<input class="w-full h-14 pl-4 pr-4 rounded-lg bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-gray-900 dark:text-white placeholder-text-secondary-light dark:placeholder-text-secondary-dark focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none" id="title" placeholder="e.g. Netflix, Amazon" type="text"/>
+<input class="w-full h-14 pl-4 pr-4 rounded-lg bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-gray-900 dark:text-white placeholder-text-secondary-light dark:placeholder-text-secondary-dark focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none input-error" id="title" placeholder="e.g. Netflix, Amazon" type="text" aria-describedby="title-error" title="Entry title"/>
 </div>
+<p class="form-error ml-1" id="title-error">Title is required.</p>
 </div>
 <div class="flex flex-col gap-2">
 <label class="text-sm font-semibold text-gray-700 dark:text-gray-200 ml-1" for="website">Website</label>
 <div class="relative">
-<input class="w-full h-14 pl-4 pr-4 rounded-lg bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-gray-900 dark:text-white placeholder-text-secondary-light dark:placeholder-text-secondary-dark focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none" id="website" placeholder="https://..." type="url"/>
+<input class="w-full h-14 pl-4 pr-4 rounded-lg bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-gray-900 dark:text-white placeholder-text-secondary-light dark:placeholder-text-secondary-dark focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none" id="website" placeholder="https://..." type="url" title="Website URL"/>
 </div>
 </div>
 <div class="flex flex-col gap-2">
 <label class="text-sm font-semibold text-gray-700 dark:text-gray-200 ml-1" for="username">Username</label>
 <div class="relative">
-<input class="w-full h-14 pl-4 pr-4 rounded-lg bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-gray-900 dark:text-white placeholder-text-secondary-light dark:placeholder-text-secondary-dark focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none" id="username" placeholder="email@example.com" type="email"/>
+<input class="w-full h-14 pl-4 pr-4 rounded-lg bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-gray-900 dark:text-white placeholder-text-secondary-light dark:placeholder-text-secondary-dark focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none" id="username" placeholder="email@example.com" type="email" title="Username or email"/>
 </div>
 </div>
 <div class="flex flex-col gap-2">
 <label class="text-sm font-semibold text-gray-700 dark:text-gray-200 ml-1" for="password">Password</label>
 <div class="relative group">
-<input class="w-full h-14 pl-4 pr-24 rounded-lg bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-gray-900 dark:text-white placeholder-text-secondary-light dark:placeholder-text-secondary-dark focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none font-mono" id="password" placeholder="Required" type="password"/>
+<input class="w-full h-14 pl-4 pr-24 rounded-lg bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-gray-900 dark:text-white placeholder-text-secondary-light dark:placeholder-text-secondary-dark focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none font-mono" id="password" placeholder="Required" type="password" title="Password"/>
 <div class="absolute right-0 top-0 h-full flex items-center pr-2 gap-1">
-<button class="p-2 text-text-secondary-light dark:text-text-secondary-dark hover:text-primary dark:hover:text-primary transition-colors rounded-full hover:bg-gray-100 dark:hover:bg-gray-800" title="Toggle Visibility" type="button">
-<span class="material-symbols-outlined text-[22px]">visibility</span>
+<button class="touch-target p-2 text-text-secondary-light dark:text-text-secondary-dark hover:text-primary dark:hover:text-primary transition-colors rounded-full hover:bg-gray-100 dark:hover:bg-gray-800" title="Toggle Visibility" type="button" aria-label="Toggle password visibility">
+<span class="material-symbols-outlined text-[22px]" aria-hidden="true">visibility</span>
 </button>
-<button class="p-2 text-primary hover:text-primary/80 transition-colors rounded-full hover:bg-primary/10" title="Generate Password" type="button">
-<span class="material-symbols-outlined text-[22px]">casino</span>
+<button class="touch-target p-2 text-primary hover:text-primary/80 transition-colors rounded-full hover:bg-primary/10" title="Generate Password" type="button" aria-label="Generate password">
+<span class="material-symbols-outlined text-[22px]" aria-hidden="true">autorenew</span>
 </button>
 </div>
 </div>
 <div class="flex items-center gap-2 mt-1 px-1">
-<div class="flex-1 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-<div class="h-full w-2/3 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full" data-alt="Password strength indicator bar showing medium strength"></div>
+<div class="flex-1 flex items-center gap-1">
+<div class="h-1.5 flex-1 rounded-full bg-green-500"></div>
+<div class="h-1.5 flex-1 rounded-full bg-green-400"></div>
+<div class="h-1.5 flex-1 rounded-full bg-yellow-400"></div>
+<div class="h-1.5 flex-1 rounded-full bg-gray-200 dark:bg-gray-700"></div>
 </div>
-<span class="text-xs font-medium text-orange-500">Medium</span>
+<span class="text-xs font-medium text-yellow-500">Medium</span>
 </div>
 </div>
 <div class="flex flex-col gap-2">
 <label class="text-sm font-semibold text-gray-700 dark:text-gray-200 ml-1" for="notes">Notes</label>
-<textarea class="w-full p-4 rounded-lg bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-gray-900 dark:text-white placeholder-text-secondary-light dark:placeholder-text-secondary-dark focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none resize-none" id="notes" placeholder="Security questions, PINs, etc." rows="4"></textarea>
+<textarea class="w-full p-4 rounded-lg bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-gray-900 dark:text-white placeholder-text-secondary-light dark:placeholder-text-secondary-dark focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none resize-none" id="notes" placeholder="Security questions, PINs, etc." rows="4" title="Notes"></textarea>
 </div>
 </div>
 <div class="h-10"></div>
