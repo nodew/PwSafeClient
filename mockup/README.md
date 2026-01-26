@@ -62,6 +62,22 @@ This analysis systematically reviewed all mockup designs for the PwSafe Mobile a
 
 ## Documents / 文档
 
+### ✅ [FUNCTIONAL_ANALYSIS_CORRECTED.md](./FUNCTIONAL_ANALYSIS_CORRECTED.md) ⭐ **CORRECTED**
+**pwsafe-Aligned Functional Analysis / 基于pwsafe官方规范的功能分析**
+- **11 missing features** aligned with Password Safe v3/v4 specification
+- Removes unsupported features: recycle bin, tags, custom fields, multi-type entries
+- Focuses on actual pwsafe capabilities: password history, aliases, attachments, policies
+- **31 days** implementation estimate (vs 76-104 in original)
+- 基于Password Safe官方格式规范的正确分析
+- 移除了pwsafe不支持的功能（回收站、标签、自定义字段）
+- 聚焦于pwsafe实际支持的功能
+
+### ⚠️ [FUNCTIONAL_ANALYSIS.md](./FUNCTIONAL_ANALYSIS.md) - **DEPRECATED**
+**Original Functional Analysis (DO NOT USE) / 原始功能分析（已废弃）**
+- This version incorrectly assumed generic password manager features
+- 该版本错误地假设了通用密码管理器功能
+- **Use FUNCTIONAL_ANALYSIS_CORRECTED.md instead**
+
 ### 📄 [ISSUES_SUMMARY.md](./ISSUES_SUMMARY.md)
 **UI/UX Quick Reference / UI/UX快速参考**
 - Executive summary of all 26 UI/UX issues
@@ -82,17 +98,6 @@ This analysis systematically reviewed all mockup designs for the PwSafe Mobile a
 - 对用户体验的影响
 - 带代码示例的详细解决方案
 
-### 🔧 [FUNCTIONAL_ANALYSIS.md](./FUNCTIONAL_ANALYSIS.md) ⭐ NEW
-**Functional Gap Analysis / 功能缺失分析**
-- 42 missing core features identified
-- Unreasonable user flows and business logic issues
-- Security and data management gaps
-- Priority matrix with time estimates (76-104 days)
-- 识别了42个缺失的核心功能
-- 不合理的用户流程和业务逻辑问题
-- 安全性和数据管理缺口
-- 优先级矩阵及时间估算（76-104天）
-
 ### ✅ [IMPLEMENTATION_CHECKLIST.md](./IMPLEMENTATION_CHECKLIST.md)
 **UI/UX Implementation Tracking / UI/UX实施跟踪**
 - Detailed checklist for all 26 UI/UX issues
@@ -103,6 +108,15 @@ This analysis systematically reviewed all mockup designs for the PwSafe Mobile a
 - 每个任务的时间估算
 - 进度跟踪系统
 - 测试和验证任务
+
+### 📊 [ANALYSIS_COMPLETE.md](./ANALYSIS_COMPLETE.md)
+**UI/UX Complete Summary / UI/UX完整总结**
+- Focuses on UI/UX issues (26 issues, 12 days)
+- Design system and component library recommendations
+- Does NOT include functional analysis (see corrected version above)
+- 聚焦于UI/UX问题（26个问题，12天）
+- 设计系统和组件库建议
+- 不包含功能分析（请参阅上面的修正版）
 
 ### 🎨 [index.html](./index.html)
 **Mockup Navigation / Mockup导航**
