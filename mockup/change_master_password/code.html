@@ -60,6 +60,7 @@
   </style>
   </head>
 <body class="bg-background-light dark:bg-background-dark text-text-main-light dark:text-text-main-dark min-h-screen flex flex-col antialiased selection:bg-primary/30 selection:text-primary">
+<div class="relative mx-auto flex h-screen w-full max-w-[480px] flex-col overflow-hidden bg-background-light dark:bg-background-dark shadow-xl">
 <header class="flex items-center justify-between px-4 py-4 md:px-6 md:py-5 border-b border-border-light dark:border-border-dark bg-surface-light/90 dark:bg-surface-dark/80 backdrop-blur-md sticky top-0 z-50">
 <a class="text-primary font-medium text-base hover:opacity-70 transition-opacity" href="../settings_database/code.html">
         Back
@@ -69,7 +70,7 @@
     </h1>
 <div class="w-[38px]"></div> 
 </header>
-<main class="flex-1 w-full max-w-lg mx-auto p-4 md:p-6 flex flex-col gap-6">
+<main class="flex-1 w-full p-4 md:p-6 flex flex-col gap-6 overflow-y-auto">
 <div class="mb-2">
 <p class="text-text-sub-light dark:text-text-sub-dark text-sm font-normal leading-relaxed">
             Update the master password used to encrypt all your local databases. Please ensure you remember your new password as it cannot be recovered.
@@ -124,5 +125,5 @@
         </a>
 </div>
 </main>
-
+</div>
 </body></html>

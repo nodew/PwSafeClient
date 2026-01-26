@@ -37,15 +37,16 @@
 </style>
 </head>
 <body class="bg-background-light dark:bg-background-dark font-display text-base text-black dark:text-white antialiased transition-colors duration-200">
+<div class="relative mx-auto flex h-screen w-full max-w-[480px] flex-col overflow-hidden bg-background-light dark:bg-background-dark shadow-xl">
 <header class="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-separator-light dark:border-separator-dark">
-<div class="max-w-md mx-auto px-4 h-14 flex items-center justify-center relative">
+<div class="px-4 h-14 flex items-center justify-center relative">
 <a class="absolute left-4 inline-flex items-center justify-center text-gray-500 dark:text-gray-400 hover:text-primary transition-colors" href="../password_list/code.html">
 <span class="material-icons-outlined text-lg">arrow_back_ios_new</span>
 </a>
 <h1 class="text-[17px] font-semibold">Settings</h1>
 </div>
 </header>
-<main class="max-w-md mx-auto pt-6 pb-12 px-4 space-y-6">
+<main class="flex-1 w-full pt-6 pb-12 px-4 space-y-6 overflow-y-auto">
 <section>
 <h2 class="text-[13px] uppercase text-gray-500 dark:text-gray-400 font-medium mb-2 pl-4">General</h2>
 <div class="bg-surface-light dark:bg-surface-dark rounded-xl overflow-hidden shadow-sm">
@@ -158,4 +159,5 @@
     </p>
 </section>
 </main>
+</div>
 </body></html>
