@@ -89,7 +89,6 @@
                     </Grid>
                 </Border>
 
-                <!-- Read Only Checkbox -->
                 <Label Text="{Binding ErrorMessage}"
                        IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotNullOrWhiteSpaceConverter}}"
                        TextColor="{StaticResource Error}"
