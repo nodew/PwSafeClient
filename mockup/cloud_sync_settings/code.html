@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Cloud Sync Settings</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="../design-system.css" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<script>
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    primary: "#1773cf",
+                    "background-light": "#f2f2f7",
+                    "background-dark": "#0b1118",
+                    "surface-light": "#FFFFFF",
+                    "surface-dark": "#1C1C1E",
+                    "separator-light": "#E5E7EB",
+                    "separator-dark": "#2A2A2E",
+                },
+                fontFamily: {
+                    display: ["Manrope", "sans-serif"],
+                },
+                borderRadius: {
+                    DEFAULT: "0.75rem",
+                    lg: "1rem",
+                    full: "9999px",
+                },
+            },
+        },
+    };
+</script>
+<style>
+  body {
+    min-height: max(884px, 100dvh);
+  }
+</style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-base text-black dark:text-white antialiased transition-colors duration-200">
+<div class="screen-frame relative mx-auto flex h-screen w-full flex-col overflow-hidden bg-background-light dark:bg-background-dark shadow-xl">
+<header class="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-separator-light dark:border-separator-dark">
+<div class="px-4 h-14 flex items-center justify-center relative">
+<a class="absolute left-4 inline-flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-primary transition-colors touch-target" href="../settings_system/code.html" aria-label="Back to settings">
+<span class="material-symbols-outlined text-lg">arrow_back_ios_new</span>
+</a>
+<h1 class="text-[17px] font-semibold">Cloud Sync</h1>
+</div>
+</header>
+<main class="flex-1 w-full pt-6 pb-12 px-4 space-y-6 overflow-y-auto">
+<section class="rounded-xl border border-separator-light dark:border-separator-dark bg-surface-light dark:bg-surface-dark p-4 text-sm text-gray-600 dark:text-gray-300">
+Configure sync provider and frequency for your databases.
+</section>
+<section>
+<h2 class="text-[13px] uppercase text-gray-500 dark:text-gray-400 font-medium mb-2 pl-4">Status</h2>
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl overflow-hidden shadow-sm">
+<div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 last:border-0">
+<span class="text-[17px]">Sync Status</span>
+<span class="text-[17px] text-green-600">Connected</span>
+</div>
+<div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 last:border-0">
+<span class="text-[17px]">Last Sync</span>
+<span class="text-[17px] text-gray-500 dark:text-gray-400">10 minutes ago</span>
+</div>
+</div>
+</section>
+<section>
+<h2 class="text-[13px] uppercase text-gray-500 dark:text-gray-400 font-medium mb-2 pl-4">Provider</h2>
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl overflow-hidden shadow-sm">
+<div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 last:border-0">
+<span class="text-[17px]">Provider</span>
+<div class="flex items-center text-gray-500 dark:text-gray-400">
+<span class="text-[17px] mr-2">Dropbox</span>
+<span class="material-symbols-outlined text-gray-400 dark:text-gray-500 text-lg" aria-hidden="true">arrow_forward_ios</span>
+</div>
+</div>
+<div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 last:border-0">
+<span class="text-[17px]">Account</span>
+<span class="text-[17px] text-gray-500 dark:text-gray-400">user@example.com</span>
+</div>
+</div>
+</section>
+<section>
+<h2 class="text-[13px] uppercase text-gray-500 dark:text-gray-400 font-medium mb-2 pl-4">Sync Options</h2>
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl overflow-hidden shadow-sm">
+<div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 last:border-0">
+<span class="text-[17px]">Sync on Save</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value="" aria-label="Toggle sync on save"/>
+<div class="w-[51px] h-[31px] bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[27px] after:w-[27px] after:transition-all dark:border-gray-600 peer-checked:bg-green-500"></div>
+</label>
+</div>
+<div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 last:border-0">
+<span class="text-[17px]">Sync Frequency</span>
+<div class="flex items-center text-gray-500 dark:text-gray-400">
+<span class="text-[17px] mr-2">Every 30 minutes</span>
+<span class="material-symbols-outlined text-gray-400 dark:text-gray-500 text-lg" aria-hidden="true">arrow_forward_ios</span>
+</div>
+</div>
+<div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 last:border-0">
+<span class="text-[17px]">Sync on Cellular</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value="" aria-label="Toggle sync on cellular"/>
+<div class="w-[51px] h-[31px] bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[27px] after:w-[27px] after:transition-all dark:border-gray-600 peer-checked:bg-green-500"></div>
+</label>
+</div>
+</div>
+</section>
+<section>
+<h2 class="text-[13px] uppercase text-gray-500 dark:text-gray-400 font-medium mb-2 pl-4">Actions</h2>
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl overflow-hidden shadow-sm">
+<button class="w-full flex items-center justify-between p-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors border-b border-gray-200 dark:border-gray-700 last:border-0" aria-label="Disconnect provider">
+<span class="text-[17px] text-red-600">Disconnect</span>
+<span class="material-symbols-outlined text-gray-400 dark:text-gray-500 text-lg" aria-hidden="true">link_off</span>
+</button>
+</div>
+</section>
+</main>
+</div>
+</body></html>
