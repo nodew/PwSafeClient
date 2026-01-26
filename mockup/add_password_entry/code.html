@@ -82,10 +82,6 @@
 </div>
 </header>
 <main class="flex-1 w-full p-4 flex flex-col gap-6 pt-6 overflow-y-auto">
-<div class="rounded-xl border border-border-light dark:border-border-dark bg-white/70 dark:bg-surface-dark/70 p-4 text-sm text-text-secondary-light dark:text-text-secondary-dark flex items-start gap-3" role="status">
-<span class="material-symbols-outlined text-primary text-xl" aria-hidden="true">info</span>
-Fill in the required fields to save this entry.
-</div>
 <div class="flex flex-col gap-5">
 <div class="flex flex-col gap-2">
 <label class="text-sm font-semibold text-gray-700 dark:text-gray-200 ml-1" for="title">Title</label>
@@ -95,16 +91,20 @@ Fill in the required fields to save this entry.
 <p class="form-error ml-1" id="title-error">Title is required.</p>
 </div>
 <div class="flex flex-col gap-2">
-<label class="text-sm font-semibold text-gray-700 dark:text-gray-200 ml-1" for="website">Website</label>
-<div class="relative">
-<input class="w-full h-14 pl-4 pr-4 rounded-lg bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-gray-900 dark:text-white placeholder-text-secondary-light dark:placeholder-text-secondary-dark focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none" id="website" placeholder="https://..." type="url" title="Website URL"/>
-</div>
-</div>
-<div class="flex flex-col gap-2">
 <label class="text-sm font-semibold text-gray-700 dark:text-gray-200 ml-1" for="username">Username</label>
 <div class="relative">
 <input class="w-full h-14 pl-4 pr-4 rounded-lg bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-gray-900 dark:text-white placeholder-text-secondary-light dark:placeholder-text-secondary-dark focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none" id="username" placeholder="email@example.com" type="email" title="Username or email"/>
 </div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-gray-700 dark:text-gray-200 ml-1" for="policy">Password Policy</label>
+<select class="w-full h-14 px-4 rounded-lg bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none" id="policy" aria-label="Password policy">
+<option>None</option>
+<option>Standard (16 chars)</option>
+<option>Strong (24 chars)</option>
+<option>PIN (6 digits)</option>
+<option>Passphrase</option>
+</select>
 </div>
 <div class="flex flex-col gap-2">
 <label class="text-sm font-semibold text-gray-700 dark:text-gray-200 ml-1" for="password">Password</label>
@@ -128,6 +128,23 @@ Fill in the required fields to save this entry.
 </div>
 <span class="text-xs font-medium text-yellow-500">Medium</span>
 </div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-gray-700 dark:text-gray-200 ml-1" for="confirmPassword">Confirm Password</label>
+<div class="relative">
+<input class="w-full h-14 pl-4 pr-4 rounded-lg bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-gray-900 dark:text-white placeholder-text-secondary-light dark:placeholder-text-secondary-dark focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none input-error" id="confirmPassword" placeholder="Re-enter password" type="password" title="Confirm password"/>
+</div>
+<p class="form-error ml-1">Passwords must match.</p>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-gray-700 dark:text-gray-200 ml-1" for="website">URL</label>
+<div class="relative">
+<input class="w-full h-14 pl-4 pr-4 rounded-lg bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-gray-900 dark:text-white placeholder-text-secondary-light dark:placeholder-text-secondary-dark focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none" id="website" placeholder="https://..." type="url" title="Website URL"/>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-gray-700 dark:text-gray-200 ml-1" for="email">Email</label>
+<input class="w-full h-14 pl-4 pr-4 rounded-lg bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-gray-900 dark:text-white placeholder-text-secondary-light dark:placeholder-text-secondary-dark focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none" id="email" placeholder="name@example.com" type="email" title="Email"/>
 </div>
 <div class="flex flex-col gap-2">
 <label class="text-sm font-semibold text-gray-700 dark:text-gray-200 ml-1" for="notes">Notes</label>

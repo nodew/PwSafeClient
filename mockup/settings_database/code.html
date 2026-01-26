@@ -50,13 +50,6 @@
 </div>
 </header>
 <main class="flex-1 w-full pt-6 pb-12 px-4 space-y-6 overflow-y-auto">
-<p class="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
-    Database settings apply only to the current vault.
-</p>
-<section class="bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl p-4 flex items-start gap-3 text-sm text-text-secondary-light dark:text-text-secondary-dark" role="status">
-<span class="material-symbols-outlined text-primary text-lg" aria-hidden="true">lock</span>
-Unlocked for 12 minutes. Lock your vault when you finish.
-</section>
 <section>
 <h2 class="text-[13px] uppercase text-gray-500 dark:text-gray-400 font-medium mb-2 pl-4">General</h2>
 <div class="bg-surface-light dark:bg-surface-dark rounded-xl overflow-hidden shadow-sm">
@@ -74,13 +67,6 @@ Unlocked for 12 minutes. Lock your vault when you finish.
 <span class="material-symbols-outlined text-gray-400 dark:text-gray-500 text-lg" aria-hidden="true">arrow_forward_ios</span>
 </div>
 </div>
-<div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 last:border-0" title="Haptic feedback">
-<span class="text-[17px]">Haptic Feedback</span>
-<label class="relative inline-flex items-center cursor-pointer">
-<input checked="" class="sr-only peer" type="checkbox" value="" aria-label="Toggle haptic feedback"/>
-<div class="w-[51px] h-[31px] bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[27px] after:w-[27px] after:transition-all dark:border-gray-600 peer-checked:bg-green-500"></div>
-</label>
-</div>
 </div>
 </section>
 <section>
@@ -90,61 +76,61 @@ Unlocked for 12 minutes. Lock your vault when you finish.
 <span class="text-[17px]">Active Database</span>
 <span class="text-[17px] text-gray-500 dark:text-gray-400">Personal Vault</span>
 </div>
-<a class="flex items-center justify-between p-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors cursor-pointer border-b border-gray-200 dark:border-gray-700 last:border-0" href="../change_master_password/code.html" title="Change master password">
-<span class="text-[17px]">Change Master Password</span>
-<span class="material-symbols-outlined text-gray-400 dark:text-gray-500 text-lg" aria-hidden="true">arrow_forward_ios</span>
-</a>
 <div class="flex items-center justify-between p-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors cursor-pointer border-b border-gray-200 dark:border-gray-700 last:border-0" title="Rename database">
 <span class="text-[17px]">Rename Database</span>
 <span class="material-symbols-outlined text-gray-400 dark:text-gray-500 text-lg" aria-hidden="true">arrow_forward_ios</span>
 </div>
-<div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 last:border-0" title="Lock database">
-<span class="text-[17px]">Lock Database</span>
-<span class="material-symbols-outlined text-gray-400 dark:text-gray-500 text-lg" aria-hidden="true">lock</span>
+<a class="flex items-center justify-between p-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors cursor-pointer border-b border-gray-200 dark:border-gray-700 last:border-0" href="../change_master_password/code.html" title="Change master password">
+<span class="text-[17px]">Change Master Password</span>
+<span class="material-symbols-outlined text-gray-400 dark:text-gray-500 text-lg" aria-hidden="true">arrow_forward_ios</span>
+</a>
+<div>
+<div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 last:border-0" title="Biometrics login">
+<span class="text-[17px]">Biometrics login</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value="" aria-label="Toggle biometrics login"/>
+<div class="w-[51px] h-[31px] bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[27px] after:w-[27px] after:transition-all dark:border-gray-600 peer-checked:bg-green-500"></div>
+</label>
+</div>
+<div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 last:border-0" title="Manage password policies">
+<span class="text-[17px]">Manage password policies</span>
+<span class="material-symbols-outlined text-gray-400 dark:text-gray-500 text-lg" aria-hidden="true">arrow_forward_ios</span>
+</div>
+<div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 last:border-0" title="Export data">
+<span class="text-[17px]">Export data</span>
+<span class="material-symbols-outlined text-gray-400 dark:text-gray-500 text-lg" aria-hidden="true">arrow_forward_ios</span>
 </div>
 </div>
 </section>
 <section>
-<h2 class="text-[13px] uppercase text-gray-500 dark:text-gray-400 font-medium mb-2 pl-4">Password Policies</h2>
+<h2 class="text-[13px] uppercase text-gray-500 dark:text-gray-400 font-medium mb-2 pl-4">App Security</h2>
 <div class="bg-surface-light dark:bg-surface-dark rounded-xl overflow-hidden shadow-sm">
-<div class="flex items-center justify-between p-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors cursor-pointer border-b border-gray-200 dark:border-gray-700 last:border-0" title="Default policy">
-<span class="text-[17px]">Default Policy</span>
+<div class="flex items-center justify-between p-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors cursor-pointer border-b border-gray-200 dark:border-gray-700 last:border-0" title="Auto-lock timeout">
+<span class="text-[17px]">Auto-lock Timeout</span>
 <div class="flex items-center text-gray-500 dark:text-gray-400">
-<span class="text-[17px] mr-2">Standard (16 chars)</span>
+<span class="text-[17px] mr-2">5 minutes</span>
 <span class="material-symbols-outlined text-gray-400 dark:text-gray-500 text-lg" aria-hidden="true">arrow_forward_ios</span>
 </div>
 </div>
-<div class="flex items-center justify-between p-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors cursor-pointer border-b border-gray-200 dark:border-gray-700 last:border-0" title="Manage policies">
-<span class="text-[17px]">Manage Policies</span>
+<div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 last:border-0" title="Clipboard clear">
+<span class="text-[17px]">Clipboard Clear</span>
+<div class="flex items-center text-gray-500 dark:text-gray-400">
+<span class="text-[17px] mr-2">30 seconds</span>
 <span class="material-symbols-outlined text-gray-400 dark:text-gray-500 text-lg" aria-hidden="true">arrow_forward_ios</span>
+</div>
 </div>
 </div>
 </section>
 <section>
-<h2 class="text-[13px] uppercase text-gray-500 dark:text-gray-400 font-medium mb-2 pl-4">Backup &amp; Export</h2>
+<h2 class="text-[13px] uppercase text-gray-500 dark:text-gray-400 font-medium mb-2 pl-4">Storage &amp; Sync</h2>
 <div class="bg-surface-light dark:bg-surface-dark rounded-xl overflow-hidden shadow-sm">
-<div class="flex items-center justify-between p-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors cursor-pointer border-b border-gray-200 dark:border-gray-700 last:border-0" title="Backup now">
-<span class="text-[17px] text-primary">Backup Now</span>
+<div class="flex items-center justify-between p-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors cursor-pointer border-b border-gray-200 dark:border-gray-700 last:border-0" title="Cloud sync">
+<span class="text-[17px]">Cloud Sync</span>
 <span class="material-symbols-outlined text-gray-400 dark:text-gray-500 text-lg" aria-hidden="true">arrow_forward_ios</span>
 </div>
-<div class="flex items-center justify-between p-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors cursor-pointer border-b border-gray-200 dark:border-gray-700 last:border-0" title="Backup schedule">
-<span class="text-[17px]">Backup Schedule</span>
-<div class="flex items-center text-gray-500 dark:text-gray-400">
-<span class="text-[17px] mr-2">Weekly</span>
-<span class="material-symbols-outlined text-gray-400 dark:text-gray-500 text-lg" aria-hidden="true">arrow_forward_ios</span>
-</div>
-</div>
-<div class="flex items-center justify-between p-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors cursor-pointer border-b border-gray-200 dark:border-gray-700 last:border-0" title="Cloud backup settings">
-<span class="text-[17px]">Cloud Backup Settings</span>
-<span class="material-symbols-outlined text-gray-400 dark:text-gray-500 text-lg" aria-hidden="true">arrow_forward_ios</span>
-</div>
-<div class="flex items-center justify-between p-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors cursor-pointer border-b border-gray-200 dark:border-gray-700 last:border-0" title="Export data">
-<span class="text-[17px]">Export Data</span>
-<span class="material-symbols-outlined text-gray-400 dark:text-gray-500 text-lg" aria-hidden="true">arrow_forward_ios</span>
-</div>
-<div class="flex items-center justify-between p-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors cursor-pointer border-b border-gray-200 dark:border-gray-700 last:border-0" title="Import data">
-<span class="text-[17px]">Import Data</span>
-<span class="material-symbols-outlined text-gray-400 dark:text-gray-500 text-lg" aria-hidden="true">arrow_forward_ios</span>
+<div class="flex items-center justify-between p-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors cursor-pointer border-b border-gray-200 dark:border-gray-700 last:border-0" title="Storage usage">
+<span class="text-[17px]">Storage Usage</span>
+<span class="text-[17px] text-gray-500 dark:text-gray-400">128 MB</span>
 </div>
 </div>
 </section>

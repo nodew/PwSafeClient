@@ -75,7 +75,6 @@
 </div>
 <div class="flex-1 min-w-0">
 <h2 class="text-xl font-bold truncate">Netflix</h2>
-<p class="text-sm text-text-secondary-light dark:text-text-secondary-dark truncate">streaming.netflix.com</p>
 </div>
 <span class="rounded-full bg-green-100 text-green-700 text-xs font-semibold px-2 py-1">Active</span>
 </div>
@@ -113,7 +112,7 @@ Copy
 </div>
 </div>
 <div class="flex flex-col gap-2">
-<span class="text-xs uppercase text-text-secondary-light dark:text-text-secondary-dark font-semibold">Website</span>
+<span class="text-xs uppercase text-text-secondary-light dark:text-text-secondary-dark font-semibold">URL</span>
 <div class="flex items-center gap-2">
 <a class="text-base font-medium text-primary hover:text-primary/80 transition-colors" href="#" title="https://netflix.com/login">https://netflix.com/login</a>
 <button class="touch-target flex items-center gap-1 text-primary text-sm font-semibold px-3 py-1 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors" aria-label="Open website" title="Open website">
@@ -122,30 +121,10 @@ Open
 </button>
 </div>
 </div>
+<div class="flex flex-col gap-2">
+<span class="text-xs uppercase text-text-secondary-light dark:text-text-secondary-dark font-semibold">Email</span>
+<p class="text-base font-medium">family.plan@icloud.com</p>
 </div>
-</section>
-<section class="bg-surface-light dark:bg-surface-dark rounded-xl border border-border-light dark:border-border-dark p-5 shadow-sm flex flex-col gap-4">
-<div class="flex items-center justify-between">
-<h3 class="text-base font-bold">Quick Actions</h3>
-<span class="text-xs text-text-secondary-light dark:text-text-secondary-dark">Last updated 2 days ago</span>
-</div>
-<div class="grid grid-cols-2 gap-3">
-<button class="touch-target flex flex-col items-center gap-2 rounded-xl border border-border-light dark:border-border-dark p-3 hover:border-primary/40 transition-colors" aria-label="Copy username" title="Copy username">
-<span class="material-symbols-outlined text-[22px] text-primary" aria-hidden="true">content_copy</span>
-<span class="text-sm font-semibold">Copy Username</span>
-</button>
-<button class="touch-target flex flex-col items-center gap-2 rounded-xl border border-border-light dark:border-border-dark p-3 hover:border-primary/40 transition-colors" aria-label="Copy password" title="Copy password">
-<span class="material-symbols-outlined text-[22px] text-primary" aria-hidden="true">key</span>
-<span class="text-sm font-semibold">Copy Password</span>
-</button>
-<a class="touch-target flex flex-col items-center gap-2 rounded-xl border border-border-light dark:border-border-dark p-3 hover:border-primary/40 transition-colors" href="../edit_password_entry/code.html" aria-label="Edit entry">
-<span class="material-symbols-outlined text-[22px] text-primary" aria-hidden="true">edit</span>
-<span class="text-sm font-semibold">Edit Entry</span>
-</a>
-<button class="touch-target flex flex-col items-center gap-2 rounded-xl border border-border-light dark:border-border-dark p-3 hover:border-primary/40 transition-colors" aria-label="Delete entry">
-<span class="material-symbols-outlined text-[22px] text-primary" aria-hidden="true">delete</span>
-<span class="text-sm font-semibold">Delete</span>
-</button>
 </div>
 </section>
 <section class="bg-surface-light dark:bg-surface-dark rounded-xl border border-border-light dark:border-border-dark p-5 shadow-sm flex flex-col gap-3">
@@ -154,18 +133,13 @@ Open
     Shared with the family plan. Update billing card details once per quarter.
 </p>
 </section>
-<section class="bg-surface-light dark:bg-surface-dark rounded-xl border border-border-light dark:border-border-dark p-4">
-<div class="flex items-start gap-3 text-sm text-text-secondary-light dark:text-text-secondary-dark">
-<span class="material-symbols-outlined text-lg text-primary" aria-hidden="true">cloud</span>
-<div>
-<p class="font-semibold text-gray-900 dark:text-white">Sync Status</p>
-<p>Last synced 10 minutes ago • Local storage only</p>
+<section>
+<div class="p-4 mt-4 mb-8">
+<button class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-12 px-5 bg-red-50 hover:bg-red-100 text-red-600 text-base font-bold leading-normal transition-colors border border-transparent hover:border-red-200" aria-label="Delete entry" data-loading="true">
+<span class="button-label">Delete Entry</span>
+<span class="material-symbols-outlined button-spinner animate-spin text-base ml-2" aria-hidden="true">progress_activity</span>
+</button>
 </div>
-</div>
-</section>
-<section class="bg-red-50/60 border border-red-100 rounded-xl p-4 text-sm text-red-600 flex items-start gap-2" role="alert">
-<span class="material-symbols-outlined text-[18px]" aria-hidden="true">warning</span>
-Deleting an entry is permanent. Confirm before continuing.
 </section>
 </main>
 </div>
