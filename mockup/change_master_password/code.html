@@ -7,6 +7,7 @@
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="../design-system.css" rel="stylesheet"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script id="tailwind-config">
         tailwind.config = {
@@ -14,22 +15,22 @@
             theme: {
                 extend: {
                     colors: {
-                        "primary": "#007AFF",
-                        "background-light": "#F2F2F7",
-                        "background-dark": "#000000",
+                        "primary": "#1773cf",
+                        "background-light": "#f2f2f7",
+                        "background-dark": "#0b1118",
                         "surface-light": "#FFFFFF",
                         "surface-dark": "#1c1c1e",
-                        "border-light": "#D1D1D6",
-                        "border-dark": "#3a3a3c",
-                        "text-main-light": "#000000",
-                        "text-main-dark": "#ffffff",
-                        "text-sub-light": "#666666",
-                        "text-sub-dark": "#98989d",
+                        "border-light": "#E5E7EB",
+                        "border-dark": "#2a2a2e",
+                        "text-main-light": "#111827",
+                        "text-main-dark": "#f9fafb",
+                        "text-sub-light": "#4b5563",
+                        "text-sub-dark": "#cbd5f5",
                     },
                     fontFamily: {
                         "display": ["Manrope", "sans-serif"]
                     },
-                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "0.75rem", "xl": "1rem", "full": "9999px"},
                 },
             },
         }
@@ -60,11 +61,11 @@
   </style>
   </head>
 <body class="bg-background-light dark:bg-background-dark text-text-main-light dark:text-text-main-dark min-h-screen flex flex-col antialiased selection:bg-primary/30 selection:text-primary">
-<div class="relative mx-auto flex h-screen w-full max-w-[480px] flex-col overflow-hidden bg-background-light dark:bg-background-dark shadow-xl">
+<div class="screen-frame relative mx-auto flex h-screen w-full flex-col overflow-hidden bg-background-light dark:bg-background-dark shadow-xl">
 <header class="flex items-center justify-between px-4 py-4 md:px-6 md:py-5 border-b border-border-light dark:border-border-dark bg-surface-light/90 dark:bg-surface-dark/80 backdrop-blur-md sticky top-0 z-50">
-<a class="text-primary font-medium text-base hover:opacity-70 transition-opacity" href="../settings_database/code.html">
-        Back
-    </a>
+<a class="text-primary font-medium text-base hover:opacity-70 transition-opacity touch-target flex items-center justify-center" href="../settings_database/code.html" aria-label="Back to database settings">
+<span class="material-symbols-outlined text-xl" aria-hidden="true">arrow_back_ios_new</span>
+</a>
 <h1 class="text-lg font-bold leading-tight tracking-tight text-center flex-1 mx-2">
         Change Master Password
     </h1>
@@ -82,11 +83,12 @@
                 Current Master Password
             </label>
 <div class="relative flex items-center">
-<input class="w-full h-14 pl-4 pr-16 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all text-base text-text-main-light placeholder:text-text-sub-light/60 dark:placeholder:text-text-sub-dark/50" id="current-password" placeholder="Enter current password" type="password"/>
-<button class="absolute right-0 h-full px-4 text-primary text-sm font-semibold hover:text-primary/70 transition-colors focus:outline-none" type="button">
-                    Show
-                </button>
+<input class="w-full h-14 pl-4 pr-16 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all text-base text-text-main-light placeholder:text-text-sub-light/60 dark:placeholder:text-text-sub-dark/50" id="current-password" placeholder="Enter current password" type="password" aria-describedby="current-password-help"/>
+<button class="absolute right-0 h-full px-4 text-text-sub-light dark:text-text-sub-dark hover:text-primary transition-colors focus:outline-none touch-target flex items-center justify-center" type="button" aria-label="Toggle current password visibility" title="Show or hide password">
+<span class="material-symbols-outlined text-xl" aria-hidden="true">visibility</span>
+</button>
 </div>
+<p class="sr-only" id="current-password-help">Enter your existing master password.</p>
 </div>
 <div class="h-px bg-border-light dark:bg-border-dark my-1 w-full opacity-60"></div>
 <div class="space-y-2">
@@ -94,13 +96,25 @@
                 New Master Password
             </label>
 <div class="relative flex items-center">
-<input class="w-full h-14 pl-4 pr-16 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all text-base text-text-main-light placeholder:text-text-sub-light/60 dark:placeholder:text-text-sub-dark/50" id="new-password" placeholder="Enter new password" type="password"/>
-<button class="absolute right-0 h-full px-4 text-primary text-sm font-semibold hover:text-primary/70 transition-colors focus:outline-none" type="button">
-                    Show
-                </button>
+<input class="w-full h-14 pl-4 pr-24 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all text-base text-text-main-light placeholder:text-text-sub-light/60 dark:placeholder:text-text-sub-dark/50 font-mono" id="new-password" placeholder="Enter new password" type="password"/>
+<div class="absolute right-0 h-full px-3 flex items-center gap-1">
+<button class="touch-target flex items-center justify-center text-text-sub-light dark:text-text-sub-dark hover:text-primary transition-colors focus:outline-none" type="button" aria-label="Generate a new password" title="Generate password">
+<span class="material-symbols-outlined text-xl" aria-hidden="true">autorenew</span>
+</button>
+<button class="touch-target flex items-center justify-center text-text-sub-light dark:text-text-sub-dark hover:text-primary transition-colors focus:outline-none" type="button" aria-label="Toggle new password visibility" title="Show or hide password">
+<span class="material-symbols-outlined text-xl" aria-hidden="true">visibility</span>
+</button>
+</div>
+</div>
+<div class="flex items-center gap-2 pt-2 px-1" aria-label="Password strength">
+<div class="h-1.5 flex-1 rounded-full bg-green-500"></div>
+<div class="h-1.5 flex-1 rounded-full bg-green-400"></div>
+<div class="h-1.5 flex-1 rounded-full bg-yellow-400"></div>
+<div class="h-1.5 flex-1 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+<span class="text-xs font-semibold text-yellow-500">Medium</span>
 </div>
 <p class="text-text-sub-light dark:text-text-sub-dark text-xs font-medium pt-1 flex items-start gap-1.5 ml-1">
-<span class="material-symbols-outlined text-sm" style="font-size: 16px;">info</span>
+<span class="material-symbols-outlined text-sm" style="font-size: 16px;" aria-hidden="true">info</span>
                 Password must be at least 8 characters long.
             </p>
 </div>
@@ -109,17 +123,19 @@
                 Confirm New Master Password
             </label>
 <div class="relative flex items-center">
-<input class="w-full h-14 pl-4 pr-16 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all text-base text-text-main-light placeholder:text-text-sub-light/60 dark:placeholder:text-text-sub-dark/50" id="confirm-password" placeholder="Re-enter new password" type="password"/>
-<button class="absolute right-0 h-full px-4 text-primary text-sm font-semibold hover:text-primary/70 transition-colors focus:outline-none" type="button">
-                    Show
-                </button>
+<input class="w-full h-14 pl-4 pr-16 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all text-base text-text-main-light placeholder:text-text-sub-light/60 dark:placeholder:text-text-sub-dark/50 input-error" id="confirm-password" placeholder="Re-enter new password" type="password" aria-describedby="confirm-password-error"/>
+<button class="absolute right-0 h-full px-4 text-text-sub-light dark:text-text-sub-dark hover:text-primary transition-colors focus:outline-none touch-target flex items-center justify-center" type="button" aria-label="Toggle confirm password visibility" title="Show or hide password">
+<span class="material-symbols-outlined text-xl" aria-hidden="true">visibility</span>
+</button>
 </div>
+<p class="form-error ml-1" id="confirm-password-error">Passwords do not match. Please check again.</p>
 </div>
 </div>
 <div class="mt-8 flex flex-col gap-3">
-<a class="w-full h-12 flex items-center justify-center bg-primary hover:bg-blue-600 text-white font-bold rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98]" href="../settings_database/code.html">
-            Save Changes
-        </a>
+<a class="w-full h-12 flex items-center justify-center bg-primary hover:bg-blue-600 text-white font-bold rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98]" href="../settings_database/code.html" data-loading="true" aria-label="Save master password changes">
+<span class="button-label">Save Changes</span>
+<span class="material-symbols-outlined button-spinner animate-spin ml-2" aria-hidden="true">progress_activity</span>
+</a>
 <a class="w-full h-12 flex items-center justify-center bg-transparent border border-border-light dark:border-border-dark text-primary dark:text-white font-semibold rounded-xl hover:bg-surface-light dark:hover:bg-surface-dark/50 transition-all active:scale-[0.98]" href="../settings_database/code.html">
             Cancel
         </a>

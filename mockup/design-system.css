@@ -1,0 +1,111 @@
+:root {
+  color-scheme: light;
+  --color-primary: #1773cf;
+  --color-primary-strong: #145fa9;
+  --color-primary-soft: rgba(23, 115, 207, 0.12);
+  --color-background-light: #f2f2f7;
+  --color-surface-light: #ffffff;
+  --color-border-light: #e5e7eb;
+  --color-text-main-light: #111827;
+  --color-text-secondary-light: #4b5563;
+  --color-text-tertiary-light: #6b7280;
+  --color-text-disabled-light: #9ca3af;
+  --color-success: #16a34a;
+  --color-warning: #f59e0b;
+  --color-danger: #dc2626;
+  --color-info: #2563eb;
+  --color-background-dark: #0b1118;
+  --color-surface-dark: #1c1c1e;
+  --color-border-dark: #2a2a2e;
+  --color-text-main-dark: #f9fafb;
+  --color-text-secondary-dark: #cbd5f5;
+  --color-text-tertiary-dark: #9ca3af;
+  --font-display: "Manrope", sans-serif;
+  --font-mono: "SF Mono", "Monaco", "Inconsolata", "monospace";
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-full: 9999px;
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.7;
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-display);
+  line-height: var(--line-height-normal);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.screen-frame {
+  width: 100%;
+  max-width: 480px;
+  min-height: max(884px, 100dvh);
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .screen-frame {
+    max-width: 720px;
+    border-radius: var(--radius-lg);
+  }
+}
+
+@media (min-width: 1024px) {
+  .screen-frame {
+    max-width: 960px;
+  }
+}
+
+.touch-target {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.toast {
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.toast[data-visible="true"] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.button-spinner {
+  display: none;
+}
+
+[data-loading="true"] .button-spinner {
+  display: inline-flex;
+}
+
+[data-loading="true"] .button-label {
+  opacity: 0.6;
+}
+
+.input-error {
+  border-color: var(--color-danger) !important;
+  background-color: rgba(220, 38, 38, 0.08);
+}
+
+.form-error {
+  color: var(--color-danger);
+  font-size: 0.75rem;
+  font-weight: 600;
+}

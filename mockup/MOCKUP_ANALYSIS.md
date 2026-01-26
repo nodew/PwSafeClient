@@ -36,9 +36,10 @@ This document provides a comprehensive analysis of all issues found in the curre
 **Solution:**
 ```css
 /* Use a single theme color */
---primary: #1773cf; /* Or choose #007AFF, but must be consistent */
+--primary: #1773cf;
+```
 
-**Implementation:** Use the same primary color value across all mockups. Recommend using `#1773cf` as the brand color, or if following iOS design guidelines, consistently use `#007AFF`.
+**Implementation:** Use the same primary color value across all mockups. Finalized on `#1773cf` as the brand color.
 
 ### Issue 1.2: Inconsistent Border Radius
 
@@ -100,17 +101,9 @@ This document provides a comprehensive analysis of all issues found in the curre
 
 **Problem:**
 ```css
-/* database_list.html */
-"background-light": "#F3F4F6"
-
-/* password_list.html */
-"background-light": "#f6f7f8"
-
-/* master_password_entry.html */
-"background-light": "#f8fafc"
-
-/* create_new_database.html */
+/* Unified background */
 "background-light": "#F2F2F7"
+```
 
 **Impact:**
 - Visual jumps during page transitions

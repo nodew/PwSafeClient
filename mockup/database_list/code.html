@@ -6,6 +6,7 @@
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="../design-system.css" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script id="tailwind-config">
@@ -14,16 +15,16 @@
             extend: {
                 colors: {
                     "primary": "#1773cf",
-                    "background-light": "#F3F4F6","surface-light": "#ffffff",
-                    "text-main": "#111827","text-sub": "#6B7280","border-light": "#E5E7EB",
+                    "background-light": "#f2f2f7","surface-light": "#ffffff",
+                    "text-main": "#111827","text-sub": "#4b5563","border-light": "#E5E7EB",
                 },
                 fontFamily: {
                     "display": ["Manrope", "sans-serif"]
                 },
                 borderRadius: {
-                    "DEFAULT": "0.25rem",
-                    "lg": "0.5rem",
-                    "xl": "0.75rem",
+                    "DEFAULT": "0.5rem",
+                    "lg": "0.75rem",
+                    "xl": "1rem",
                     "full": "9999px"
                 },
                 boxShadow: {
@@ -55,10 +56,10 @@
 </style>
     </head>
 <body class="bg-background-light font-display text-text-main overflow-x-hidden min-h-screen">
-<div class="relative mx-auto flex h-screen w-full max-w-[480px] flex-col overflow-hidden bg-background-light shadow-xl">
+<div class="screen-frame relative mx-auto flex h-screen w-full flex-col overflow-hidden bg-background-light shadow-xl">
 <header class="sticky top-0 z-20 bg-background-light/95 backdrop-blur-md px-4 py-3 flex items-center justify-between border-b border-border-light">
 <h2 class="text-text-main text-3xl font-extrabold leading-tight tracking-tight">Databases</h2>
-<a class="flex items-center justify-center rounded-full w-10 h-10 hover:bg-black/5 transition-colors active:scale-95" href="../settings_system/code.html">
+<a class="touch-target flex items-center justify-center rounded-full w-10 h-10 hover:bg-black/5 transition-colors active:scale-95" href="../settings_system/code.html" aria-label="Open system settings">
 <span class="material-symbols-outlined text-text-main" style="font-size: 24px;">settings</span>
 </a>
 </header>
@@ -67,11 +68,11 @@
 <div class="flex items-center justify-center pl-4 text-gray-400">
 <span class="material-symbols-outlined" style="font-size: 24px;">search</span>
 </div>
-<input aria-label="Search databases" class="flex w-full bg-transparent border-none focus:ring-0 text-base font-medium text-text-main placeholder:text-gray-400 h-full px-3 rounded-r-xl" placeholder="Search..."/>
+<input aria-label="Search databases" class="flex w-full bg-transparent border-none focus:ring-0 text-base font-medium text-text-main placeholder:text-gray-400 h-full px-3 rounded-r-xl" placeholder="Search..." type="search"/>
 </div>
 </div>
 <div class="flex-1 overflow-y-auto px-4 flex flex-col gap-3 pb-24">
-<a class="group flex items-center gap-4 bg-surface-light p-4 rounded-xl shadow-soft border border-border-light cursor-pointer hover:border-primary/30 transition-all active:scale-[0.98]" href="../master_password_entry/code.html">
+<a class="group flex items-center gap-4 bg-surface-light p-4 rounded-xl shadow-soft border border-border-light cursor-pointer hover:border-primary/30 transition-all active:scale-[0.98]" href="../master_password_entry/code.html" title="Open Personal Safe">
 <div class="flex flex-col flex-1 min-w-0">
 <p class="text-text-main text-[17px] font-bold leading-snug truncate">Personal Safe</p>
 <p class="text-text-sub text-sm font-medium leading-normal truncate">Last synced: Today, 10:43 AM</p>
@@ -80,7 +81,7 @@
 <span class="material-symbols-outlined" style="font-size: 24px;">chevron_right</span>
 </div>
 </a>
-<a class="group flex items-center gap-4 bg-surface-light p-4 rounded-xl shadow-soft border border-border-light cursor-pointer hover:border-primary/30 transition-all active:scale-[0.98]" href="../master_password_entry/code.html">
+<a class="group flex items-center gap-4 bg-surface-light p-4 rounded-xl shadow-soft border border-border-light cursor-pointer hover:border-primary/30 transition-all active:scale-[0.98]" href="../master_password_entry/code.html" title="Open Work Credentials">
 <div class="flex flex-col flex-1 min-w-0">
 <p class="text-text-main text-[17px] font-bold leading-snug truncate">Work Credentials</p>
 <p class="text-text-sub text-sm font-medium leading-normal truncate">Last synced: Yesterday</p>
@@ -89,7 +90,7 @@
 <span class="material-symbols-outlined" style="font-size: 24px;">chevron_right</span>
 </div>
 </a>
-<a class="group flex items-center gap-4 bg-surface-light p-4 rounded-xl shadow-soft border border-border-light cursor-pointer hover:border-primary/30 transition-all active:scale-[0.98]" href="../master_password_entry/code.html">
+<a class="group flex items-center gap-4 bg-surface-light p-4 rounded-xl shadow-soft border border-border-light cursor-pointer hover:border-primary/30 transition-all active:scale-[0.98]" href="../master_password_entry/code.html" title="Open Backup 2023">
 <div class="flex flex-col flex-1 min-w-0">
 <p class="text-text-main text-[17px] font-bold leading-snug truncate">Backup 2023</p>
 <p class="text-text-sub text-sm font-medium leading-normal truncate">Local only</p>
@@ -98,7 +99,7 @@
 <span class="material-symbols-outlined" style="font-size: 24px;">chevron_right</span>
 </div>
 </a>
-<a class="group flex items-center gap-4 bg-surface-light p-4 rounded-xl shadow-soft border border-border-light cursor-pointer hover:border-primary/30 transition-all active:scale-[0.98]" href="../master_password_entry/code.html">
+<a class="group flex items-center gap-4 bg-surface-light p-4 rounded-xl shadow-soft border border-border-light cursor-pointer hover:border-primary/30 transition-all active:scale-[0.98]" href="../master_password_entry/code.html" title="Open Family Shared">
 <div class="flex flex-col flex-1 min-w-0">
 <p class="text-text-main text-[17px] font-bold leading-snug truncate">Family Shared</p>
 <p class="text-text-sub text-sm font-medium leading-normal truncate">Last synced: 2 days ago</p>
@@ -112,7 +113,7 @@
 </div>
 </div>
 <div class="absolute bottom-6 right-6 z-20">
-<a aria-label="Add new database" class="flex items-center justify-center w-14 h-14 bg-primary text-white rounded-full shadow-lg shadow-blue-500/30 hover:shadow-xl hover:bg-blue-600 transition-all active:scale-95 focus:outline-none focus:ring-4 focus:ring-primary/20" href="../create_new_database/code.html">
+<a aria-label="Add new database" class="touch-target flex items-center justify-center w-14 h-14 bg-primary text-white rounded-full shadow-lg shadow-blue-500/30 hover:shadow-xl hover:bg-blue-600 transition-all active:scale-95 focus:outline-none focus:ring-4 focus:ring-primary/20" href="../create_new_database/code.html">
 <span class="material-symbols-outlined" style="font-size: 32px;">add</span>
 </a>
 </div>
