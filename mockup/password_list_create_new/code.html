@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Password List</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="../design-system.css" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1773cf",
+                        "background-light": "#f2f2f7",
+                        "background-dark": "#0b1118",
+                        "surface-dark": "#1c252e",
+                        "surface-light": "#ffffff",
+                        "border-light": "#e5e7eb",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "0.75rem", "xl": "1rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 3px;
+        }
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light font-display text-gray-900 antialiased overflow-hidden">
+<div class="screen-frame relative mx-auto flex h-screen w-full flex-col overflow-hidden bg-background-light shadow-xl">
+<header class="flex-none bg-background-light px-4 pb-2 pt-6 z-20">
+<div class="flex items-center justify-between h-14">
+<a class="touch-target flex size-10 items-center justify-center rounded-full text-gray-900 hover:bg-black/5 transition-colors" href="../database_list/code.html" aria-label="Back to database list">
+<span class="material-symbols-outlined text-2xl" aria-hidden="true">arrow_back_ios_new</span>
+</a>
+<div class="flex flex-col items-center">
+<h1 class="text-lg font-bold leading-tight tracking-tight">Personal Vault</h1>
+<span class="text-xs font-medium text-gray-500">Locked • Root</span>
+</div>
+<a class="touch-target flex size-10 items-center justify-center rounded-full text-gray-900 hover:bg-black/5 transition-colors" href="../settings_database/code.html" aria-label="Open database settings">
+<span class="material-symbols-outlined text-2xl" aria-hidden="true">settings</span>
+</a>
+</div>
+</header>
+<div class="flex-none px-4 py-2 z-10 bg-background-light sticky top-0 border-b border-border-light">
+<div class="relative flex w-full items-center">
+<div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
+<span class="material-symbols-outlined text-xl" aria-hidden="true">search</span>
+</div>
+<input class="block w-full rounded-xl border-none bg-gray-200 py-3 pl-10 pr-4 text-sm text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-primary focus:outline-none transition-shadow" placeholder="Search entries..." type="search" aria-label="Search entries"/>
+</div>
+</div>
+<div class="flex-none px-5 py-2 flex items-center gap-2 text-xs font-medium text-gray-500 bg-gray-100 border-y border-gray-200">
+<a class="flex items-center gap-1 text-primary hover:text-primary/80 transition-colors" href="../password_list_create_new/code.html">Home</a>
+<span class="material-symbols-outlined text-sm text-gray-400" aria-hidden="true">chevron_right</span>
+<a class="text-gray-700 hover:text-gray-900 transition-colors" href="../password_list_create_new/code.html" title="Root">Root</a>
+</div>
+<main class="flex-1 overflow-y-auto pb-24 bg-surface-light">
+<section class="px-5 py-6 text-center border-b border-gray-200" role="status">
+<div class="flex flex-col items-center gap-3 text-gray-500">
+<span class="material-symbols-outlined text-4xl text-primary" aria-hidden="true">lock_open</span>
+<p class="text-sm font-medium text-gray-700">No recent entries yet</p>
+<p class="text-xs">Create a password entry to get started.</p>
+</div>
+</section>
+<button class="group w-full flex items-center gap-4 px-5 py-4 border-b border-gray-200 hover:bg-gray-50 transition-colors text-left" title="Open Banking folder">
+<span class="material-symbols-outlined text-2xl text-yellow-600" aria-hidden="true">folder</span>
+<div class="flex-1">
+<p class="text-sm font-bold text-gray-900">Banking</p>
+<p class="text-xs text-gray-500">3 items</p>
+</div>
+<span class="material-symbols-outlined text-gray-500" aria-hidden="true">chevron_right</span>
+</button>
+<button class="group w-full flex items-center gap-4 px-5 py-4 border-b border-gray-200 hover:bg-gray-50 transition-colors text-left" title="Open Email Accounts folder">
+<span class="material-symbols-outlined text-2xl text-yellow-600" aria-hidden="true">folder</span>
+<div class="flex-1">
+<p class="text-sm font-bold text-gray-900">Email Accounts</p>
+<p class="text-xs text-gray-500">2 items</p>
+</div>
+<span class="material-symbols-outlined text-gray-500" aria-hidden="true">chevron_right</span>
+</button>
+<button class="group w-full flex items-center gap-4 px-5 py-4 border-b border-gray-200 hover:bg-gray-50 transition-colors text-left" title="Open Social Media folder">
+<span class="material-symbols-outlined text-2xl text-yellow-600" aria-hidden="true">folder</span>
+<div class="flex-1">
+<p class="text-sm font-bold text-gray-900">Social Media</p>
+<p class="text-xs text-gray-500">5 items</p>
+</div>
+<span class="material-symbols-outlined text-gray-500" aria-hidden="true">chevron_right</span>
+</button>
+<div class="group flex items-center gap-4 px-5 py-3 border-b border-gray-200 hover:bg-gray-50 transition-colors" title="Apple ID">
+<span class="material-symbols-outlined text-2xl text-gray-500" aria-hidden="true">vpn_key</span>
+<div class="flex-1 min-w-0">
+<p class="text-sm font-bold text-gray-900 truncate">Apple ID</p>
+<p class="text-xs font-medium text-gray-500 truncate">user@icloud.com</p>
+</div>
+<div class="flex items-center gap-1">
+<button class="touch-target flex size-9 items-center justify-center rounded-lg text-gray-500 hover:text-primary hover:bg-primary/10 active:scale-95 transition-all" title="Copy Username" aria-label="Copy username for Apple ID">
+<span class="material-symbols-outlined text-xl" aria-hidden="true">person</span>
+</button>
+<button class="touch-target flex size-9 items-center justify-center rounded-lg text-gray-500 hover:text-primary hover:bg-primary/10 active:scale-95 transition-all" title="Copy Password" aria-label="Copy password for Apple ID">
+<span class="material-symbols-outlined text-xl" aria-hidden="true">key</span>
+</button>
+</div>
+</div>
+<div class="group flex items-center gap-4 px-5 py-3 border-b border-gray-200 hover:bg-gray-50 transition-colors" title="Home Router">
+<span class="material-symbols-outlined text-2xl text-gray-500" aria-hidden="true">vpn_key</span>
+<div class="flex-1 min-w-0">
+<p class="text-sm font-bold text-gray-900 truncate">Home Router</p>
+<p class="text-xs font-medium text-gray-500 truncate">admin</p>
+</div>
+<div class="flex items-center gap-1">
+<button class="touch-target flex size-9 items-center justify-center rounded-lg text-gray-500 hover:text-primary hover:bg-primary/10 active:scale-95 transition-all" title="Copy Username" aria-label="Copy username for Home Router">
+<span class="material-symbols-outlined text-xl" aria-hidden="true">person</span>
+</button>
+<button class="touch-target flex size-9 items-center justify-center rounded-lg text-gray-500 hover:text-primary hover:bg-primary/10 active:scale-95 transition-all" title="Copy Password" aria-label="Copy password for Home Router">
+<span class="material-symbols-outlined text-xl" aria-hidden="true">key</span>
+</button>
+</div>
+</div>
+<div class="group flex items-center gap-4 px-5 py-3 border-b border-gray-200 hover:bg-gray-50 transition-colors" title="WiFi Backup Codes">
+<span class="material-symbols-outlined text-2xl text-gray-500" aria-hidden="true">description</span>
+<div class="flex-1 min-w-0">
+<p class="text-sm font-bold text-gray-900 truncate">WiFi Backup Codes</p>
+<p class="text-xs font-medium text-gray-500 truncate">Secure Note</p>
+</div>
+<div class="flex items-center gap-1">
+<button class="touch-target flex size-9 items-center justify-center rounded-lg text-gray-500 hover:text-primary hover:bg-primary/10 active:scale-95 transition-all" title="Copy Content" aria-label="Copy content for WiFi Backup Codes">
+<span class="material-symbols-outlined text-xl" aria-hidden="true">content_copy</span>
+</button>
+</div>
+</div>
+<div class="h-16"></div>
+</main>
+<div class="absolute inset-0 z-40 bg-black/40 backdrop-blur-[1px] flex flex-col justify-end" role="dialog" aria-modal="true" aria-label="Create new entry">
+<div class="w-full bg-white rounded-t-2xl shadow-2xl animate-slide-up border-t border-gray-200">
+<div class="flex justify-center pt-3 pb-1">
+<div class="w-10 h-1 rounded-full bg-gray-300"></div>
+</div>
+<div class="p-5 pb-8 space-y-3">
+<h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider px-2 mb-2">Create New</h3>
+<a class="w-full flex items-center gap-4 p-4 rounded-xl bg-gray-50 active:bg-gray-100 transition-colors border border-gray-200 text-left" href="../create_new_database/code.html">
+<div class="flex size-10 items-center justify-center rounded-full bg-yellow-100 text-yellow-600">
+<span class="material-symbols-outlined text-2xl" aria-hidden="true">create_new_folder</span>
+</div>
+<div class="flex-1">
+<p class="text-base font-bold text-gray-900">Add Group (Folder)</p>
+<p class="text-xs text-gray-500">Create a new folder to organize entries</p>
+</div>
+</a>
+<a class="w-full flex items-center gap-4 p-4 rounded-xl bg-gray-50 active:bg-gray-100 transition-colors border border-gray-200 text-left" href="../add_password_entry/code.html">
+<div class="flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+<span class="material-symbols-outlined text-2xl" aria-hidden="true">password</span>
+</div>
+<div class="flex-1">
+<p class="text-base font-bold text-gray-900">Add Password Entry</p>
+<p class="text-xs text-gray-500">Save a new login credential</p>
+</div>
+</a>
+</div>
+<div class="p-4 border-t border-gray-100 flex justify-center">
+<a class="touch-target size-12 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 transition-colors" href="../password_list/code.html" aria-label="Close create menu">
+<span class="material-symbols-outlined text-2xl" aria-hidden="true">close</span>
+</a>
+</div>
+</div>
+</div>
+<div class="toast pointer-events-none absolute bottom-8 left-1/2 z-50 flex -translate-x-1/2 transform items-center gap-2 rounded-full bg-gray-900/90 px-4 py-2 text-sm font-medium text-white shadow-xl opacity-0 transition-opacity duration-300" data-visible="true">
+<span class="material-symbols-outlined text-lg text-green-400" aria-hidden="true">check_circle</span>
+        Password copied
+    </div>
+</div>
+</body></html>

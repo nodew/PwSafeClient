@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Create Password Policy</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="../design-system.css" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<script>
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    primary: "#1773cf",
+                    "background-light": "#f2f2f7",
+                    "background-dark": "#0b1118",
+                    "surface-light": "#FFFFFF",
+                    "surface-dark": "#1C1C1E",
+                    "separator-light": "#E5E7EB",
+                    "separator-dark": "#2A2A2E",
+                },
+                fontFamily: {
+                    display: ["Manrope", "sans-serif"],
+                },
+                borderRadius: {
+                    DEFAULT: "0.75rem",
+                    lg: "1rem",
+                    full: "9999px",
+                },
+            },
+        },
+    };
+</script>
+<style>
+  body {
+    min-height: max(884px, 100dvh);
+  }
+</style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-base text-black dark:text-white antialiased transition-colors duration-200">
+<div class="screen-frame relative mx-auto flex h-screen w-full flex-col overflow-hidden bg-background-light dark:bg-background-dark shadow-xl">
+<header class="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-separator-light dark:border-separator-dark">
+<div class="px-4 h-14 flex items-center justify-center relative">
+<a class="absolute left-4 inline-flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-primary transition-colors touch-target" href="../manage_password_policies/code.html" aria-label="Back to policies">
+<span class="material-symbols-outlined text-lg">arrow_back_ios_new</span>
+</a>
+<h1 class="text-[17px] font-semibold">Password Policies</h1>
+</div>
+</header>
+<main class="flex-1 w-full overflow-y-auto">
+<div class="absolute inset-0 bg-black/30"></div>
+<section class="absolute inset-x-0 bottom-0 bg-surface-light dark:bg-surface-dark rounded-t-3xl shadow-2xl border-t border-separator-light dark:border-separator-dark">
+<div class="flex items-center justify-between px-5 py-4">
+<button class="text-sm font-semibold text-gray-500 dark:text-gray-400" aria-label="Cancel">Cancel</button>
+<span class="w-10 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700 absolute left-1/2 -translate-x-1/2 top-2"></span>
+<h2 class="text-base font-semibold">Create Policy</h2>
+<button class="text-sm font-semibold text-primary" aria-label="Save policy">Save</button>
+</div>
+<div class="px-5 pb-6 space-y-5">
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-gray-600 dark:text-gray-300" for="policyName">Policy Name</label>
+<input class="h-12 rounded-xl bg-background-light dark:bg-background-dark border border-separator-light dark:border-separator-dark px-4 text-base focus:ring-2 focus:ring-primary" id="policyName" placeholder="e.g. Strong" type="text"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-gray-600 dark:text-gray-300" for="length">Password Length</label>
+<div class="flex items-center justify-between gap-3">
+<input class="flex-1 h-12 rounded-xl bg-background-light dark:bg-background-dark border border-separator-light dark:border-separator-dark px-4 text-base focus:ring-2 focus:ring-primary" id="length" type="number" value="16" min="4" max="64"/>
+<span class="text-xs text-gray-500 dark:text-gray-400">4–64</span>
+</div>
+</div>
+<div class="flex flex-col gap-3">
+<label class="text-sm font-semibold text-gray-600 dark:text-gray-300">Character Counts</label>
+<div class="grid grid-cols-2 gap-3">
+<label class="flex flex-col gap-2 rounded-xl border border-separator-light dark:border-separator-dark px-4 py-3">
+<span class="text-sm">Uppercase</span>
+<input class="h-10 rounded-lg bg-background-light dark:bg-background-dark border border-separator-light dark:border-separator-dark px-3 text-sm focus:ring-2 focus:ring-primary" type="number" min="0" value="2" aria-label="Uppercase count"/>
+</label>
+<label class="flex flex-col gap-2 rounded-xl border border-separator-light dark:border-separator-dark px-4 py-3">
+<span class="text-sm">Lowercase</span>
+<input class="h-10 rounded-lg bg-background-light dark:bg-background-dark border border-separator-light dark:border-separator-dark px-3 text-sm focus:ring-2 focus:ring-primary" type="number" min="0" value="6" aria-label="Lowercase count"/>
+</label>
+<label class="flex flex-col gap-2 rounded-xl border border-separator-light dark:border-separator-dark px-4 py-3">
+<span class="text-sm">Numbers</span>
+<input class="h-10 rounded-lg bg-background-light dark:bg-background-dark border border-separator-light dark:border-separator-dark px-3 text-sm focus:ring-2 focus:ring-primary" type="number" min="0" value="4" aria-label="Numbers count"/>
+</label>
+<label class="flex flex-col gap-2 rounded-xl border border-separator-light dark:border-separator-dark px-4 py-3">
+<span class="text-sm">Symbols</span>
+<input class="h-10 rounded-lg bg-background-light dark:bg-background-dark border border-separator-light dark:border-separator-dark px-3 text-sm focus:ring-2 focus:ring-primary" type="number" min="0" value="2" aria-label="Symbols count"/>
+</label>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-gray-600 dark:text-gray-300" for="symbols">Custom Symbol Set</label>
+<input class="h-12 rounded-xl bg-background-light dark:bg-background-dark border border-separator-light dark:border-separator-dark px-4 text-base focus:ring-2 focus:ring-primary font-mono" id="symbols" placeholder="!@#$%" type="text"/>
+</div>
+</div>
+</section>
+</main>
+</div>
+</body></html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Edit Password Entry</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="../design-system.css" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1773cf",
+                        "background-light": "#f2f2f7",
+                        "background-dark": "#0b1118",
+                        "surface-dark": "#293038",
+                        "surface-light": "#ffffff",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "0.75rem", "xl": "1rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light font-display antialiased text-[#111418]">
+<div class="screen-frame relative mx-auto flex h-screen w-full flex-col overflow-hidden bg-background-light shadow-xl">
+<div class="flex items-center justify-between p-4 pb-2 bg-background-light sticky top-0 z-50 border-b border-[#e5e7eb]">
+<a class="flex w-16 items-center justify-start cursor-pointer touch-target" href="../entry_detail/code.html" aria-label="Cancel edit">
+<p class="text-[#637588] text-base font-medium leading-normal tracking-[0.015em] shrink-0 hover:text-[#111418] transition-colors">Cancel</p>
+</a>
+<h2 class="text-[#111418] text-lg font-bold leading-tight tracking-[-0.015em] text-center">Edit Entry</h2>
+<a class="flex w-16 items-center justify-end cursor-pointer touch-target" href="../entry_detail/code.html" aria-label="Save changes" data-loading="true">
+<p class="text-primary text-base font-bold leading-normal tracking-[0.015em] shrink-0 hover:text-blue-400 transition-colors button-label">Save</p>
+<span class="material-symbols-outlined button-spinner animate-spin text-base text-primary ml-2" aria-hidden="true">progress_activity</span>
+</a>
+</div>
+<div class="flex-1 flex flex-col w-full overflow-y-auto">
+<div class="flex flex-col px-4 py-4">
+<label class="flex flex-col w-full">
+<p class="text-[#111418] text-base font-medium leading-normal pb-2">Title</p>
+<input class="form-input flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-1 focus:ring-primary border-none bg-surface-light h-14 placeholder:text-[#637588] p-4 text-base font-normal leading-normal shadow-sm input-error" value="Netflix" aria-describedby="title-error" aria-label="Title" title="Netflix"/>
+<p class="form-error mt-2" id="title-error">Title cannot be empty.</p>
+</label>
+</div>
+<div class="flex flex-col gap-4 px-4 pb-4">
+<label class="flex flex-col w-full">
+<p class="text-[#111418] text-base font-medium leading-normal pb-2">Username / Email</p>
+<input class="form-input flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-1 focus:ring-primary border-none bg-surface-light h-14 placeholder:text-[#637588] p-4 text-base font-normal leading-normal shadow-sm" type="email" value="johndoe@example.com" aria-label="Username or email" title="johndoe@example.com"/>
+</label>
+<label class="flex flex-col w-full">
+<p class="text-[#111418] text-base font-medium leading-normal pb-2">Password Policy</p>
+<select class="form-select h-14 rounded-lg border-none bg-surface-light px-4 text-base text-[#111418] shadow-sm focus:ring-1 focus:ring-primary" aria-label="Password policy">
+<option>None</option>
+<option>Standard (16 chars)</option>
+<option>Strong (24 chars)</option>
+<option>PIN (6 digits)</option>
+<option>Passphrase</option>
+</select>
+</label>
+<label class="flex flex-col w-full">
+<p class="text-[#111418] text-base font-medium leading-normal pb-2">Password</p>
+<div class="flex w-full items-stretch rounded-lg shadow-sm bg-surface-light overflow-hidden focus-within:ring-1 focus-within:ring-primary">
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-none text-[#111418] focus:outline-0 focus:ring-0 border-none bg-transparent h-14 placeholder:text-[#637588] p-4 text-base font-normal leading-normal font-mono" type="password" value="P@ssw0rd123!" aria-label="Password" title="Hidden password"/>
+<div class="flex items-center gap-1 pr-2">
+<button aria-label="Toggle Visibility" class="touch-target flex items-center justify-center h-10 w-10 rounded-full hover:bg-[#f0f2f5] text-[#637588] transition-colors" title="Show or hide password">
+<span class="material-symbols-outlined text-[24px]" aria-hidden="true">visibility</span>
+</button>
+<button aria-label="Generate Password" class="touch-target flex items-center justify-center h-10 w-10 rounded-full hover:bg-[#f0f2f5] text-primary transition-colors" title="Generate password">
+<span class="material-symbols-outlined text-[24px]" aria-hidden="true">autorenew</span>
+</button>
+</div>
+</div>
+<div class="flex items-center gap-2 pt-2 px-1" aria-label="Password strength">
+<div class="h-1.5 flex-1 rounded-full bg-green-500"></div>
+<div class="h-1.5 flex-1 rounded-full bg-green-500"></div>
+<div class="h-1.5 flex-1 rounded-full bg-green-400"></div>
+<div class="h-1.5 flex-1 rounded-full bg-gray-200"></div>
+<span class="text-xs font-medium text-green-600 ml-2">Strong</span>
+</div>
+</label>
+<label class="flex flex-col w-full mt-2">
+<p class="text-[#111418] text-base font-medium leading-normal pb-2">Confirm Password</p>
+<input class="form-input flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-1 focus:ring-primary border-none bg-surface-light h-14 placeholder:text-[#637588] p-4 text-base font-normal leading-normal shadow-sm input-error" type="password" value="P@ssw0rd123!" aria-label="Confirm password" title="Confirm password"/>
+<p class="form-error mt-2">Passwords must match.</p>
+</label>
+<label class="flex flex-col w-full mt-2">
+<p class="text-[#111418] text-base font-medium leading-normal pb-2">URL</p>
+<div class="relative">
+<input class="form-input flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-1 focus:ring-primary border-none bg-surface-light h-14 placeholder:text-[#637588] p-4 text-base font-normal leading-normal shadow-sm" type="url" value="https://netflix.com" aria-label="URL" title="https://netflix.com"/>
+</div>
+</label>
+<label class="flex flex-col w-full">
+<p class="text-[#111418] text-base font-medium leading-normal pb-2">Email</p>
+<input class="form-input flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-1 focus:ring-primary border-none bg-surface-light h-14 placeholder:text-[#637588] p-4 text-base font-normal leading-normal shadow-sm" type="email" value="family.plan@icloud.com" aria-label="Email" title="family.plan@icloud.com"/>
+</label>
+<label class="flex flex-col w-full">
+<p class="text-[#111418] text-base font-medium leading-normal pb-2">Notes</p>
+<textarea class="form-textarea flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-1 focus:ring-primary border-none bg-surface-light h-32 placeholder:text-[#637588] p-4 text-base font-normal leading-normal shadow-sm" aria-label="Notes">Shared with family plan members.</textarea>
+</label>
+</div>
+
+</div>
+</div>
+</div>
+
+</body></html>

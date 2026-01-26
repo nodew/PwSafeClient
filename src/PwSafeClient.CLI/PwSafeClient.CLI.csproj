@@ -5,17 +5,16 @@
     <AssemblyName>pwsafe</AssemblyName>
     <Nullable>enable</Nullable>
     <RootNamespace>PwSafeClient.Cli</RootNamespace>
-    <RuntimeIdentifiers>win-x64;linux-x64;osx-x64</RuntimeIdentifiers>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(RuntimeIdentifier)' != ''">
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' != '' and '$(PackAsTool)' != 'true' and '$(IsPacking)' != 'true'">
     <SelfContained>true</SelfContained>
     <PublishSingleFile>true</PublishSingleFile>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(RuntimeIdentifier)' != '' and '$(EnableTrimming)' == 'true'">
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' != '' and '$(EnableTrimming)' == 'true' and '$(PackAsTool)' != 'true' and '$(IsPacking)' != 'true'">
     <PublishTrimmed>true</PublishTrimmed>
     <TrimMode>partial</TrimMode>
     <NoWarn>$(NoWarn);IL2104</NoWarn>
@@ -28,9 +27,15 @@
     <PackageOutputPath>./nupkg</PackageOutputPath>
   </PropertyGroup>
 
+  <!-- Keep RuntimeIdentifiers only for explicit self-contained publishing scenarios.
+       When packing as a dotnet tool, do NOT set RuntimeIdentifiers; otherwise .NET SDK emits per-RID tool packages. -->
+  <PropertyGroup Condition="'$(PackAsTool)' != 'true' and '$(IsPacking)' != 'true'">
+    <RuntimeIdentifiers>win-x64;linux-x64;osx-x64</RuntimeIdentifiers>
+  </PropertyGroup>
+
   <PropertyGroup>
     <PackageId>PasswordSafe.Cli</PackageId>
-    <Version>2.0.1</Version>
+    <Version>2.0.2</Version>
     <Authors>Qiao Wang</Authors>
     <Description>Command-line interface for Password Safe.</Description>
     <Copyright>Copyright 2024 Qiao Wang &lt;wangqiao11@hotmail.com&gt;</Copyright>

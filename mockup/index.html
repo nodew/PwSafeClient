@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PwSafe Mockup Index</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="./design-system.css" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    "primary": "#1773cf",
+                    "background-light": "#f2f2f7",
+                    "surface-light": "#ffffff",
+                    "border-light": "#e5e7eb",
+                    "text-secondary-light": "#4b5563",
+                },
+                fontFamily: {
+                    "display": ["Manrope", "sans-serif"]
+                },
+                borderRadius: {"DEFAULT": "0.75rem", "lg": "1rem", "xl": "1.25rem", "full": "9999px"},
+            },
+        },
+    }
+</script>
+<style>
+    body {
+        min-height: max(884px, 100dvh);
+    }
+</style>
+</head>
+<body class="bg-background-light font-display text-gray-900 antialiased">
+<main class="max-w-3xl mx-auto px-6 py-12 space-y-10">
+<header class="space-y-3">
+<p class="text-sm uppercase tracking-[0.2em] text-text-secondary-light font-semibold">PwSafe Mobile Mockups</p>
+<h1 class="text-3xl font-bold">UI Mockup Index</h1>
+<p class="text-base text-text-secondary-light max-w-2xl">
+    Use the links below to review each mock screen. The list includes new password list, entry detail, and the split settings pages.
+</p>
+</header>
+<section class="grid gap-4 sm:grid-cols-2">
+<a class="flex flex-col gap-2 bg-surface-light border border-border-light rounded-xl p-4 shadow-sm hover:border-primary/40 transition-colors" href="./database_list/code.html">
+<span class="text-base font-semibold">Database List</span>
+<span class="text-sm text-text-secondary-light">Select a database or add a new safe.</span>
+</a>
+<a class="flex flex-col gap-2 bg-surface-light border border-border-light rounded-xl p-4 shadow-sm hover:border-primary/40 transition-colors" href="./master_password_entry/code.html">
+<span class="text-base font-semibold">Master Password Entry</span>
+<span class="text-sm text-text-secondary-light">Unlock an existing database.</span>
+</a>
+<a class="flex flex-col gap-2 bg-surface-light border border-border-light rounded-xl p-4 shadow-sm hover:border-primary/40 transition-colors" href="./password_list/code.html">
+<span class="text-base font-semibold">Password List</span>
+<span class="text-sm text-text-secondary-light">Browse folders and entries.</span>
+</a>
+<a class="flex flex-col gap-2 bg-surface-light border border-border-light rounded-xl p-4 shadow-sm hover:border-primary/40 transition-colors" href="./password_list_long_press_item/code.html">
+<span class="text-base font-semibold">Password List (Long Press)</span>
+<span class="text-sm text-text-secondary-light">Context actions for a selected entry.</span>
+</a>
+<a class="flex flex-col gap-2 bg-surface-light border border-border-light rounded-xl p-4 shadow-sm hover:border-primary/40 transition-colors" href="./password_list_create_new/code.html">
+<span class="text-base font-semibold">Password List (Create New)</span>
+<span class="text-sm text-text-secondary-light">Create entry or group action sheet.</span>
+</a>
+<a class="flex flex-col gap-2 bg-surface-light border border-border-light rounded-xl p-4 shadow-sm hover:border-primary/40 transition-colors" href="./entry_detail/code.html">
+<span class="text-base font-semibold">Entry Detail</span>
+<span class="text-sm text-text-secondary-light">View a saved credential.</span>
+</a>
+<a class="flex flex-col gap-2 bg-surface-light border border-border-light rounded-xl p-4 shadow-sm hover:border-primary/40 transition-colors" href="./add_password_entry/code.html">
+<span class="text-base font-semibold">Add Password Entry</span>
+<span class="text-sm text-text-secondary-light">Create a new credential.</span>
+</a>
+<a class="flex flex-col gap-2 bg-surface-light border border-border-light rounded-xl p-4 shadow-sm hover:border-primary/40 transition-colors" href="./edit_password_entry/code.html">
+<span class="text-base font-semibold">Edit Password Entry</span>
+<span class="text-sm text-text-secondary-light">Update an existing entry.</span>
+</a>
+<a class="flex flex-col gap-2 bg-surface-light border border-border-light rounded-xl p-4 shadow-sm hover:border-primary/40 transition-colors" href="./create_new_database/code.html">
+<span class="text-base font-semibold">Create New Database</span>
+<span class="text-sm text-text-secondary-light">Set up a new safe.</span>
+</a>
+<a class="flex flex-col gap-2 bg-surface-light border border-border-light rounded-xl p-4 shadow-sm hover:border-primary/40 transition-colors" href="./change_master_password/code.html">
+<span class="text-base font-semibold">Change Master Password</span>
+<span class="text-sm text-text-secondary-light">Update database credentials.</span>
+</a>
+<a class="flex flex-col gap-2 bg-surface-light border border-border-light rounded-xl p-4 shadow-sm hover:border-primary/40 transition-colors" href="./settings_system/code.html">
+<span class="text-base font-semibold">Settings (System)</span>
+<span class="text-sm text-text-secondary-light">System-level settings before a database is open.</span>
+</a>
+<a class="flex flex-col gap-2 bg-surface-light border border-border-light rounded-xl p-4 shadow-sm hover:border-primary/40 transition-colors" href="./settings_database/code.html">
+<span class="text-base font-semibold">Settings (Database)</span>
+<span class="text-sm text-text-secondary-light">Settings with an active database open.</span>
+</a>
+</section>
+</main>
+</body></html>

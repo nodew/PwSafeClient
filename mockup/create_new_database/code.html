@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Create New Database</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="../design-system.css" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1773cf","background-light": "#f2f2f7","surface": "#FFFFFF",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.5rem", "lg": "0.75rem", "xl": "1rem", "full": "9999px" },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            min-height: max(884px, 100dvh);
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light font-display text-slate-900 antialiased overflow-x-hidden min-h-screen flex flex-col">
+<div class="screen-frame relative mx-auto flex h-screen w-full flex-col overflow-hidden bg-background-light shadow-xl">
+<header class="sticky top-0 z-30 bg-background-light/90 backdrop-blur-md border-b border-slate-200/80 px-4 py-3 flex items-center justify-between transition-colors">
+<a class="text-primary text-[17px] font-normal leading-normal tracking-tight shrink-0 active:opacity-60 transition-opacity touch-target flex items-center justify-center" href="../database_list/code.html" aria-label="Cancel database creation">
+Cancel
+</a>
+<h2 class="text-slate-900 text-[17px] font-semibold leading-tight tracking-tight absolute left-1/2 -translate-x-1/2">
+            New Database
+        </h2>
+<div class="w-12"></div> 
+</header>
+<main class="flex-1 w-full flex flex-col p-4 pb-32 overflow-y-auto">
+<p class="text-sm text-slate-600 leading-relaxed text-center px-2">
+    New databases are stored locally until you export or sync them.
+</p>
+<div class="flex flex-col items-center justify-center py-8 text-center">
+<div class="w-20 h-20 rounded-full bg-white shadow-soft flex items-center justify-center mb-5 border border-slate-100">
+<span class="material-symbols-outlined text-primary" style="font-size: 40px;" aria-hidden="true">lock_open</span>
+</div>
+<h1 class="text-2xl font-bold text-slate-900 mb-2 tracking-tight">Secure Setup</h1>
+<p class="text-slate-500 text-[15px] font-normal leading-relaxed max-w-xs mx-auto">
+                Create a new local encrypted database to store your passwords securely.
+            </p>
+</div>
+<form class="flex flex-col gap-6 mt-2" onsubmit="event.preventDefault()">
+<div class="flex flex-col gap-2">
+<label class="text-slate-500 text-[13px] uppercase tracking-wider font-semibold ml-1" for="database-name">Database Name</label>
+<div class="relative shadow-sm rounded-xl">
+<input class="form-input w-full rounded-xl border-0 ring-1 ring-slate-200 bg-white text-slate-900 h-[50px] px-4 placeholder:text-slate-400 focus:outline-0 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-[17px] input-error" id="database-name" placeholder="e.g., Personal, Work" type="text" aria-describedby="database-name-error" title="Database name"/>
+</div>
+<p class="form-error ml-1" id="database-name-error">Database name is required.</p>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-slate-500 text-[13px] uppercase tracking-wider font-semibold ml-1" for="master-password">Master Password</label>
+<div class="relative flex items-center shadow-sm rounded-xl">
+<input class="form-input w-full rounded-xl border-0 ring-1 ring-slate-200 bg-white text-slate-900 h-[50px] pl-4 pr-24 placeholder:text-slate-400 focus:outline-0 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-[17px] font-mono" id="master-password" placeholder="Create a strong password" type="password" title="Master password"/>
+<div class="absolute right-0 h-full px-3 flex items-center gap-1">
+<button class="touch-target flex items-center justify-center text-slate-400 hover:text-primary transition-colors" type="button" aria-label="Generate password" title="Generate password">
+<span class="material-symbols-outlined text-[22px]" aria-hidden="true">autorenew</span>
+</button>
+<button class="touch-target flex items-center justify-center text-slate-400 hover:text-primary transition-colors" type="button" aria-label="Toggle password visibility" title="Show or hide password">
+<span class="material-symbols-outlined text-[22px]" aria-hidden="true">visibility</span>
+</button>
+</div>
+</div>
+<div class="flex gap-1.5 mt-1 px-1" aria-label="Password strength">
+<div class="h-1.5 flex-1 rounded-full bg-green-500"></div>
+<div class="h-1.5 flex-1 rounded-full bg-green-400"></div>
+<div class="h-1.5 flex-1 rounded-full bg-yellow-400"></div>
+<div class="h-1.5 flex-1 rounded-full bg-slate-200"></div>
+</div>
+<p class="text-xs text-slate-500 mt-0.5 px-1 font-medium">Strength: Medium</p>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-slate-500 text-[13px] uppercase tracking-wider font-semibold ml-1" for="confirm-password">Confirm Password</label>
+<div class="relative flex items-center shadow-sm rounded-xl">
+<input class="form-input w-full rounded-xl border-0 ring-1 ring-slate-200 bg-white text-slate-900 h-[50px] pl-4 pr-12 placeholder:text-slate-400 focus:outline-0 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-[17px] font-mono" id="confirm-password" placeholder="Re-enter password" type="password" title="Confirm password"/>
+</div>
+</div>
+<div class="rounded-xl bg-red-50 border border-red-100 p-4 flex gap-3 items-start mt-1">
+<span class="material-symbols-outlined text-red-500 shrink-0 mt-0.5" style="font-size: 20px;" aria-hidden="true">warning</span>
+<p class="text-red-600 text-[13px] font-medium leading-snug">
+                    Important: If you forget your master password, your data is lost forever. We do not store a copy.
+                </p>
+</div>
+<div class="w-full p-4">
+<a class="w-full bg-primary hover:bg-blue-600 text-white font-semibold text-[17px] h-[52px] rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-blue-500/25 active:scale-[0.98] transition-all" href="../master_password_entry/code.html" data-loading="true" aria-label="Create database">
+<span class="button-label">Create Database</span>
+<span class="material-symbols-outlined text-[20px]" aria-hidden="true">arrow_forward</span>
+<span class="material-symbols-outlined button-spinner animate-spin text-[20px]" aria-hidden="true">progress_activity</span>
+</a>
+</div>
+</form>
+</main>
+</div>
+</body></html>

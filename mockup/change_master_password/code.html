@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Change Master Password</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="../design-system.css" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1773cf",
+                        "background-light": "#f2f2f7",
+                        "background-dark": "#0b1118",
+                        "surface-light": "#FFFFFF",
+                        "surface-dark": "#1c1c1e",
+                        "border-light": "#E5E7EB",
+                        "border-dark": "#2a2a2e",
+                        "text-main-light": "#111827",
+                        "text-main-dark": "#f9fafb",
+                        "text-sub-light": "#4b5563",
+                        "text-sub-dark": "#cbd5f5",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "0.75rem", "xl": "1rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+        }::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 3px;
+        }
+    </style>
+<style>
+        body {
+          min-height: max(884px, 100dvh);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-text-main-light dark:text-text-main-dark min-h-screen flex flex-col antialiased selection:bg-primary/30 selection:text-primary">
+<div class="screen-frame relative mx-auto flex h-screen w-full flex-col overflow-hidden bg-background-light dark:bg-background-dark shadow-xl">
+<header class="flex items-center justify-between px-4 py-4 md:px-6 md:py-5 border-b border-border-light dark:border-border-dark bg-surface-light/90 dark:bg-surface-dark/80 backdrop-blur-md sticky top-0 z-50">
+<a class="text-primary font-medium text-base hover:opacity-70 transition-opacity touch-target flex items-center justify-center" href="../settings_database/code.html" aria-label="Back to database settings">
+<span class="material-symbols-outlined text-xl" aria-hidden="true">arrow_back_ios_new</span>
+</a>
+<h1 class="text-lg font-bold leading-tight tracking-tight text-center flex-1 mx-2">
+        Change Master Password
+    </h1>
+<div class="w-[38px]"></div> 
+</header>
+<main class="flex-1 w-full p-4 md:p-6 flex flex-col gap-6 overflow-y-auto">
+<div class="mb-2">
+<p class="text-text-sub-light dark:text-text-sub-dark text-sm font-normal leading-relaxed">
+            Update the master password used to encrypt all your local databases. Please ensure you remember your new password as it cannot be recovered.
+        </p>
+</div>
+<div class="flex flex-col gap-5">
+<div class="space-y-2">
+<label class="block text-sm font-semibold text-text-main-light dark:text-text-main-dark ml-1" for="current-password">
+                Current Master Password
+            </label>
+<div class="relative flex items-center">
+<input class="w-full h-14 pl-4 pr-16 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all text-base text-text-main-light placeholder:text-text-sub-light/60 dark:placeholder:text-text-sub-dark/50" id="current-password" placeholder="Enter current password" type="password" aria-describedby="current-password-help"/>
+<button class="absolute right-0 h-full px-4 text-text-sub-light dark:text-text-sub-dark hover:text-primary transition-colors focus:outline-none touch-target flex items-center justify-center" type="button" aria-label="Toggle current password visibility" title="Show or hide password">
+<span class="material-symbols-outlined text-xl" aria-hidden="true">visibility</span>
+</button>
+</div>
+<p class="sr-only" id="current-password-help">Enter your existing master password.</p>
+</div>
+<div class="h-px bg-border-light dark:bg-border-dark my-1 w-full opacity-60"></div>
+<div class="space-y-2">
+<label class="block text-sm font-semibold text-text-main-light dark:text-text-main-dark ml-1" for="new-password">
+                New Master Password
+            </label>
+<div class="relative flex items-center">
+<input class="w-full h-14 pl-4 pr-24 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all text-base text-text-main-light placeholder:text-text-sub-light/60 dark:placeholder:text-text-sub-dark/50 font-mono" id="new-password" placeholder="Enter new password" type="password"/>
+<div class="absolute right-0 h-full px-3 flex items-center gap-1">
+<button class="touch-target flex items-center justify-center text-text-sub-light dark:text-text-sub-dark hover:text-primary transition-colors focus:outline-none" type="button" aria-label="Generate a new password" title="Generate password">
+<span class="material-symbols-outlined text-xl" aria-hidden="true">autorenew</span>
+</button>
+<button class="touch-target flex items-center justify-center text-text-sub-light dark:text-text-sub-dark hover:text-primary transition-colors focus:outline-none" type="button" aria-label="Toggle new password visibility" title="Show or hide password">
+<span class="material-symbols-outlined text-xl" aria-hidden="true">visibility</span>
+</button>
+</div>
+</div>
+<div class="flex items-center gap-2 pt-2 px-1" aria-label="Password strength">
+<div class="h-1.5 flex-1 rounded-full bg-green-500"></div>
+<div class="h-1.5 flex-1 rounded-full bg-green-400"></div>
+<div class="h-1.5 flex-1 rounded-full bg-yellow-400"></div>
+<div class="h-1.5 flex-1 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+<span class="text-xs font-semibold text-yellow-500">Medium</span>
+</div>
+<p class="text-text-sub-light dark:text-text-sub-dark text-xs font-medium pt-1 flex items-start gap-1.5 ml-1">
+<span class="material-symbols-outlined text-sm" style="font-size: 16px;" aria-hidden="true">info</span>
+                Password must be at least 8 characters long.
+            </p>
+</div>
+<div class="space-y-2">
+<label class="block text-sm font-semibold text-text-main-light dark:text-text-main-dark ml-1" for="confirm-password">
+                Confirm New Master Password
+            </label>
+<div class="relative flex items-center">
+<input class="w-full h-14 pl-4 pr-16 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all text-base text-text-main-light placeholder:text-text-sub-light/60 dark:placeholder:text-text-sub-dark/50 input-error" id="confirm-password" placeholder="Re-enter new password" type="password" aria-describedby="confirm-password-error"/>
+<button class="absolute right-0 h-full px-4 text-text-sub-light dark:text-text-sub-dark hover:text-primary transition-colors focus:outline-none touch-target flex items-center justify-center" type="button" aria-label="Toggle confirm password visibility" title="Show or hide password">
+<span class="material-symbols-outlined text-xl" aria-hidden="true">visibility</span>
+</button>
+</div>
+<p class="form-error ml-1" id="confirm-password-error">Passwords do not match. Please check again.</p>
+</div>
+</div>
+<div class="mt-8 flex flex-col gap-3">
+<a class="w-full h-12 flex items-center justify-center bg-primary hover:bg-blue-600 text-white font-bold rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98]" href="../settings_database/code.html" data-loading="true" aria-label="Save master password changes">
+<span class="button-label">Save Changes</span>
+<span class="material-symbols-outlined button-spinner animate-spin ml-2" aria-hidden="true">progress_activity</span>
+</a>
+<a class="w-full h-12 flex items-center justify-center bg-transparent border border-border-light dark:border-border-dark text-primary dark:text-white font-semibold rounded-xl hover:bg-surface-light dark:hover:bg-surface-dark/50 transition-all active:scale-[0.98]" href="../settings_database/code.html">
+            Cancel
+        </a>
+</div>
+</main>
+</div>
+</body></html>
