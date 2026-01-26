@@ -4,14 +4,14 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     Title="New Database"
-    BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}">
+    BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark={StaticResource BackgroundDark}}">
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Cancel" Command="{Binding CancelCommand}" IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}" />
     </ContentPage.ToolbarItems>
 
     <ScrollView>
-        <VerticalStackLayout Padding="24" Spacing="14">
+        <VerticalStackLayout Padding="20" Spacing="18">
             <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
                 <ActivityIndicator
                     Grid.Column="1"
@@ -21,64 +21,71 @@
             </Grid>
 
             <VerticalStackLayout Spacing="6" HorizontalOptions="Center">
-                <Label Text="🔒" FontSize="42" HorizontalOptions="Center" />
-                <Label Text="Secure Setup" FontSize="22" HorizontalOptions="Center" />
+                <Border HeightRequest="80" WidthRequest="80" BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceLight}, Dark={StaticResource SurfaceDark}}"
+                        Stroke="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}" StrokeThickness="1"
+                        StrokeShape="RoundRectangle 40">
+                    <Label Text="&#xe90d;" FontFamily="IconFont" FontSize="34" TextColor="{StaticResource Primary}" HorizontalOptions="Center" VerticalOptions="Center" />
+                </Border>
+                <Label Text="Secure Setup" FontSize="22" FontAttributes="Bold" HorizontalOptions="Center" />
                 <Label
-                    Text="Create a new encrypted database to store your passwords securely."
+                    Text="Create a new local encrypted database to store your passwords securely."
                     FontSize="12"
-                    TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}"
+                    TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}"
                     HorizontalTextAlignment="Center" />
             </VerticalStackLayout>
 
-            <Label Text="Database Name" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" />
-            <Border Padding="12" Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}" Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="12" />
-                </Border.StrokeShape>
-                <Entry
-                    Placeholder="e.g. Personal, Work"
-                    Text="{Binding DatabaseName}"
-                    BackgroundColor="Transparent" />
-            </Border>
+            <VerticalStackLayout Spacing="8">
+                <Label Text="Database Name" FontSize="13" TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}" FontAttributes="Bold" />
+                <Border Padding="12" BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceLight}, Dark={StaticResource SurfaceDark}}"
+                        Stroke="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}" StrokeThickness="1"
+                        StrokeShape="RoundRectangle 12">
+                    <Entry
+                        Placeholder="e.g. Personal, Work"
+                        Text="{Binding DatabaseName}"
+                        BackgroundColor="Transparent" />
+                </Border>
+            </VerticalStackLayout>
 
-            <Label Text="Master Password" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" />
-            <Border Padding="12" Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}" Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="12" />
-                </Border.StrokeShape>
-                <Entry
-                    Placeholder="Create a strong password"
-                    Text="{Binding MasterPassword}"
-                    IsPassword="True"
-                    BackgroundColor="Transparent" />
-            </Border>
+            <VerticalStackLayout Spacing="8">
+                <Label Text="Master Password" FontSize="13" TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}" FontAttributes="Bold" />
+                <Border Padding="12" BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceLight}, Dark={StaticResource SurfaceDark}}"
+                        Stroke="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}" StrokeThickness="1"
+                        StrokeShape="RoundRectangle 12">
+                    <Entry
+                        Placeholder="Create a strong password"
+                        Text="{Binding MasterPassword}"
+                        IsPassword="True"
+                        BackgroundColor="Transparent" />
+                </Border>
+            </VerticalStackLayout>
 
-            <Label Text="Confirm Password" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" />
-            <Border Padding="12" Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}" Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="12" />
-                </Border.StrokeShape>
-                <Entry
-                    Placeholder="Re-enter password"
-                    Text="{Binding ConfirmPassword}"
-                    IsPassword="True"
-                    BackgroundColor="Transparent" />
-            </Border>
+            <VerticalStackLayout Spacing="8">
+                <Label Text="Confirm Password" FontSize="13" TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}" FontAttributes="Bold" />
+                <Border Padding="12" BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceLight}, Dark={StaticResource SurfaceDark}}"
+                        Stroke="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}" StrokeThickness="1"
+                        StrokeShape="RoundRectangle 12">
+                    <Entry
+                        Placeholder="Re-enter password"
+                        Text="{Binding ConfirmPassword}"
+                        IsPassword="True"
+                        BackgroundColor="Transparent" />
+                </Border>
+            </VerticalStackLayout>
 
-            <Border Padding="12" Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}" Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="12" />
-                </Border.StrokeShape>
-                <Label
-                    Text="Important: If you forget your master password, your data cannot be recovered."
-                    FontSize="12"
-                    TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" />
+            <Border Padding="12" BackgroundColor="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource Gray800}}" Stroke="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}" StrokeThickness="1" StrokeShape="RoundRectangle 12">
+                <HorizontalStackLayout Spacing="8">
+                    <Label Text="&#xe90d;" FontFamily="IconFont" FontSize="18" TextColor="{StaticResource Error}" VerticalOptions="Start" />
+                    <Label
+                        Text="Important: If you forget your master password, your data cannot be recovered."
+                        FontSize="12"
+                        TextColor="{StaticResource Error}" />
+                </HorizontalStackLayout>
             </Border>
 
             <Label
                 Text="{Binding ErrorMessage}"
                 IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotNullOrWhiteSpaceConverter}}"
-                TextColor="Red"
+                TextColor="{StaticResource Error}"
                 FontSize="12" />
 
             <Button

@@ -7,16 +7,17 @@
     x:DataType="viewModels:UnlockViewModel"
     Title="Unlock"
     Shell.NavBarIsVisible="False"
-    BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}">
+    BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark={StaticResource BackgroundDark}}">
 
-    <Grid RowDefinitions="Auto, *, Auto" Padding="24">
+    <Grid RowDefinitions="Auto, *, Auto" Padding="24" RowSpacing="10">
 
         <!-- Top Bar -->
         <Grid Grid.Row="0" ColumnDefinitions="*, Auto">
             <Label Grid.Column="1"
                    Text="Switch Database"
                    TextColor="{StaticResource Primary}"
-                   FontSize="14">
+                   FontSize="14"
+                   FontAttributes="Semibold">
                 <Label.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding SwitchDatabaseCommand}" />
                 </Label.GestureRecognizers>
@@ -32,36 +33,46 @@
             </Border>
 
             <VerticalStackLayout Spacing="8">
-                <Label Text="Welcome Back" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center" TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource White}}" />
+                <Label Text="Welcome Back" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center" TextColor="{AppThemeBinding Light={StaticResource TextMainLight}, Dark={StaticResource TextMainDark}}" />
 
                 <!-- Database Name -->
-                <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
-                    <Label Text="&#xe90a;" FontFamily="IconFont" FontSize="16" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" VerticalOptions="Center" />
-                    <Label Text="{Binding DisplayName}" FontSize="14" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" VerticalOptions="Center" />
-                </HorizontalStackLayout>
+                <Border BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceLight}, Dark={StaticResource SurfaceDark}}"
+                        Stroke="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 999"
+                        Padding="10,4"
+                        HorizontalOptions="Center">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding SwitchDatabaseCommand}" />
+                    </Border.GestureRecognizers>
+                    <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
+                        <Label Text="&#xe90a;" FontFamily="IconFont" FontSize="16" TextColor="{StaticResource Primary}" VerticalOptions="Center" />
+                        <Label Text="{Binding DisplayName}" FontSize="13" TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}" VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                </Border>
             </VerticalStackLayout>
 
             <!-- Password Entry Section -->
             <VerticalStackLayout Spacing="16">
                 <Label Text="Enter your master password to decrypt and access your safe."
-                       FontSize="14"
-                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                       FontSize="13"
+                       TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}"
                        HorizontalTextAlignment="Center" />
 
                 <!-- Password Input -->
                 <Border StrokeShape="RoundRectangle 12"
                         StrokeThickness="1"
-                        Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}"
-                        BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray800}}"
+                        Stroke="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceLight}, Dark={StaticResource SurfaceDark}}"
                         Padding="12,0">
                     <Grid ColumnDefinitions="Auto, *, Auto">
-                        <Label Grid.Column="0" Text="&#xe90c;" FontFamily="IconFont" FontSize="20" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" VerticalOptions="Center" Margin="0,0,8,0" />
+                        <Label Grid.Column="0" Text="&#xe90c;" FontFamily="IconFont" FontSize="20" TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray400}}" VerticalOptions="Center" Margin="0,0,8,0" />
 
                         <Entry Grid.Column="1"
                                Placeholder="Master Password"
                                IsPassword="{Binding IsPasswordHidden}"
                                Text="{Binding Password}"
-                               TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource White}}"
+                               TextColor="{AppThemeBinding Light={StaticResource TextMainLight}, Dark={StaticResource TextMainDark}}"
                                BackgroundColor="Transparent"
                                VerticalOptions="Center" />
 
@@ -69,7 +80,7 @@
                                Text="{Binding PasswordIcon}"
                                FontFamily="IconFont"
                                FontSize="24"
-                               TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                               TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray400}}"
                                VerticalOptions="Center">
                             <Label.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding TogglePasswordVisibilityCommand}" />
@@ -79,12 +90,6 @@
                 </Border>
 
                 <!-- Read Only Checkbox -->
-                <HorizontalStackLayout Spacing="8" HorizontalOptions="Start">
-                    <CheckBox IsChecked="{Binding IsReadOnly}" Color="{StaticResource Primary}" />
-                    <Label Text="Read Only" VerticalOptions="Center" TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource White}}" />
-                </HorizontalStackLayout>
-
-                <!-- Error Message -->
                 <Label Text="{Binding ErrorMessage}"
                        IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotNullOrWhiteSpaceConverter}}"
                        TextColor="{StaticResource Error}"
@@ -99,17 +104,19 @@
                             BackgroundColor="{StaticResource Primary}"
                             TextColor="White"
                             CornerRadius="12"
-                            HeightRequest="50"
+                            HeightRequest="52"
                             FontAttributes="Bold"/>
 
                     <Button Grid.Column="1"
                             Command="{Binding BiometricUnlockCommand}"
                             IsVisible="{Binding IsBiometricUnlockVisible}"
-                            BackgroundColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}"
-                            TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource White}}"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceLight}, Dark={StaticResource SurfaceDark}}"
+                            TextColor="{AppThemeBinding Light={StaticResource TextMainLight}, Dark={StaticResource TextMainDark}}"
+                            BorderColor="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}"
+                            BorderWidth="1"
                             CornerRadius="12"
-                            HeightRequest="50"
-                            WidthRequest="50"
+                            HeightRequest="52"
+                            WidthRequest="52"
                             Padding="0"
                             FontFamily="IconFont"
                             FontSize="24"
@@ -123,7 +130,7 @@
         <!-- Footer -->
         <Label Grid.Row="2"
                Text="Forgot Master Password?"
-               TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+               TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}"
                FontSize="14"
                HorizontalOptions="Center"
                Margin="0,0,0,20">

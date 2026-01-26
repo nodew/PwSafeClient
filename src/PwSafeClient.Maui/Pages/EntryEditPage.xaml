@@ -4,16 +4,16 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     Title="Entry"
-    BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}">
+    BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark={StaticResource BackgroundDark}}">
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Cancel" Command="{Binding CancelCommand}" IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}" />
     </ContentPage.ToolbarItems>
 
     <ScrollView>
-        <VerticalStackLayout Padding="24" Spacing="14">
+        <VerticalStackLayout Padding="20" Spacing="18">
             <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
-                <Label Text="{Binding PageTitle}" FontSize="24" VerticalOptions="Center" />
+                <Label Text="{Binding PageTitle}" FontSize="20" FontAttributes="Bold" VerticalOptions="Center" />
                 <ActivityIndicator
                     Grid.Column="1"
                     IsRunning="{Binding IsBusy}"
@@ -21,75 +21,86 @@
                     VerticalOptions="Center" />
             </Grid>
 
-            <Label Text="Title" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" />
-            <Border Padding="12" Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}" Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="12" />
-                </Border.StrokeShape>
-                <Entry
-                    Placeholder="e.g. Email"
-                    Text="{Binding Title}"
-                    BackgroundColor="Transparent" />
-            </Border>
+            <VerticalStackLayout Spacing="8">
+                <Label Text="Title" FontSize="13" TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}" FontAttributes="Bold" />
+                <Border Padding="12" BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceLight}, Dark={StaticResource SurfaceDark}}"
+                        Stroke="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}" StrokeThickness="1"
+                        StrokeShape="RoundRectangle 10">
+                    <Entry
+                        Placeholder="e.g. Netflix, Amazon"
+                        Text="{Binding Title}"
+                        BackgroundColor="Transparent" />
+                </Border>
+            </VerticalStackLayout>
 
-            <Label Text="Username" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" />
-            <Border Padding="12" Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}" Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="12" />
-                </Border.StrokeShape>
-                <Entry
-                    Placeholder="e.g. alice@example.com"
-                    Text="{Binding Username}"
-                    BackgroundColor="Transparent" />
-            </Border>
+            <VerticalStackLayout Spacing="8">
+                <Label Text="Username / Email" FontSize="13" TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}" FontAttributes="Bold" />
+                <Border Padding="12" BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceLight}, Dark={StaticResource SurfaceDark}}"
+                        Stroke="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}" StrokeThickness="1"
+                        StrokeShape="RoundRectangle 10">
+                    <Entry
+                        Placeholder="email@example.com"
+                        Text="{Binding Username}"
+                        BackgroundColor="Transparent" />
+                </Border>
+            </VerticalStackLayout>
 
-            <Label Text="Password" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" />
-            <Border Padding="12" Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}" Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="12" />
-                </Border.StrokeShape>
-                <Entry
-                    Placeholder="Password"
-                    Text="{Binding Password}"
-                    IsPassword="{Binding IsPasswordHidden}"
-                    BackgroundColor="Transparent" />
-            </Border>
+            <VerticalStackLayout Spacing="8">
+                <Label Text="Password" FontSize="13" TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}" FontAttributes="Bold" />
+                <Border Padding="12" BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceLight}, Dark={StaticResource SurfaceDark}}"
+                        Stroke="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}" StrokeThickness="1"
+                        StrokeShape="RoundRectangle 10">
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                        <Entry
+                            Grid.Column="0"
+                            Placeholder="Password"
+                            Text="{Binding Password}"
+                            IsPassword="{Binding IsPasswordHidden}"
+                            BackgroundColor="Transparent" />
+                        <Label Grid.Column="1"
+                               Text="{Binding TogglePasswordButtonText}"
+                               TextColor="{StaticResource Primary}"
+                               FontSize="12"
+                               VerticalOptions="Center"
+                               HorizontalOptions="End"
+                               Margin="4,0,0,0">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding TogglePasswordCommand}" />
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </Grid>
+                </Border>
+            </VerticalStackLayout>
 
-            <Button
-                Text="{Binding TogglePasswordButtonText}"
-                Command="{Binding TogglePasswordCommand}"
-                BackgroundColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray900}}"
-                TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
-                CornerRadius="12"
-                HeightRequest="44" />
+            <VerticalStackLayout Spacing="8">
+                <Label Text="URL" FontSize="13" TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}" FontAttributes="Bold" />
+                <Border Padding="12" BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceLight}, Dark={StaticResource SurfaceDark}}"
+                        Stroke="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}" StrokeThickness="1"
+                        StrokeShape="RoundRectangle 10">
+                    <Entry
+                        Placeholder="https://"
+                        Text="{Binding Url}"
+                        BackgroundColor="Transparent" />
+                </Border>
+            </VerticalStackLayout>
 
-            <Label Text="URL" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" />
-            <Border Padding="12" Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}" Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="12" />
-                </Border.StrokeShape>
-                <Entry
-                    Placeholder="https://"
-                    Text="{Binding Url}"
-                    BackgroundColor="Transparent" />
-            </Border>
-
-            <Label Text="Notes" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" />
-            <Border Padding="12" Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}" Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="12" />
-                </Border.StrokeShape>
-                <Editor
-                    AutoSize="TextChanges"
-                    Placeholder="Notes"
-                    Text="{Binding Notes}"
-                    BackgroundColor="Transparent" />
-            </Border>
+            <VerticalStackLayout Spacing="8">
+                <Label Text="Notes" FontSize="13" TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}" FontAttributes="Bold" />
+                <Border Padding="12" BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceLight}, Dark={StaticResource SurfaceDark}}"
+                        Stroke="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}" StrokeThickness="1"
+                        StrokeShape="RoundRectangle 10">
+                    <Editor
+                        AutoSize="TextChanges"
+                        Placeholder="Security questions, PINs, etc."
+                        Text="{Binding Notes}"
+                        BackgroundColor="Transparent" />
+                </Border>
+            </VerticalStackLayout>
 
             <Label
                 Text="{Binding ErrorMessage}"
                 IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotNullOrWhiteSpaceConverter}}"
-                TextColor="Red"
+                TextColor="{StaticResource Error}"
                 FontSize="12" />
 
             <Button

@@ -4,16 +4,16 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     Title="Backup &amp; Restore"
-    BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}">
+    BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark={StaticResource BackgroundDark}}">
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Close" Command="{Binding CloseCommand}" />
     </ContentPage.ToolbarItems>
 
     <ScrollView>
-        <VerticalStackLayout Padding="24" Spacing="14">
+        <VerticalStackLayout Padding="20" Spacing="18">
             <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
-                <Label Text="Backup &amp; Restore" FontSize="18" VerticalOptions="Center" />
+                <Label Text="Backup &amp; Restore" FontSize="18" FontAttributes="Bold" VerticalOptions="Center" />
                 <ActivityIndicator
                     Grid.Column="1"
                     IsRunning="{Binding IsBusy}"
@@ -21,20 +21,23 @@
                     VerticalOptions="Center" />
             </Grid>
 
-            <Border Padding="12" Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}" Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="14" />
-                </Border.StrokeShape>
-                <Label
-                    Text="Restore will overwrite your current database file. Make sure you have a backup."
-                    FontSize="12"
-                    TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" />
+            <Border Padding="12" BackgroundColor="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource Gray800}}"
+                    Stroke="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 12">
+                <HorizontalStackLayout Spacing="8">
+                    <Label Text="&#xe90d;" FontFamily="IconFont" FontSize="18" TextColor="{StaticResource Warning}" VerticalOptions="Start" />
+                    <Label
+                        Text="Restore will overwrite your current database file. Make sure you have a backup."
+                        FontSize="12"
+                        TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}" />
+                </HorizontalStackLayout>
             </Border>
 
             <Label
                 Text="{Binding ErrorMessage}"
                 IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotNullOrWhiteSpaceConverter}}"
-                TextColor="Red"
+                TextColor="{StaticResource Error}"
                 FontSize="12" />
 
             <Button
@@ -49,8 +52,10 @@
                 Text="Restore from File"
                 Command="{Binding RestoreCommand}"
                 IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}"
-                BackgroundColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray900}}"
-                TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
+                BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceLight}, Dark={StaticResource SurfaceDark}}"
+                TextColor="{AppThemeBinding Light={StaticResource TextMainLight}, Dark={StaticResource TextMainDark}}"
+                BorderColor="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}"
+                BorderWidth="1"
                 CornerRadius="12"
                 HeightRequest="48" />
         </VerticalStackLayout>
