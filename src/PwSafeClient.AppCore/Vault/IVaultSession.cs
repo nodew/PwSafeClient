@@ -20,6 +20,13 @@ public interface IVaultSession
     VaultEntryUpsertResult UpdateEntry(int entryIndex, VaultEntryEditRequest request);
     VaultEntryDeleteResult DeleteEntry(int entryIndex);
 
+    VaultGroupOperationResult CreateGroup(string groupPath);
+    VaultGroupOperationResult RenameGroup(string groupPath, string newGroupPath);
+    VaultGroupOperationResult DeleteEmptyGroup(string groupPath);
+    VaultGroupOperationResult MoveEntry(int entryIndex, string newGroupPath);
+
+    IReadOnlyList<string> GetEmptyGroupPaths();
+
     Task<VaultLoadResult> LoadAsync(string filePath, string password, bool readOnly, CancellationToken cancellationToken = default);
     Task SaveAsync(CancellationToken cancellationToken = default);
 

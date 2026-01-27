@@ -115,6 +115,7 @@ public sealed class VaultSession : IVaultSession
         }
 
         entries.Add(entry);
+        RemoveEmptyGroupHeader(request.GroupPath);
         return VaultEntryUpsertResult.Success(entries.Count - 1);
     }
 
@@ -153,6 +154,7 @@ public sealed class VaultSession : IVaultSession
         entry.Url = request.Url ?? string.Empty;
         entry.Notes = request.Notes ?? string.Empty;
         entry.Group = ToGroupPath(request.GroupPath);
+        RemoveEmptyGroupHeader(request.GroupPath);
 
         return VaultEntryUpsertResult.Success(entryIndex);
     }
@@ -179,6 +181,167 @@ public sealed class VaultSession : IVaultSession
         return VaultEntryDeleteResult.Success();
     }
 
+    public VaultGroupOperationResult CreateGroup(string groupPath)
+    {
+        if (_document == null)
+        {
+            return VaultGroupOperationResult.Fail("Vault is locked.");
+        }
+
+        if (IsReadOnly)
+        {
+            return VaultGroupOperationResult.Fail("Vault is read-only.");
+        }
+
+        var normalized = NormalizeGroupPath(groupPath);
+        if (string.IsNullOrWhiteSpace(normalized))
+        {
+            return VaultGroupOperationResult.Fail("Group name is required.");
+        }
+
+        if (GroupExists(normalized))
+        {
+            return VaultGroupOperationResult.Fail("Group already exists.");
+        }
+
+        _document.Headers.Add(new Header(HeaderType.EmptyGroups) { Text = normalized });
+        return VaultGroupOperationResult.Success();
+    }
+
+    public VaultGroupOperationResult RenameGroup(string groupPath, string newGroupPath)
+    {
+        if (_document == null)
+        {
+            return VaultGroupOperationResult.Fail("Vault is locked.");
+        }
+
+        if (IsReadOnly)
+        {
+            return VaultGroupOperationResult.Fail("Vault is read-only.");
+        }
+
+        var oldPath = NormalizeGroupPath(groupPath);
+        var updatedPath = NormalizeGroupPath(newGroupPath);
+
+        if (string.IsNullOrWhiteSpace(oldPath) || string.IsNullOrWhiteSpace(updatedPath))
+        {
+            return VaultGroupOperationResult.Fail("Group name is required.");
+        }
+
+        if (string.Equals(oldPath, updatedPath, StringComparison.OrdinalIgnoreCase))
+        {
+            return VaultGroupOperationResult.Success();
+        }
+
+        if (updatedPath.StartsWith(oldPath + ".", StringComparison.OrdinalIgnoreCase))
+        {
+            return VaultGroupOperationResult.Fail("Cannot move a group into itself.");
+        }
+
+        var entries = _document.Entries;
+        if (entries == null)
+        {
+            return VaultGroupOperationResult.Fail("Vault entries are unavailable.");
+        }
+
+        var affected = 0;
+        foreach (var entry in entries)
+        {
+            var current = NormalizeGroupPath(entry.Group?.ToString());
+            if (!IsSameOrChild(current, oldPath))
+            {
+                continue;
+            }
+
+            var suffix = current.Length == oldPath.Length
+                ? string.Empty
+                : current[(oldPath.Length + 1)..];
+
+            var newPath = string.IsNullOrEmpty(suffix)
+                ? updatedPath
+                : $"{updatedPath}.{suffix}";
+
+            entry.Group = ToGroupPath(newPath);
+            affected++;
+        }
+
+        UpdateEmptyGroupHeaders(oldPath, updatedPath);
+        RemoveEmptyGroupHeader(updatedPath, entries);
+
+        return VaultGroupOperationResult.Success(affected);
+    }
+
+    public VaultGroupOperationResult DeleteEmptyGroup(string groupPath)
+    {
+        if (_document == null)
+        {
+            return VaultGroupOperationResult.Fail("Vault is locked.");
+        }
+
+        if (IsReadOnly)
+        {
+            return VaultGroupOperationResult.Fail("Vault is read-only.");
+        }
+
+        var normalized = NormalizeGroupPath(groupPath);
+        if (string.IsNullOrWhiteSpace(normalized))
+        {
+            return VaultGroupOperationResult.Fail("Group name is required.");
+        }
+
+        var emptyGroups = GetEmptyGroupHeaders();
+        if (!emptyGroups.Any(g => string.Equals(g, normalized, StringComparison.OrdinalIgnoreCase)))
+        {
+            return VaultGroupOperationResult.Fail("Group not found.");
+        }
+
+        if (HasEntriesInGroup(normalized))
+        {
+            return VaultGroupOperationResult.Fail("Group is not empty.");
+        }
+
+        if (emptyGroups.Any(g => IsChildPath(g, normalized)))
+        {
+            return VaultGroupOperationResult.Fail("Group contains subgroups.");
+        }
+
+        RemoveEmptyGroupHeader(normalized);
+        return VaultGroupOperationResult.Success();
+    }
+
+    public VaultGroupOperationResult MoveEntry(int entryIndex, string newGroupPath)
+    {
+        if (_document == null)
+        {
+            return VaultGroupOperationResult.Fail("Vault is locked.");
+        }
+
+        if (IsReadOnly)
+        {
+            return VaultGroupOperationResult.Fail("Vault is read-only.");
+        }
+
+        var entries = _document.Entries;
+        if (entries == null || entryIndex < 0 || entryIndex >= entries.Count)
+        {
+            return VaultGroupOperationResult.Fail("Entry not found.");
+        }
+
+        var normalized = NormalizeGroupPath(newGroupPath);
+        var entry = entries[entryIndex];
+        var current = NormalizeGroupPath(entry.Group?.ToString());
+
+        if (string.Equals(current, normalized, StringComparison.OrdinalIgnoreCase))
+        {
+            return VaultGroupOperationResult.Success();
+        }
+
+        entry.Group = ToGroupPath(normalized);
+        RemoveEmptyGroupHeader(normalized);
+
+        return VaultGroupOperationResult.Success(1);
+    }
+
     private static GroupPath ToGroupPath(string? groupPath)
     {
         if (string.IsNullOrWhiteSpace(groupPath))
@@ -188,6 +351,174 @@ public sealed class VaultSession : IVaultSession
 
         var segments = groupPath.Split('.', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         return segments.Length == 0 ? new GroupPath() : new GroupPath(segments);
+    }
+
+    public IReadOnlyList<string> GetEmptyGroupPaths()
+    {
+        if (_document == null)
+        {
+            return Array.Empty<string>();
+        }
+
+        return GetEmptyGroupHeaders();
+    }
+
+    private List<string> GetEmptyGroupHeaders()
+    {
+        if (_document == null)
+        {
+            return new List<string>();
+        }
+
+        return _document.Headers
+            .Where(header => header.HeaderType == HeaderType.EmptyGroups && !string.IsNullOrWhiteSpace(header.Text))
+            .Select(header => NormalizeGroupPath(header.Text))
+            .Where(path => !string.IsNullOrWhiteSpace(path))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+    }
+
+    private bool GroupExists(string groupPath)
+    {
+        if (string.IsNullOrWhiteSpace(groupPath))
+        {
+            return false;
+        }
+
+        if (HasEntriesInGroup(groupPath))
+        {
+            return true;
+        }
+
+        return GetEmptyGroupHeaders()
+            .Any(existing => string.Equals(existing, groupPath, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private bool HasEntriesInGroup(string groupPath)
+    {
+        if (_document?.Entries == null || string.IsNullOrWhiteSpace(groupPath))
+        {
+            return false;
+        }
+
+        foreach (var entry in _document.Entries)
+        {
+            var current = NormalizeGroupPath(entry.Group?.ToString());
+            if (IsSameOrChild(current, groupPath))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void UpdateEmptyGroupHeaders(string oldPath, string newPath)
+    {
+        if (_document == null)
+        {
+            return;
+        }
+
+        var headers = _document.Headers
+            .Where(header => header.HeaderType == HeaderType.EmptyGroups && !string.IsNullOrWhiteSpace(header.Text))
+            .ToList();
+
+        foreach (var header in headers)
+        {
+            var current = NormalizeGroupPath(header.Text);
+            if (!IsSameOrChild(current, oldPath))
+            {
+                continue;
+            }
+
+            var suffix = current.Length == oldPath.Length
+                ? string.Empty
+                : current[(oldPath.Length + 1)..];
+
+            var updated = string.IsNullOrEmpty(suffix)
+                ? newPath
+                : $"{newPath}.{suffix}";
+
+            header.Text = updated;
+        }
+    }
+
+    private void RemoveEmptyGroupHeader(string? groupPath)
+    {
+        if (_document == null)
+        {
+            return;
+        }
+
+        var normalized = NormalizeGroupPath(groupPath);
+        if (string.IsNullOrWhiteSpace(normalized))
+        {
+            return;
+        }
+
+        var headers = _document.Headers
+            .Where(header => header.HeaderType == HeaderType.EmptyGroups && !string.IsNullOrWhiteSpace(header.Text))
+            .ToList();
+
+        foreach (var header in headers)
+        {
+            if (string.Equals(NormalizeGroupPath(header.Text), normalized, StringComparison.OrdinalIgnoreCase))
+            {
+                _document.Headers.Remove(header);
+            }
+        }
+    }
+
+    private void RemoveEmptyGroupHeader(string groupPath, EntryCollection entries)
+    {
+        if (entries == null)
+        {
+            return;
+        }
+
+        if (!entries.Any(entry => IsSameOrChild(NormalizeGroupPath(entry.Group?.ToString()), groupPath)))
+        {
+            return;
+        }
+
+        RemoveEmptyGroupHeader(groupPath);
+    }
+
+    private static bool IsSameOrChild(string currentPath, string groupPath)
+    {
+        if (string.IsNullOrWhiteSpace(groupPath))
+        {
+            return false;
+        }
+
+        if (string.Equals(currentPath, groupPath, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        return currentPath.StartsWith(groupPath + ".", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool IsChildPath(string currentPath, string groupPath)
+    {
+        if (string.IsNullOrWhiteSpace(groupPath))
+        {
+            return false;
+        }
+
+        return currentPath.StartsWith(groupPath + ".", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string NormalizeGroupPath(string? groupPath)
+    {
+        if (string.IsNullOrWhiteSpace(groupPath))
+        {
+            return string.Empty;
+        }
+
+        var segments = groupPath.Split('.', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        return string.Join('.', segments);
     }
 
     public Task<VaultLoadResult> LoadAsync(string filePath, string password, bool readOnly, CancellationToken cancellationToken = default)
