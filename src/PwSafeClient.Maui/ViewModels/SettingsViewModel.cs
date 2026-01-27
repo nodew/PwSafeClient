@@ -13,7 +13,7 @@ namespace PwSafeClient.Maui.ViewModels;
 public sealed partial class SettingsViewModel : ObservableObject
 {
     private const bool DefaultDatabaseSyncEnabled = true;
-    private const double BytesPerMegabyte = 1000d * 1000d;
+    private const double BytesPerMebibyte = 1024d * 1024d;
     private readonly IAppConfigurationStore _store;
     private readonly ISecureSecretStore _secretStore;
     private readonly IVaultSession _vaultSession;
@@ -644,7 +644,7 @@ public sealed partial class SettingsViewModel : ObservableObject
             return "—";
         }
 
-        var mb = totalBytes / BytesPerMegabyte;
+        var mb = totalBytes / BytesPerMebibyte;
         return $"{mb:0.#} MB";
     }
 
