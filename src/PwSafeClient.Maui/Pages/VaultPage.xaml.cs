@@ -1,3 +1,4 @@
+using PwSafeClient.Maui.Models;
 using PwSafeClient.Maui.Services;
 using PwSafeClient.Maui.ViewModels;
 
@@ -21,5 +22,33 @@ public partial class VaultPage : ContentPage
         base.OnAppearing();
         _autoLock.NotifyActivity();
         _viewModel.Refresh();
+    }
+
+    private void OnDragStarting(object sender, DragStartingEventArgs e)
+    {
+        if (BindingContext is not VaultViewModel viewModel)
+        {
+            return;
+        }
+
+        var item = (sender as BindableObject)?.BindingContext as VaultListItem;
+        if (viewModel.StartDragCommand.CanExecute(item))
+        {
+            viewModel.StartDragCommand.Execute(item);
+        }
+    }
+
+    private void OnDropOnItem(object sender, DropEventArgs e)
+    {
+        if (BindingContext is not VaultViewModel viewModel)
+        {
+            return;
+        }
+
+        var item = (sender as BindableObject)?.BindingContext as VaultListItem;
+        if (viewModel.DropOnItemCommand.CanExecute(item))
+        {
+            viewModel.DropOnItemCommand.Execute(item);
+        }
     }
 }

@@ -90,29 +90,24 @@
                     <VerticalStackLayout Spacing="0">
                         <SwipeView>
                             <SwipeView.GestureRecognizers>
-                                <DragGestureRecognizer Command="{Binding Source={x:Reference Page}, Path=BindingContext.StartDragCommand}"
-                                                       CommandParameter="{Binding .}" />
-                                <DropGestureRecognizer Command="{Binding Source={x:Reference Page}, Path=BindingContext.DropOnItemCommand}"
-                                                       CommandParameter="{Binding .}"
+                                <DragGestureRecognizer DragStarting="OnDragStarting" />
+                                <DropGestureRecognizer Drop="OnDropOnItem"
                                                        AllowDrop="{Binding IsGroup}" />
                             </SwipeView.GestureRecognizers>
                             <SwipeView.RightItems>
                                 <SwipeItems Mode="Execute">
                                     <SwipeItem Text="Rename"
                                                BackgroundColor="{StaticResource Primary}"
-                                               TextColor="{StaticResource White}"
                                                Command="{Binding Source={x:Reference Page}, Path=BindingContext.RenameGroupCommand}"
                                                CommandParameter="{Binding .}"
                                                IsVisible="{Binding IsGroup}" />
                                     <SwipeItem Text="Delete"
                                                BackgroundColor="{StaticResource Error}"
-                                               TextColor="{StaticResource White}"
                                                Command="{Binding Source={x:Reference Page}, Path=BindingContext.DeleteGroupCommand}"
                                                CommandParameter="{Binding .}"
                                                IsVisible="{Binding IsGroup}" />
                                     <SwipeItem Text="Move"
                                                BackgroundColor="{StaticResource Secondary}"
-                                               TextColor="{StaticResource PrimaryDarkText}"
                                                Command="{Binding Source={x:Reference Page}, Path=BindingContext.MoveItemCommand}"
                                                CommandParameter="{Binding .}" />
                                 </SwipeItems>
