@@ -8,8 +8,9 @@ using PwSafeClient.AppCore.Vault;
 
 namespace PwSafeClient.AppCore.CloudSync;
 
-public sealed class FileCloudSyncService : ICloudSyncService
+public sealed class FileCloudSyncService : ICloudSyncService, IDisposable
 {
+    // File timestamp resolution can vary between file systems; allow a 2s tolerance to avoid false conflicts.
     private const int ConflictToleranceSeconds = 2;
     private readonly IAppConfigurationStore _configStore;
     private readonly IVaultSession _vaultSession;
@@ -18,6 +19,9 @@ public sealed class FileCloudSyncService : ICloudSyncService
     private CloudSyncStatus _status = CloudSyncStatus.NotConfigured;
     private DateTimeOffset? _lastSynced;
     private DateTimeOffset? _nextScheduled;
+    private Timer? _syncTimer;
+    private readonly SemaphoreSlim _syncGate = new(1, 1);
+    private bool _disposed;
 
     public FileCloudSyncService(IAppConfigurationStore configStore, IVaultSession vaultSession, IAppPaths paths)
     {
@@ -41,6 +45,8 @@ public sealed class FileCloudSyncService : ICloudSyncService
                 _status = CloudSyncStatus.Ready;
             }
         }
+
+        ScheduleIfNeeded(config);
 
         return new CloudSyncState(
             config.CloudSyncProvider,
@@ -73,6 +79,8 @@ public sealed class FileCloudSyncService : ICloudSyncService
                 _status = CloudSyncStatus.Ready;
             }
         }
+
+        ScheduleIfNeeded(config);
     }
 
     public async Task<CloudSyncResult> TriggerSyncAsync(CloudSyncTrigger trigger, CancellationToken cancellationToken = default)
@@ -94,13 +102,14 @@ public sealed class FileCloudSyncService : ICloudSyncService
             return CloudSyncResult.Fail("Vault file not found.");
         }
 
-        lock (_gate)
-        {
-            _status = CloudSyncStatus.Syncing;
-        }
-
+        await _syncGate.WaitAsync(cancellationToken);
         try
         {
+            lock (_gate)
+            {
+                _status = CloudSyncStatus.Syncing;
+            }
+
             if (trigger != CloudSyncTrigger.ConflictResolution)
             {
                 await _vaultSession.SaveAsync(cancellationToken);
@@ -136,6 +145,7 @@ public sealed class FileCloudSyncService : ICloudSyncService
                 _nextScheduled = CalculateNextScheduled(config.CloudSyncSchedule, _lastSynced);
             }
 
+            ScheduleIfNeeded(config);
             return CloudSyncResult.Success();
         }
         catch (OperationCanceledException)
@@ -150,6 +160,10 @@ public sealed class FileCloudSyncService : ICloudSyncService
             }
 
             return CloudSyncResult.Fail(ex.Message);
+        }
+        finally
+        {
+            _syncGate.Release();
         }
     }
 
@@ -170,6 +184,26 @@ public sealed class FileCloudSyncService : ICloudSyncService
             _lastSynced = null;
             _nextScheduled = null;
         }
+
+        CancelSchedule();
+    }
+
+    public async Task TriggerSyncIfEnabledAsync(CloudSyncTrigger trigger, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var state = await GetStateAsync(cancellationToken);
+            if (state.Provider == CloudSyncProvider.None || !state.SyncOnSave)
+            {
+                return;
+            }
+
+            await TriggerSyncAsync(trigger, cancellationToken);
+        }
+        catch
+        {
+            // ignore background sync failures
+        }
     }
 
     private DateTimeOffset? GetNextScheduledSync() => _nextScheduled;
@@ -187,10 +221,80 @@ public sealed class FileCloudSyncService : ICloudSyncService
 
         var fileName = Path.GetFileName(vaultPath);
         var root = string.IsNullOrWhiteSpace(_paths.AppDataDirectory)
-            ? Path.GetTempPath()
+            ? throw new InvalidOperationException("AppDataDirectory is not available.")
             : Path.Combine(_paths.AppDataDirectory, "pwsafe", "cloudsync", providerFolder);
 
         return Path.Combine(root, fileName);
+    }
+
+    private void ScheduleIfNeeded(AppConfiguration config)
+    {
+        if (config.CloudSyncProvider == CloudSyncProvider.None || config.CloudSyncSchedule == CloudSyncSchedule.Manual)
+        {
+            CancelSchedule();
+            return;
+        }
+
+        var next = CalculateNextScheduled(config.CloudSyncSchedule, config.CloudSyncLastSyncedAt);
+        if (next == null)
+        {
+            CancelSchedule();
+            return;
+        }
+
+        var delay = next.Value - DateTimeOffset.UtcNow;
+        if (delay < TimeSpan.Zero)
+        {
+            delay = TimeSpan.Zero;
+        }
+
+        lock (_gate)
+        {
+            _nextScheduled = next;
+            _syncTimer?.Dispose();
+            _syncTimer = new Timer(static state =>
+            {
+                if (state is FileCloudSyncService service)
+                {
+                    _ = service.RunScheduledSyncAsync();
+                }
+            }, this, delay, Timeout.InfiniteTimeSpan);
+        }
+    }
+
+    private void CancelSchedule()
+    {
+        lock (_gate)
+        {
+            _nextScheduled = null;
+            _syncTimer?.Dispose();
+            _syncTimer = null;
+        }
+    }
+
+    private async Task RunScheduledSyncAsync()
+    {
+        try
+        {
+            await TriggerSyncAsync(CloudSyncTrigger.Scheduled);
+        }
+        catch
+        {
+            // ignore background sync failures
+        }
+    }
+
+    public void Dispose()
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        _disposed = true;
+        CancelSchedule();
+        _syncGate.Dispose();
+        GC.SuppressFinalize(this);
     }
 
     private static DateTimeOffset? CalculateNextScheduled(CloudSyncSchedule schedule, DateTimeOffset? lastSynced)

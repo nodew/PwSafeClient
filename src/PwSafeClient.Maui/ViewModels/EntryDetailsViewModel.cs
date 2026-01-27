@@ -188,23 +188,8 @@ public sealed partial class EntryDetailsViewModel : ObservableObject
         }
     }
 
-    private async Task TriggerCloudSyncIfEnabledAsync()
-    {
-        try
-        {
-            var state = await _cloudSyncService.GetStateAsync();
-            if (state.Provider == CloudSyncProvider.None || !state.SyncOnSave)
-            {
-                return;
-            }
-
-            _ = await _cloudSyncService.TriggerSyncAsync(CloudSyncTrigger.Save);
-        }
-        catch
-        {
-            // ignore background sync failures
-        }
-    }
+    private Task TriggerCloudSyncIfEnabledAsync()
+        => _cloudSyncService.TriggerSyncIfEnabledAsync(CloudSyncTrigger.Save);
 
     [RelayCommand]
     private Task TogglePasswordAsync()

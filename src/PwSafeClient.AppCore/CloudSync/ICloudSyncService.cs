@@ -9,4 +9,5 @@ public interface ICloudSyncService
     Task UpdateOptionsAsync(CloudSyncState state, CancellationToken cancellationToken = default);
     Task<CloudSyncResult> TriggerSyncAsync(CloudSyncTrigger trigger, CancellationToken cancellationToken = default);
     Task DisconnectAsync(CancellationToken cancellationToken = default);
+    Task TriggerSyncIfEnabledAsync(CloudSyncTrigger trigger, CancellationToken cancellationToken = default);
 }

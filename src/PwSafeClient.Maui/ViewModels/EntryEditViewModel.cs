@@ -2,7 +2,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using PwSafeClient.AppCore.CloudSync;
-using PwSafeClient.AppCore.Configuration;
 using PwSafeClient.AppCore.Vault;
 using PwSafeClient.AppCore.Vault.Editing;
 
@@ -199,23 +198,8 @@ public sealed partial class EntryEditViewModel : ObservableObject
         }
     }
 
-    private async Task TriggerCloudSyncIfEnabledAsync()
-    {
-        try
-        {
-            var state = await _cloudSyncService.GetStateAsync();
-            if (state.Provider == CloudSyncProvider.None || !state.SyncOnSave)
-            {
-                return;
-            }
-
-            _ = await _cloudSyncService.TriggerSyncAsync(CloudSyncTrigger.Save);
-        }
-        catch
-        {
-            // ignore background sync failures
-        }
-    }
+    private Task TriggerCloudSyncIfEnabledAsync()
+        => _cloudSyncService.TriggerSyncIfEnabledAsync(CloudSyncTrigger.Save);
 
     private void LoadFromVault()
     {

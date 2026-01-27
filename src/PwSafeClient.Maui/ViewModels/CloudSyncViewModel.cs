@@ -54,7 +54,7 @@ public sealed partial class CloudSyncViewModel : ObservableObject
         {
             if (SetProperty(ref _syncOnSave, value) && !_suppressOptionUpdates)
             {
-                _ = SaveOptionsAsync();
+                SaveOptionsCommand.Execute(null);
             }
         }
     }
@@ -74,7 +74,7 @@ public sealed partial class CloudSyncViewModel : ObservableObject
         {
             if (SetProperty(ref _syncOnCellular, value) && !_suppressOptionUpdates)
             {
-                _ = SaveOptionsAsync();
+                SaveOptionsCommand.Execute(null);
             }
         }
     }
