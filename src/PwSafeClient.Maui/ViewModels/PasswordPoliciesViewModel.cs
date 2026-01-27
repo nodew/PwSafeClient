@@ -115,20 +115,29 @@ public sealed partial class PasswordPoliciesViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void SaveSheet()
+    private Task SaveSheetAsync()
     {
         IsSheetVisible = false;
+
+        var shell = Shell.Current;
+        return shell?.DisplayAlertAsync("Password Policies", "Policy saved (preview only).", "OK") ?? Task.CompletedTask;
     }
 
     [RelayCommand]
-    private void SaveAsDefault()
+    private Task SaveAsDefaultAsync()
     {
         IsSheetVisible = false;
+
+        var shell = Shell.Current;
+        return shell?.DisplayAlertAsync("Password Policies", "Default policy updated (preview only).", "OK") ?? Task.CompletedTask;
     }
 
     [RelayCommand]
-    private void DeletePolicy()
+    private Task DeletePolicyAsync()
     {
         IsSheetVisible = false;
+
+        var shell = Shell.Current;
+        return shell?.DisplayAlertAsync("Password Policies", "Policy deleted (preview only).", "OK") ?? Task.CompletedTask;
     }
 }

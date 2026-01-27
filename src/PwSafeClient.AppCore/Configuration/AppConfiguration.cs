@@ -8,6 +8,8 @@ public sealed class AppConfiguration
 
     public string? DefaultDatabase { get; set; }
 
+    public Dictionary<string, bool> DatabaseSyncStates { get; set; } = new();
+
     public int MaxBackupCount { get; set; } = 10;
 
     public int ClipboardClearSeconds { get; set; } = 30;

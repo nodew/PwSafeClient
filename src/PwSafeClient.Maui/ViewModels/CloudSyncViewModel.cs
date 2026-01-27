@@ -5,42 +5,42 @@ namespace PwSafeClient.Maui.ViewModels;
 
 public sealed partial class CloudSyncViewModel : ObservableObject
 {
-    private string _syncStatus = "Connected";
+    private string _syncStatus = "Not configured";
     public string SyncStatus
     {
         get => _syncStatus;
         set => SetProperty(ref _syncStatus, value);
     }
 
-    private string _lastSyncDisplayName = "10 minutes ago";
+    private string _lastSyncDisplayName = "—";
     public string LastSyncDisplayName
     {
         get => _lastSyncDisplayName;
         set => SetProperty(ref _lastSyncDisplayName, value);
     }
 
-    private string _providerDisplayName = "Dropbox";
+    private string _providerDisplayName = "Not configured";
     public string ProviderDisplayName
     {
         get => _providerDisplayName;
         set => SetProperty(ref _providerDisplayName, value);
     }
 
-    private string _accountDisplayName = "user@example.com";
+    private string _accountDisplayName = "—";
     public string AccountDisplayName
     {
         get => _accountDisplayName;
         set => SetProperty(ref _accountDisplayName, value);
     }
 
-    private bool _syncOnSave = true;
+    private bool _syncOnSave;
     public bool SyncOnSave
     {
         get => _syncOnSave;
         set => SetProperty(ref _syncOnSave, value);
     }
 
-    private string _syncFrequencyDisplayName = "Every 30 minutes";
+    private string _syncFrequencyDisplayName = "—";
     public string SyncFrequencyDisplayName
     {
         get => _syncFrequencyDisplayName;
@@ -60,6 +60,8 @@ public sealed partial class CloudSyncViewModel : ObservableObject
         get => _errorMessage;
         set => SetProperty(ref _errorMessage, value);
     }
+
+    public string PlaceholderMessage => "Cloud sync providers are not configured yet.";
 
     [RelayCommand]
     private Task CloseAsync() => Shell.Current.GoToAsync("..");

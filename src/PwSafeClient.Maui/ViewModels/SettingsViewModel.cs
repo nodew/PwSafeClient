@@ -97,7 +97,7 @@ public sealed partial class SettingsViewModel : ObservableObject
         set => SetProperty(ref _isBiometricUnlockEnabled, value);
     }
 
-    private bool _isDatabaseSyncEnabled = true;
+    private bool _isDatabaseSyncEnabled;
     public bool IsDatabaseSyncEnabled
     {
         get => _isDatabaseSyncEnabled;
@@ -222,7 +222,7 @@ public sealed partial class SettingsViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private Task CloseAsync() => SaveAsync();
+    private Task CloseAsync() => Shell.Current.GoToAsync("..");
 
     [RelayCommand]
     private Task OpenChangeMasterPasswordAsync()
@@ -468,10 +468,19 @@ public sealed partial class SettingsViewModel : ObservableObject
 
             config.Theme = Theme;
             config.IsBiometricUnlockEnabled = IsBiometricUnlockEnabled;
+            var alias = string.IsNullOrWhiteSpace(_vaultSession.CurrentFilePath)
+                ? null
+                : FindAliasForPath(config, _vaultSession.CurrentFilePath);
+
             config.Language = lang;
             config.AutoLockMinutes = autoLockMinutes;
             config.ClipboardClearSeconds = clipboardClearSeconds;
             config.MaxBackupCount = maxBackupCount;
+
+            if (IsDatabaseOpen && !string.IsNullOrWhiteSpace(alias))
+            {
+                config.DatabaseSyncStates[alias] = IsDatabaseSyncEnabled;
+            }
 
             if (wasBiometricEnabled && !IsBiometricUnlockEnabled)
             {
@@ -538,6 +547,18 @@ public sealed partial class SettingsViewModel : ObservableObject
             : "—";
 
         StorageUsageDisplayName = BuildStorageUsageDisplayName(IsDatabaseOpen ? filePath : null, config);
+
+        if (IsDatabaseOpen)
+        {
+            if (!string.IsNullOrWhiteSpace(alias))
+            {
+                IsDatabaseSyncEnabled = !config.DatabaseSyncStates.TryGetValue(alias, out var enabled) || enabled;
+            }
+            else
+            {
+                IsDatabaseSyncEnabled = true;
+            }
+        }
     }
 
     private static string? FindAliasForPath(AppConfiguration config, string filePath)
@@ -559,21 +580,40 @@ public sealed partial class SettingsViewModel : ObservableObject
 
         if (!string.IsNullOrWhiteSpace(currentPath))
         {
-            if (File.Exists(currentPath))
+            try
             {
-                totalBytes = new FileInfo(currentPath).Length;
+                if (File.Exists(currentPath))
+                {
+                    totalBytes = new FileInfo(currentPath).Length;
+                }
+            }
+            catch
+            {
+                return "—";
             }
         }
         else
         {
             foreach (var path in config.Databases.Values)
             {
-                if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
+                if (string.IsNullOrWhiteSpace(path))
                 {
                     continue;
                 }
 
-                totalBytes += new FileInfo(path).Length;
+                try
+                {
+                    if (!File.Exists(path))
+                    {
+                        continue;
+                    }
+
+                    totalBytes += new FileInfo(path).Length;
+                }
+                catch
+                {
+                    // ignore missing/unavailable file
+                }
             }
         }
 

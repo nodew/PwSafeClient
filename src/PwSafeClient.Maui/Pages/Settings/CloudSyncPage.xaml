@@ -31,7 +31,7 @@
                 <VerticalStackLayout Spacing="0">
                     <Grid Padding="14" ColumnDefinitions="*,Auto">
                         <Label Text="Sync status" VerticalOptions="Center" />
-                        <Label Grid.Column="1" Text="{Binding SyncStatus}" TextColor="{StaticResource Success}" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="{Binding SyncStatus}" TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}" VerticalOptions="Center" />
                     </Grid>
                     <BoxView HeightRequest="1" BackgroundColor="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}" />
                     <Grid Padding="14" ColumnDefinitions="*,Auto">
@@ -40,6 +40,8 @@
                     </Grid>
                 </VerticalStackLayout>
             </Border>
+
+            <Label Text="{Binding PlaceholderMessage}" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}" />
 
             <Label Text="PROVIDER" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}" />
             <Border Padding="0"
