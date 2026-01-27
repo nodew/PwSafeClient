@@ -23,7 +23,6 @@ This document outlines areas for improvement and features to be implemented for 
   - [ ] Google Drive
   - [ ] Dropbox
   - [ ] OneDrive
-  - [ ] WebDAV
 - [ ] Implement conflict resolution when syncing
 - [ ] Add sync status indicators
 - [ ] Implement background sync scheduling
@@ -46,13 +45,8 @@ This document outlines areas for improvement and features to be implemented for 
 - [ ] Show password age/expiration warnings
 
 #### 2.2 Entry Fields Enhancement
-- [ ] Add support for custom fields
 - [ ] Add email field (separate from username)
-- [ ] Add TOTP/2FA secret support with code generation
-- [ ] Add file attachment support
 - [ ] Add password expiration date field
-- [ ] Add autotype sequence field
-- [ ] Add entry icons/favicons
 
 ### 3. Security Improvements
 
@@ -64,7 +58,6 @@ This document outlines areas for improvement and features to be implemented for 
 
 #### 3.2 Authentication Enhancements
 - [ ] Add password strength meter for master password
-- [ ] Add key file support as second factor
 - [ ] Add YubiKey/hardware security key support
 - [ ] Implement password entropy calculation display
 - [ ] Add brute-force protection (lockout after failed attempts)
@@ -76,10 +69,6 @@ This document outlines areas for improvement and features to be implemented for 
 ### 4. User Experience Improvements
 
 #### 4.1 Search & Navigation
-- [ ] Add advanced search (by URL, notes, custom fields)
-- [ ] Add search filters (by group, date modified, password age)
-- [ ] Add recent entries quick access
-- [ ] Add favorites/starred entries
 - [ ] Implement breadcrumb navigation with tap-to-navigate
 - [ ] Add pull-to-refresh on vault list
 - [ ] Add sorting options (alphabetical, date modified, password age)
@@ -94,8 +83,6 @@ This document outlines areas for improvement and features to be implemented for 
 #### 4.3 UI/UX Polish
 - [ ] Add empty state illustrations
 - [ ] Add onboarding tutorial for first-time users
-- [ ] Add haptic feedback for copy actions
-- [ ] Add swipe actions on entry list (delete, copy password)
 - [ ] Add floating action button for quick entry creation
 - [ ] Improve loading states with skeleton screens
 - [ ] Add animations for transitions
