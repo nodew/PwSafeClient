@@ -119,7 +119,13 @@ public sealed partial class UnlockViewModel : ObservableObject
     [RelayCommand]
     private async Task ForgotPasswordAsync()
     {
-        await Shell.Current.DisplayAlertAsync("Forgot Password", "If you forgot your master password, your data is lost forever. We do not store a copy.", "OK");
+        var shell = Shell.Current;
+        if (shell == null)
+        {
+            return;
+        }
+
+        await shell.DisplayAlertAsync("Forgot Password", "If you forgot your master password, your data is lost forever. We do not store a copy.", "OK");
     }
 
     public void SetFilePath(string? filePath)
@@ -232,7 +238,11 @@ public sealed partial class UnlockViewModel : ObservableObject
 
             await SaveUnlockSecretIfEnabledAsync(FilePath, Password);
 
-            await Shell.Current.GoToAsync($"{Routes.Vault}");
+            var shell = Shell.Current;
+            if (shell != null)
+            {
+                await shell.GoToAsync($"{Routes.Vault}");
+            }
         }
         catch (Exception ex)
         {
@@ -305,7 +315,11 @@ public sealed partial class UnlockViewModel : ObservableObject
 
             _autoLock.NotifyVaultUnlocked(filePath);
 
-            await Shell.Current.GoToAsync($"{Routes.Vault}");
+            var shell = Shell.Current;
+            if (shell != null)
+            {
+                await shell.GoToAsync($"{Routes.Vault}");
+            }
         }
         catch (Exception ex)
         {
@@ -355,7 +369,13 @@ public sealed partial class UnlockViewModel : ObservableObject
     [RelayCommand]
     private Task SwitchDatabaseAsync()
     {
-        return Shell.Current.GoToAsync(Routes.DatabaseList);
+        var shell = Shell.Current;
+        if (shell == null)
+        {
+            return Task.CompletedTask;
+        }
+
+        return shell.GoToAsync(Routes.DatabaseList);
     }
 
     public async Task InitializeDefaultAsync()
@@ -371,12 +391,20 @@ public sealed partial class UnlockViewModel : ObservableObject
             }
             else
             {
-                await Shell.Current.GoToAsync(Routes.DatabaseList);
+                var shell = Shell.Current;
+                if (shell != null)
+                {
+                    await shell.GoToAsync(Routes.DatabaseList);
+                }
             }
         }
         catch
         {
-            await Shell.Current.GoToAsync(Routes.DatabaseList);
+            var shell = Shell.Current;
+            if (shell != null)
+            {
+                await shell.GoToAsync(Routes.DatabaseList);
+            }
         }
     }
 }
