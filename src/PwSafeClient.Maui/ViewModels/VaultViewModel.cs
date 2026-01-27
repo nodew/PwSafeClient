@@ -3,6 +3,8 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using PwSafeClient.AppCore.CloudSync;
+using PwSafeClient.AppCore.Configuration;
 using PwSafeClient.AppCore.Vault;
 using PwSafeClient.AppCore.Vault.Editing;
 using PwSafeClient.Maui.Models;
@@ -12,13 +14,15 @@ namespace PwSafeClient.Maui.ViewModels;
 public sealed partial class VaultViewModel : ObservableObject
 {
     private readonly IVaultSession _vaultSession;
+    private readonly ICloudSyncService _cloudSyncService;
 
     private readonly List<string> _groupSegments = new();
     private IReadOnlyList<PwSafeClient.AppCore.Vault.Browsing.VaultEntrySnapshot> _entriesSnapshot = Array.Empty<PwSafeClient.AppCore.Vault.Browsing.VaultEntrySnapshot>();
 
-    public VaultViewModel(IVaultSession vaultSession)
+    public VaultViewModel(IVaultSession vaultSession, ICloudSyncService cloudSyncService)
     {
         _vaultSession = vaultSession;
+        _cloudSyncService = cloudSyncService;
         Refresh();
     }
 
@@ -307,6 +311,7 @@ public sealed partial class VaultViewModel : ObservableObject
         }
 
         await _vaultSession.SaveAsync();
+        await TriggerCloudSyncIfEnabledAsync();
         LoadCommand.Execute(null);
     }
 
@@ -353,6 +358,7 @@ public sealed partial class VaultViewModel : ObservableObject
         }
 
         await _vaultSession.SaveAsync();
+        await TriggerCloudSyncIfEnabledAsync();
         LoadCommand.Execute(null);
     }
 
@@ -383,6 +389,7 @@ public sealed partial class VaultViewModel : ObservableObject
         }
 
         await _vaultSession.SaveAsync();
+        await TriggerCloudSyncIfEnabledAsync();
         LoadCommand.Execute(null);
     }
 
@@ -463,6 +470,7 @@ public sealed partial class VaultViewModel : ObservableObject
         }
 
         await _vaultSession.SaveAsync();
+        await TriggerCloudSyncIfEnabledAsync();
         LoadCommand.Execute(null);
     }
 
@@ -515,5 +523,23 @@ public sealed partial class VaultViewModel : ObservableObject
         }
 
         return text.Contains(search, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private async Task TriggerCloudSyncIfEnabledAsync()
+    {
+        try
+        {
+            var state = await _cloudSyncService.GetStateAsync();
+            if (state.Provider == CloudSyncProvider.None || !state.SyncOnSave)
+            {
+                return;
+            }
+
+            _ = await _cloudSyncService.TriggerSyncAsync(CloudSyncTrigger.Save);
+        }
+        catch
+        {
+            // ignore background sync failures
+        }
     }
 }

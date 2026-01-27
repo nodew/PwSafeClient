@@ -54,6 +54,9 @@
                         <Label Text="Provider" VerticalOptions="Center" />
                         <Label Grid.Column="1" Text="{Binding ProviderDisplayName}" TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}" VerticalOptions="Center" />
                         <Label Grid.Column="2" Text=">" TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" VerticalOptions="Center" />
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding SelectProviderCommand}" />
+                        </Grid.GestureRecognizers>
                     </Grid>
                     <BoxView HeightRequest="1" BackgroundColor="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}" />
                     <Grid Padding="14" ColumnDefinitions="*,Auto">
@@ -79,6 +82,9 @@
                         <Label Text="Sync frequency" VerticalOptions="Center" />
                         <Label Grid.Column="1" Text="{Binding SyncFrequencyDisplayName}" TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}" VerticalOptions="Center" />
                         <Label Grid.Column="2" Text=">" TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" VerticalOptions="Center" />
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding SelectFrequencyCommand}" />
+                        </Grid.GestureRecognizers>
                     </Grid>
                     <BoxView HeightRequest="1" BackgroundColor="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}" />
                     <Grid Padding="14" ColumnDefinitions="*,Auto">
@@ -95,6 +101,14 @@
                     StrokeThickness="1"
                     StrokeShape="RoundRectangle 14">
                 <VerticalStackLayout Spacing="0">
+                    <Grid Padding="14" ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                        <Label Text="Sync now" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="&#xe902;" FontFamily="IconFont" FontSize="18" TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" VerticalOptions="Center" />
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding SyncNowCommand}" />
+                        </Grid.GestureRecognizers>
+                    </Grid>
+                    <BoxView HeightRequest="1" BackgroundColor="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}" />
                     <Grid Padding="14" ColumnDefinitions="*,Auto" ColumnSpacing="10">
                         <Label Text="Disconnect" TextColor="{StaticResource Error}" VerticalOptions="Center" />
                         <Label Grid.Column="1" Text="&#xe902;" FontFamily="IconFont" FontSize="18" TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" VerticalOptions="Center" />
