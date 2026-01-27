@@ -5,6 +5,9 @@ namespace PwSafeClient.Maui.ViewModels;
 
 public sealed partial class PasswordPoliciesViewModel : ObservableObject
 {
+    private const string PolicySavedMessage = "Policy saved (preview only).";
+    private const string PolicyDefaultMessage = "Default policy updated (preview only).";
+    private const string PolicyDeletedMessage = "Policy deleted (preview only).";
     private bool _isSheetVisible;
     public bool IsSheetVisible
     {
@@ -120,7 +123,7 @@ public sealed partial class PasswordPoliciesViewModel : ObservableObject
         IsSheetVisible = false;
 
         var shell = Shell.Current;
-        return shell?.DisplayAlertAsync("Password Policies", "Policy saved (preview only).", "OK") ?? Task.CompletedTask;
+        return shell?.DisplayAlertAsync("Password Policies", PolicySavedMessage, "OK") ?? Task.CompletedTask;
     }
 
     [RelayCommand]
@@ -129,7 +132,7 @@ public sealed partial class PasswordPoliciesViewModel : ObservableObject
         IsSheetVisible = false;
 
         var shell = Shell.Current;
-        return shell?.DisplayAlertAsync("Password Policies", "Default policy updated (preview only).", "OK") ?? Task.CompletedTask;
+        return shell?.DisplayAlertAsync("Password Policies", PolicyDefaultMessage, "OK") ?? Task.CompletedTask;
     }
 
     [RelayCommand]
@@ -138,6 +141,6 @@ public sealed partial class PasswordPoliciesViewModel : ObservableObject
         IsSheetVisible = false;
 
         var shell = Shell.Current;
-        return shell?.DisplayAlertAsync("Password Policies", "Policy deleted (preview only).", "OK") ?? Task.CompletedTask;
+        return shell?.DisplayAlertAsync("Password Policies", PolicyDeletedMessage, "OK") ?? Task.CompletedTask;
     }
 }

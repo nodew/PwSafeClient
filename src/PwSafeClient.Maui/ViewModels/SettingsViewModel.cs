@@ -12,6 +12,8 @@ namespace PwSafeClient.Maui.ViewModels;
 
 public sealed partial class SettingsViewModel : ObservableObject
 {
+    private const bool DefaultDatabaseSyncEnabled = true;
+    private const double BytesPerMegabyte = 1000d * 1000d;
     private readonly IAppConfigurationStore _store;
     private readonly ISecureSecretStore _secretStore;
     private readonly IVaultSession _vaultSession;
@@ -101,7 +103,15 @@ public sealed partial class SettingsViewModel : ObservableObject
     public bool IsDatabaseSyncEnabled
     {
         get => _isDatabaseSyncEnabled;
-        set => SetProperty(ref _isDatabaseSyncEnabled, value);
+        set
+        {
+            if (!IsDatabaseOpen)
+            {
+                return;
+            }
+
+            SetDatabaseSyncEnabled(value);
+        }
     }
 
     private string _language = "en";
@@ -550,14 +560,18 @@ public sealed partial class SettingsViewModel : ObservableObject
 
         if (IsDatabaseOpen)
         {
-            if (!string.IsNullOrWhiteSpace(alias))
+            if (!string.IsNullOrWhiteSpace(alias) && config.DatabaseSyncStates.TryGetValue(alias, out var enabled))
             {
-                IsDatabaseSyncEnabled = !config.DatabaseSyncStates.TryGetValue(alias, out var enabled) || enabled;
+                SetDatabaseSyncEnabled(enabled);
             }
             else
             {
-                IsDatabaseSyncEnabled = true;
+                SetDatabaseSyncEnabled(DefaultDatabaseSyncEnabled);
             }
+        }
+        else
+        {
+            SetDatabaseSyncEnabled(DefaultDatabaseSyncEnabled);
         }
     }
 
@@ -587,7 +601,11 @@ public sealed partial class SettingsViewModel : ObservableObject
                     totalBytes = new FileInfo(currentPath).Length;
                 }
             }
-            catch
+            catch (IOException)
+            {
+                return "—";
+            }
+            catch (UnauthorizedAccessException)
             {
                 return "—";
             }
@@ -610,7 +628,11 @@ public sealed partial class SettingsViewModel : ObservableObject
 
                     totalBytes += new FileInfo(path).Length;
                 }
-                catch
+                catch (IOException)
+                {
+                    // ignore missing/unavailable file
+                }
+                catch (UnauthorizedAccessException)
                 {
                     // ignore missing/unavailable file
                 }
@@ -622,19 +644,15 @@ public sealed partial class SettingsViewModel : ObservableObject
             return "—";
         }
 
-        var mb = totalBytes / (1024d * 1024d);
+        var mb = totalBytes / BytesPerMegabyte;
         return $"{mb:0.#} MB";
     }
 
-    private static string BuildAppVersionDisplayName()
+    private void SetDatabaseSyncEnabled(bool value)
     {
-        try
-        {
-            return $"Password Safe v{AppInfo.VersionString} (Build {AppInfo.BuildString})";
-        }
-        catch
-        {
-            return "Password Safe";
-        }
+        SetProperty(ref _isDatabaseSyncEnabled, value);
     }
+
+    private static string BuildAppVersionDisplayName()
+        => $"Password Safe v{AppInfo.VersionString} (Build {AppInfo.BuildString})";
 }
