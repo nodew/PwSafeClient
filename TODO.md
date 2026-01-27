@@ -9,40 +9,40 @@ This document outlines areas for improvement and features to be implemented for 
 ### 1. Core Features - Not Yet Implemented
 
 #### 1.1 Group Management
-- [ ] **Implement Group Creation** - Currently shows "Not Implemented" message (see `VaultViewModel.cs:236`)
-- [ ] Add ability to rename groups
-- [ ] Add ability to delete empty groups
-- [ ] Add ability to move entries between groups
-- [ ] Add group hierarchy visualization in tree view
-- [ ] Implement drag-and-drop for entries/groups reorganization
+- [x] **Implement Group Creation** - Currently shows "Not Implemented" message (see `VaultViewModel.cs:236`)
+- [x] Add ability to rename groups
+- [x] Add ability to delete empty groups
+- [x] Add ability to move entries between groups
+- [x] Add group hierarchy visualization in tree view
+- [x] Implement drag-and-drop for entries/groups reorganization
 
 #### 1.2 Cloud Sync Functionality
-- [ ] **Implement Cloud Sync backend** - `CloudSyncViewModel` is a stub with no actual sync logic
-- [ ] Add support for major cloud providers:
-  - [ ] iCloud Drive (iOS/macOS)
-  - [ ] Google Drive
-  - [ ] Dropbox
-  - [ ] OneDrive
-- [ ] Implement conflict resolution when syncing
-- [ ] Add sync status indicators
-- [ ] Implement background sync scheduling
-- [ ] Add "Sync on cellular" toggle functionality
+- [x] **Implement Cloud Sync backend** - `CloudSyncViewModel` is a stub with no actual sync logic
+- [x] Add support for major cloud providers:
+  - [x] iCloud Drive (iOS/macOS)
+  - [x] Google Drive
+  - [x] Dropbox
+  - [x] OneDrive
+- [x] Implement conflict resolution when syncing
+- [x] Add sync status indicators
+- [x] Implement background sync scheduling
+- [x] Add "Sync on cellular" toggle functionality
 
 #### 1.3 Password Policies - Complete Implementation
-- [ ] **Connect Password Policies to actual vault storage** - Currently shows preview-only messages
-- [ ] Persist custom password policies in the `.psafe3` file
-- [ ] Allow selecting policy when generating passwords
-- [ ] Add policy validation during entry creation/editing
-- [ ] Import/export password policies
+- [x] **Connect Password Policies to actual vault storage** - Currently shows preview-only messages
+- [x] Persist custom password policies in the `.psafe3` file
+- [x] Allow selecting policy when generating passwords
+- [x] Add policy validation during entry creation/editing
+- [x] Import/export password policies
 
 ### 2. Entry Management Improvements
 
 #### 2.1 Password Generation in Entry Edit
-- [ ] **Add password generator button in EntryEditPage** - Currently no way to generate passwords
-- [ ] Show password strength indicator
-- [ ] Allow selecting password policy for generation
-- [ ] Add password history view
-- [ ] Show password age/expiration warnings
+- [x] **Add password generator button in EntryEditPage** - Currently no way to generate passwords
+- [x] Show password strength indicator
+- [x] Allow selecting password policy for generation
+- [x] Add password history view
+- [x] Show password age/expiration warnings
 
 #### 2.2 Entry Fields Enhancement
 - [ ] Add email field (separate from username)
@@ -90,10 +90,10 @@ This document outlines areas for improvement and features to be implemented for 
 ### 5. Internationalization & Localization
 
 #### 5.1 Language Support
-- [ ] Implement proper i18n framework (not just language setting)
-- [ ] Add resource files for all UI strings
-- [ ] Add RTL language support
-- [ ] Support at least: English, Chinese, Spanish, French, German, Japanese
+- [x] Implement proper i18n framework (not just language setting)
+- [x] Add resource files for all UI strings
+- [x] Add RTL language support
+- [x] Support at least: English, Chinese, Spanish, French, German, Japanese
 
 ### 6. Platform-Specific Features
 
@@ -249,16 +249,16 @@ This document outlines areas for improvement and features to be implemented for 
 | Core Vault Operations | ✅ Complete |
 | Entry CRUD | ✅ Complete |
 | Group Browsing | ✅ Complete |
-| Group Creation/Management | ❌ Not Implemented |
+| Group Creation/Management | ✅ Complete |
 | Password Generation (standalone) | ✅ Complete |
-| Password Generation (in entry) | ❌ Missing UI |
+| Password Generation (in entry) | ✅ Complete |
 | Biometric Auth | ✅ Complete |
 | Auto-lock | ✅ Complete |
 | Backup/Restore | ✅ Complete |
 | Export Data | ✅ Complete |
-| Cloud Sync | ❌ Not Implemented |
-| Password Policies | ⚠️ Partial (UI only) |
-| Localization | ❌ Not Implemented |
+| Cloud Sync | ✅ Complete |
+| Password Policies | ✅ Complete |
+| Localization | ✅ Complete |
 | Autofill (iOS/Android) | ❌ Not Implemented |
 
 ---
