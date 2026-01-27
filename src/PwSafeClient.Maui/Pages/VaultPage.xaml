@@ -60,6 +60,7 @@
                        VerticalOptions="Center" />
                 <ActivityIndicator Grid.Column="1"
                                    IsRunning="{Binding IsBusy}"
+                                   IsVisible="{Binding IsBusy}"
                                    VerticalOptions="Center"
                                    Color="{AppThemeBinding Light={StaticResource TextMainLight}, Dark={StaticResource TextMainDark}}" />
             </Grid>
