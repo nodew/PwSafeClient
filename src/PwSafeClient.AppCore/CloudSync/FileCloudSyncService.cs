@@ -10,6 +10,7 @@ namespace PwSafeClient.AppCore.CloudSync;
 
 public sealed class FileCloudSyncService : ICloudSyncService
 {
+    private const int ConflictToleranceSeconds = 2;
     private readonly IAppConfigurationStore _configStore;
     private readonly IVaultSession _vaultSession;
     private readonly IAppPaths _paths;
@@ -110,7 +111,7 @@ public sealed class FileCloudSyncService : ICloudSyncService
             var localModified = File.GetLastWriteTimeUtc(vaultPath);
             var cloudModified = File.Exists(cloudPath) ? File.GetLastWriteTimeUtc(cloudPath) : (DateTime?)null;
 
-            var hadConflict = cloudModified.HasValue && cloudModified.Value > localModified.AddSeconds(2);
+            var hadConflict = cloudModified.HasValue && cloudModified.Value > localModified.AddSeconds(ConflictToleranceSeconds);
 
             if (hadConflict && trigger != CloudSyncTrigger.ConflictResolution)
             {
@@ -171,7 +172,7 @@ public sealed class FileCloudSyncService : ICloudSyncService
         }
     }
 
-    public DateTimeOffset? GetNextScheduledSync() => _nextScheduled;
+    private DateTimeOffset? GetNextScheduledSync() => _nextScheduled;
 
     private string GetProviderFilePath(CloudSyncProvider provider, string vaultPath)
     {

@@ -11,6 +11,7 @@ public sealed partial class CloudSyncViewModel : ObservableObject
     private readonly ICloudSyncService _cloudSyncService;
     private CloudSyncState? _state;
     private bool _isInitializing;
+    private bool _suppressOptionUpdates;
 
     public CloudSyncViewModel(ICloudSyncService cloudSyncService)
     {
@@ -51,7 +52,7 @@ public sealed partial class CloudSyncViewModel : ObservableObject
         get => _syncOnSave;
         set
         {
-            if (SetProperty(ref _syncOnSave, value))
+            if (SetProperty(ref _syncOnSave, value) && !_suppressOptionUpdates)
             {
                 _ = SaveOptionsAsync();
             }
@@ -71,7 +72,7 @@ public sealed partial class CloudSyncViewModel : ObservableObject
         get => _syncOnCellular;
         set
         {
-            if (SetProperty(ref _syncOnCellular, value))
+            if (SetProperty(ref _syncOnCellular, value) && !_suppressOptionUpdates)
             {
                 _ = SaveOptionsAsync();
             }
@@ -361,9 +362,9 @@ public sealed partial class CloudSyncViewModel : ObservableObject
             _ => "—"
         };
 
-        _syncOnSave = state.SyncOnSave;
-        _syncOnCellular = state.SyncOnCellular;
-        OnPropertyChanged(nameof(SyncOnSave));
-        OnPropertyChanged(nameof(SyncOnCellular));
+        _suppressOptionUpdates = true;
+        SyncOnSave = state.SyncOnSave;
+        SyncOnCellular = state.SyncOnCellular;
+        _suppressOptionUpdates = false;
     }
 }
