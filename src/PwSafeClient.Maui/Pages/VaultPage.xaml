@@ -47,18 +47,29 @@
 
         <!-- Breadcrumb -->
         <Border Grid.Row="1"
-                Padding="10,6"
+                Padding="6,6"
                 BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource SurfaceDark}}"
                 Stroke="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}"
                 StrokeThickness="1"
                 StrokeShape="RoundRectangle 10">
-            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-                <Label Text="{Binding Breadcrumb}"
+            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+                <Button Text="&#xe901;"
+                        FontFamily="IconFont"
+                        FontSize="14"
+                        Padding="6"
+                        HeightRequest="32"
+                        WidthRequest="32"
+                        Command="{Binding GoUpCommand}"
+                        IsVisible="{Binding IsInSubGroup}"
+                        BackgroundColor="Transparent"
+                        TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+                <Label Grid.Column="1"
+                       Text="{Binding Breadcrumb}"
                        FontSize="12"
                        TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}"
                        LineBreakMode="TailTruncation"
                        VerticalOptions="Center" />
-                <ActivityIndicator Grid.Column="1"
+                <ActivityIndicator Grid.Column="2"
                                    IsRunning="{Binding IsBusy}"
                                    IsVisible="{Binding IsBusy}"
                                    VerticalOptions="Center"
@@ -77,45 +88,77 @@
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <VerticalStackLayout Spacing="0">
-                        <Grid Padding="16,14" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="16">
-                            <Grid.GestureRecognizers>
-                                <TapGestureRecognizer
-                                    Command="{Binding Source={x:Reference Page}, Path=BindingContext.OpenItemCommand}"
-                                    CommandParameter="{Binding .}" />
-                            </Grid.GestureRecognizers>
+                        <SwipeView>
+                            <SwipeView.GestureRecognizers>
+                                <DragGestureRecognizer Command="{Binding Source={x:Reference Page}, Path=BindingContext.StartDragCommand}"
+                                                       CommandParameter="{Binding .}" />
+                                <DropGestureRecognizer Command="{Binding Source={x:Reference Page}, Path=BindingContext.DropOnItemCommand}"
+                                                       CommandParameter="{Binding .}"
+                                                       AllowDrop="{Binding IsGroup}" />
+                            </SwipeView.GestureRecognizers>
+                            <SwipeView.RightItems>
+                                <SwipeItems Mode="Execute">
+                                    <SwipeItem Text="Rename"
+                                               BackgroundColor="{StaticResource Primary}"
+                                               TextColor="{StaticResource White}"
+                                               Command="{Binding Source={x:Reference Page}, Path=BindingContext.RenameGroupCommand}"
+                                               CommandParameter="{Binding .}"
+                                               IsVisible="{Binding IsGroup}" />
+                                    <SwipeItem Text="Delete"
+                                               BackgroundColor="{StaticResource Error}"
+                                               TextColor="{StaticResource White}"
+                                               Command="{Binding Source={x:Reference Page}, Path=BindingContext.DeleteGroupCommand}"
+                                               CommandParameter="{Binding .}"
+                                               IsVisible="{Binding IsGroup}" />
+                                    <SwipeItem Text="Move"
+                                               BackgroundColor="{StaticResource Secondary}"
+                                               TextColor="{StaticResource PrimaryDarkText}"
+                                               Command="{Binding Source={x:Reference Page}, Path=BindingContext.MoveItemCommand}"
+                                               CommandParameter="{Binding .}" />
+                                </SwipeItems>
+                            </SwipeView.RightItems>
 
-                            <Label Grid.Column="0"
-                                   FontFamily="IconFont"
-                                   FontSize="22"
-                                   VerticalOptions="Center">
-                                <Label.Triggers>
-                                    <DataTrigger TargetType="Label" Binding="{Binding Kind}" Value="Group">
-                                        <Setter Property="Text" Value="&#xe90a;" />
-                                        <Setter Property="TextColor" Value="{StaticResource Warning}" />
-                                    </DataTrigger>
-                                    <DataTrigger TargetType="Label" Binding="{Binding Kind}" Value="Entry">
-                                        <Setter Property="Text" Value="&#xe90c;" />
-                                        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
-                                    </DataTrigger>
-                                </Label.Triggers>
-                            </Label>
+                            <Grid Padding="16,14" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="16"
+                                  Margin="{Binding Depth, Converter={StaticResource GroupIndentConverter}}">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                        Command="{Binding Source={x:Reference Page}, Path=BindingContext.OpenItemCommand}"
+                                        CommandParameter="{Binding .}" />
+                                </Grid.GestureRecognizers>
 
-                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
-                                <Label Text="{Binding Title}" FontSize="15" FontAttributes="Bold" LineBreakMode="TailTruncation" />
-                                <Label Text="{Binding Subtitle}"
-                                       FontSize="12"
-                                       TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}"
-                                       LineBreakMode="TailTruncation"
-                                       IsVisible="{Binding Subtitle, Converter={StaticResource StringNotNullOrWhiteSpaceConverter}}" />
-                            </VerticalStackLayout>
+                                <Label Grid.Column="0"
+                                       FontFamily="IconFont"
+                                       FontSize="22"
+                                       VerticalOptions="Center">
+                                    <Label.Triggers>
+                                        <DataTrigger TargetType="Label" Binding="{Binding Kind}" Value="Group">
+                                            <Setter Property="Text" Value="&#xe90a;" />
+                                            <Setter Property="TextColor" Value="{StaticResource Warning}" />
+                                        </DataTrigger>
+                                        <DataTrigger TargetType="Label" Binding="{Binding Kind}" Value="Entry">
+                                            <Setter Property="Text" Value="&#xe90c;" />
+                                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
 
-                            <Label Grid.Column="2"
-                                   Text="&#xe901;"
-                                   FontFamily="IconFont"
-                                   FontSize="16"
-                                   TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
-                                   VerticalOptions="Center" />
-                        </Grid>
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                                    <Label Text="{Binding Title}" FontSize="15" FontAttributes="Bold" LineBreakMode="TailTruncation" />
+                                    <Label Text="{Binding Subtitle}"
+                                           FontSize="12"
+                                           TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}"
+                                           LineBreakMode="TailTruncation"
+                                           IsVisible="{Binding Subtitle, Converter={StaticResource StringNotNullOrWhiteSpaceConverter}}" />
+                                </VerticalStackLayout>
+
+                                <Label Grid.Column="2"
+                                       Text="&#xe901;"
+                                       FontFamily="IconFont"
+                                       FontSize="16"
+                                       TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                                       VerticalOptions="Center" />
+                            </Grid>
+                        </SwipeView>
                         <BoxView HeightRequest="1"
                                  BackgroundColor="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}"
                                  Margin="16,0,0,0" />

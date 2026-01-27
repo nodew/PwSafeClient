@@ -9,12 +9,12 @@ This document outlines areas for improvement and features to be implemented for 
 ### 1. Core Features - Not Yet Implemented
 
 #### 1.1 Group Management
-- [ ] **Implement Group Creation** - Currently shows "Not Implemented" message (see `VaultViewModel.cs:236`)
-- [ ] Add ability to rename groups
-- [ ] Add ability to delete empty groups
-- [ ] Add ability to move entries between groups
-- [ ] Add group hierarchy visualization in tree view
-- [ ] Implement drag-and-drop for entries/groups reorganization
+- [x] **Implement Group Creation** - Currently shows "Not Implemented" message (see `VaultViewModel.cs:236`)
+- [x] Add ability to rename groups
+- [x] Add ability to delete empty groups
+- [x] Add ability to move entries between groups
+- [x] Add group hierarchy visualization in tree view
+- [x] Implement drag-and-drop for entries/groups reorganization
 
 #### 1.2 Cloud Sync Functionality
 - [ ] **Implement Cloud Sync backend** - `CloudSyncViewModel` is a stub with no actual sync logic
