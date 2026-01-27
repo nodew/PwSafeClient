@@ -13,24 +13,12 @@
                 <FontImageSource FontFamily="IconFont" Glyph="&#xe912;" Color="{AppThemeBinding Light={StaticResource TextMainLight}, Dark={StaticResource TextMainDark}}" Size="24" />
             </ToolbarItem.IconImageSource>
         </ToolbarItem>
+        <ToolbarItem Command="{Binding ImportDatabaseCommand}">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource FontFamily="IconFont" Glyph="&#xe90e;" Color="{AppThemeBinding Light={StaticResource TextMainLight}, Dark={StaticResource TextMainDark}}" Size="24" />
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
     </ContentPage.ToolbarItems>
-
-    <Shell.TitleView>
-        <Grid Padding="4,8" ColumnDefinitions="*,Auto" ColumnSpacing="12">
-            <Label Text="Databases" FontSize="24" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource TextMainLight}, Dark={StaticResource TextMainDark}}" VerticalOptions="Center" />
-            <Button Grid.Column="1"
-                    Command="{Binding ImportDatabaseCommand}"
-                    Text="&#xe90e;"
-                    FontFamily="IconFont"
-                    FontSize="20"
-                    TextColor="{AppThemeBinding Light={StaticResource TextMainLight}, Dark={StaticResource TextMainDark}}"
-                    BackgroundColor="Transparent"
-                    CornerRadius="20"
-                    HeightRequest="40"
-                    WidthRequest="40"
-                    Padding="0" />
-        </Grid>
-    </Shell.TitleView>
 
     <Grid RowDefinitions="Auto,*,Auto" Padding="20,16" RowSpacing="16">
 
