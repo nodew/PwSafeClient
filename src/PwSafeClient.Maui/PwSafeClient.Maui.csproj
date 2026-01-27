@@ -56,6 +56,24 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<MauiXaml Update="Pages\Settings\AboutPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\Settings\CloudSyncPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\Settings\PasswordPoliciesPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\Settings\PrivacyPolicyPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\Settings\TermsOfServicePage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+	</ItemGroup>
+
+	<ItemGroup>
 		<ProjectReference Include="..\PwSafeClient.AppCore\PwSafeClient.AppCore.csproj" />
 
 		<PackageReference Include="CommunityToolkit.Mvvm" />
