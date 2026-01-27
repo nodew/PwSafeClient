@@ -1,21 +1,31 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using Microsoft.Maui.ApplicationModel;
+
 using PwSafeClient.AppCore.Configuration;
 using PwSafeClient.AppCore.Security.Secrets;
+using PwSafeClient.AppCore.Vault;
 using PwSafeClient.Maui.Services.Security;
 
 namespace PwSafeClient.Maui.ViewModels;
 
 public sealed partial class SettingsViewModel : ObservableObject
 {
+    private const bool DefaultDatabaseSyncEnabled = true;
+    private const double BytesPerMebibyte = 1024d * 1024d;
     private readonly IAppConfigurationStore _store;
     private readonly ISecureSecretStore _secretStore;
+    private readonly IVaultSession _vaultSession;
 
-    public SettingsViewModel(IAppConfigurationStore store, ISecureSecretStore secretStore)
+    public SettingsViewModel(
+        IAppConfigurationStore store,
+        ISecureSecretStore secretStore,
+        IVaultSession vaultSession)
     {
         _store = store;
         _secretStore = secretStore;
+        _vaultSession = vaultSession;
     }
 
     private string? _errorMessage;
@@ -30,6 +40,34 @@ public sealed partial class SettingsViewModel : ObservableObject
     {
         get => _isBusy;
         set => SetProperty(ref _isBusy, value);
+    }
+
+    private bool _isDatabaseOpen;
+    public bool IsDatabaseOpen
+    {
+        get => _isDatabaseOpen;
+        private set => SetProperty(ref _isDatabaseOpen, value);
+    }
+
+    private string _activeDatabaseName = "—";
+    public string ActiveDatabaseName
+    {
+        get => _activeDatabaseName;
+        private set => SetProperty(ref _activeDatabaseName, value);
+    }
+
+    private string _storageUsageDisplayName = "—";
+    public string StorageUsageDisplayName
+    {
+        get => _storageUsageDisplayName;
+        private set => SetProperty(ref _storageUsageDisplayName, value);
+    }
+
+    private string _appVersionDisplayName = string.Empty;
+    public string AppVersionDisplayName
+    {
+        get => _appVersionDisplayName;
+        private set => SetProperty(ref _appVersionDisplayName, value);
     }
 
     private AppThemePreference _theme;
@@ -59,6 +97,21 @@ public sealed partial class SettingsViewModel : ObservableObject
     {
         get => _isBiometricUnlockEnabled;
         set => SetProperty(ref _isBiometricUnlockEnabled, value);
+    }
+
+    private bool _isDatabaseSyncEnabled;
+    public bool IsDatabaseSyncEnabled
+    {
+        get => _isDatabaseSyncEnabled;
+        set
+        {
+            if (!IsDatabaseOpen)
+            {
+                return;
+            }
+
+            SetDatabaseSyncEnabled(value);
+        }
     }
 
     private string _language = "en";
@@ -139,6 +192,9 @@ public sealed partial class SettingsViewModel : ObservableObject
             AutoLockMinutes = config.AutoLockMinutes.ToString();
             ClipboardClearSeconds = config.ClipboardClearSeconds.ToString();
             MaxBackupCount = config.MaxBackupCount.ToString();
+
+            UpdateDatabaseState(config);
+            AppVersionDisplayName = BuildAppVersionDisplayName();
         }
         catch (Exception ex)
         {
@@ -176,10 +232,7 @@ public sealed partial class SettingsViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private Task CloseAsync()
-    {
-        return Shell.Current.GoToAsync("..");
-    }
+    private Task CloseAsync() => Shell.Current.GoToAsync("..");
 
     [RelayCommand]
     private Task OpenChangeMasterPasswordAsync()
@@ -197,6 +250,36 @@ public sealed partial class SettingsViewModel : ObservableObject
     private Task OpenExportDataAsync()
     {
         return Shell.Current.GoToAsync(Routes.ExportData);
+    }
+
+    [RelayCommand]
+    private Task OpenCloudSyncAsync()
+    {
+        return Shell.Current.GoToAsync(Routes.CloudSync);
+    }
+
+    [RelayCommand]
+    private Task OpenPasswordPoliciesAsync()
+    {
+        return Shell.Current.GoToAsync(Routes.PasswordPolicies);
+    }
+
+    [RelayCommand]
+    private Task OpenAboutAsync()
+    {
+        return Shell.Current.GoToAsync(Routes.About);
+    }
+
+    [RelayCommand]
+    private Task OpenPrivacyPolicyAsync()
+    {
+        return Shell.Current.GoToAsync(Routes.PrivacyPolicy);
+    }
+
+    [RelayCommand]
+    private Task OpenTermsOfServiceAsync()
+    {
+        return Shell.Current.GoToAsync(Routes.TermsOfService);
     }
 
     [RelayCommand]
@@ -243,6 +326,86 @@ public sealed partial class SettingsViewModel : ObservableObject
         message: "Count",
         currentValue: MaxBackupCount,
         onSet: v => MaxBackupCount = v);
+
+    [RelayCommand]
+    private async Task RenameDatabaseAsync()
+    {
+        if (Shell.Current == null)
+        {
+            return;
+        }
+
+        if (!_vaultSession.IsUnlocked)
+        {
+            ErrorMessage = "Unlock the vault first.";
+            return;
+        }
+
+        var currentPath = _vaultSession.CurrentFilePath;
+        if (string.IsNullOrWhiteSpace(currentPath))
+        {
+            ErrorMessage = "Current vault file not found.";
+            return;
+        }
+
+        try
+        {
+            var config = await _store.LoadAsync();
+            var currentAlias = FindAliasForPath(config, currentPath);
+            var currentName = string.IsNullOrWhiteSpace(currentAlias)
+                ? Path.GetFileNameWithoutExtension(currentPath)
+                : currentAlias;
+
+            var result = await Shell.Current.DisplayPromptAsync(
+                "Rename Database",
+                "Enter a new name",
+                accept: "Rename",
+                cancel: "Cancel",
+                placeholder: currentName,
+                initialValue: currentName);
+
+            if (result == null)
+            {
+                return;
+            }
+
+            var trimmed = result.Trim();
+            if (string.IsNullOrWhiteSpace(trimmed))
+            {
+                ErrorMessage = "Database name cannot be empty.";
+                return;
+            }
+
+            if (!string.Equals(trimmed, currentAlias, StringComparison.OrdinalIgnoreCase)
+                && config.Databases.ContainsKey(trimmed))
+            {
+                ErrorMessage = "A database with that name already exists.";
+                return;
+            }
+
+            if (!string.IsNullOrWhiteSpace(currentAlias))
+            {
+                config.Databases.Remove(currentAlias);
+            }
+
+            config.Databases[trimmed] = currentPath;
+
+            if (!string.IsNullOrWhiteSpace(config.DefaultDatabase)
+                && string.Equals(config.DefaultDatabase, currentAlias, StringComparison.OrdinalIgnoreCase))
+            {
+                config.DefaultDatabase = trimmed;
+            }
+
+            await _store.SaveAsync(config);
+
+            ActiveDatabaseName = trimmed;
+            ErrorMessage = null;
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+        }
+    }
 
     private async Task EditNonNegativeIntAsync(string title, string message, string currentValue, Action<string> onSet)
     {
@@ -315,10 +478,19 @@ public sealed partial class SettingsViewModel : ObservableObject
 
             config.Theme = Theme;
             config.IsBiometricUnlockEnabled = IsBiometricUnlockEnabled;
+            var alias = string.IsNullOrWhiteSpace(_vaultSession.CurrentFilePath)
+                ? null
+                : FindAliasForPath(config, _vaultSession.CurrentFilePath);
+
             config.Language = lang;
             config.AutoLockMinutes = autoLockMinutes;
             config.ClipboardClearSeconds = clipboardClearSeconds;
             config.MaxBackupCount = maxBackupCount;
+
+            if (IsDatabaseOpen && !string.IsNullOrWhiteSpace(alias))
+            {
+                config.DatabaseSyncStates[alias] = IsDatabaseSyncEnabled;
+            }
 
             if (wasBiometricEnabled && !IsBiometricUnlockEnabled)
             {
@@ -345,6 +517,7 @@ public sealed partial class SettingsViewModel : ObservableObject
 
             ApplyThemeOverride();
 
+            UpdateDatabaseState(config);
             await Shell.Current.GoToAsync("..");
         }
         catch (Exception ex)
@@ -372,4 +545,114 @@ public sealed partial class SettingsViewModel : ObservableObject
             _ => AppTheme.Unspecified
         };
     }
+
+    private void UpdateDatabaseState(AppConfiguration config)
+    {
+        IsDatabaseOpen = _vaultSession.IsUnlocked;
+
+        var filePath = _vaultSession.CurrentFilePath;
+        var alias = string.IsNullOrWhiteSpace(filePath) ? null : FindAliasForPath(config, filePath);
+        ActiveDatabaseName = IsDatabaseOpen
+            ? (alias ?? (string.IsNullOrWhiteSpace(filePath) ? "—" : Path.GetFileNameWithoutExtension(filePath)))
+            : "—";
+
+        StorageUsageDisplayName = BuildStorageUsageDisplayName(IsDatabaseOpen ? filePath : null, config);
+
+        if (IsDatabaseOpen)
+        {
+            if (!string.IsNullOrWhiteSpace(alias) && config.DatabaseSyncStates.TryGetValue(alias, out var enabled))
+            {
+                SetDatabaseSyncEnabled(enabled);
+            }
+            else
+            {
+                SetDatabaseSyncEnabled(DefaultDatabaseSyncEnabled);
+            }
+        }
+        else
+        {
+            SetDatabaseSyncEnabled(DefaultDatabaseSyncEnabled);
+        }
+    }
+
+    private static string? FindAliasForPath(AppConfiguration config, string filePath)
+    {
+        foreach (var pair in config.Databases)
+        {
+            if (string.Equals(pair.Value, filePath, StringComparison.OrdinalIgnoreCase))
+            {
+                return pair.Key;
+            }
+        }
+
+        return null;
+    }
+
+    private static string BuildStorageUsageDisplayName(string? currentPath, AppConfiguration config)
+    {
+        long totalBytes = 0;
+
+        if (!string.IsNullOrWhiteSpace(currentPath))
+        {
+            try
+            {
+                if (File.Exists(currentPath))
+                {
+                    totalBytes = new FileInfo(currentPath).Length;
+                }
+            }
+            catch (IOException)
+            {
+                return "—";
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return "—";
+            }
+        }
+        else
+        {
+            foreach (var path in config.Databases.Values)
+            {
+                if (string.IsNullOrWhiteSpace(path))
+                {
+                    continue;
+                }
+
+                try
+                {
+                    if (!File.Exists(path))
+                    {
+                        continue;
+                    }
+
+                    totalBytes += new FileInfo(path).Length;
+                }
+                catch (IOException)
+                {
+                    // ignore missing/unavailable file
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    // ignore missing/unavailable file
+                }
+            }
+        }
+
+        if (totalBytes <= 0)
+        {
+            return "—";
+        }
+
+        var mb = totalBytes / BytesPerMebibyte;
+        return $"{mb:0.#} MB";
+    }
+
+    private void SetDatabaseSyncEnabled(bool value)
+    {
+        SetProperty(ref _isDatabaseSyncEnabled, value);
+    }
+
+    private static string BuildAppVersionDisplayName()
+        => $"Password Safe v{AppInfo.VersionString} (Build {AppInfo.BuildString})";
 }
