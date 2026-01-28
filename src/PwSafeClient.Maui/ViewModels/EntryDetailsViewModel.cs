@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using PwSafeClient.AppCore.CloudSync;
 using PwSafeClient.AppCore.Configuration;
 using PwSafeClient.AppCore.Vault;
 using PwSafeClient.AppCore.Vault.Editing;
@@ -11,13 +12,15 @@ public sealed partial class EntryDetailsViewModel : ObservableObject
 {
     private readonly IVaultSession _vaultSession;
     private readonly IAppConfigurationStore _configStore;
+    private readonly ICloudSyncService _cloudSyncService;
 
     private CancellationTokenSource? _clipboardCts;
 
-    public EntryDetailsViewModel(IVaultSession vaultSession, IAppConfigurationStore configStore)
+    public EntryDetailsViewModel(IVaultSession vaultSession, IAppConfigurationStore configStore, ICloudSyncService cloudSyncService)
     {
         _vaultSession = vaultSession;
         _configStore = configStore;
+        _cloudSyncService = cloudSyncService;
     }
 
     private int? _entryIndex;
@@ -176,6 +179,7 @@ public sealed partial class EntryDetailsViewModel : ObservableObject
         try
         {
             await _vaultSession.SaveAsync();
+            await TriggerCloudSyncIfEnabledAsync();
             await Shell.Current.GoToAsync("..");
         }
         catch (Exception ex)
@@ -183,6 +187,9 @@ public sealed partial class EntryDetailsViewModel : ObservableObject
             ErrorMessage = ex.Message;
         }
     }
+
+    private Task TriggerCloudSyncIfEnabledAsync()
+        => _cloudSyncService.TriggerSyncIfEnabledAsync(CloudSyncTrigger.Save);
 
     [RelayCommand]
     private Task TogglePasswordAsync()

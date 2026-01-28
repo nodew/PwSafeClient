@@ -17,16 +17,16 @@ This document outlines areas for improvement and features to be implemented for 
 - [x] Implement drag-and-drop for entries/groups reorganization
 
 #### 1.2 Cloud Sync Functionality
-- [ ] **Implement Cloud Sync backend** - `CloudSyncViewModel` is a stub with no actual sync logic
-- [ ] Add support for major cloud providers:
-  - [ ] iCloud Drive (iOS/macOS)
-  - [ ] Google Drive
-  - [ ] Dropbox
-  - [ ] OneDrive
-- [ ] Implement conflict resolution when syncing
-- [ ] Add sync status indicators
-- [ ] Implement background sync scheduling
-- [ ] Add "Sync on cellular" toggle functionality
+- [x] **Implement Cloud Sync backend** - `CloudSyncViewModel` is a stub with no actual sync logic
+- [x] Add support for major cloud providers:
+  - [x] iCloud Drive (iOS/macOS)
+  - [x] Google Drive
+  - [x] Dropbox
+  - [x] OneDrive
+- [x] Implement conflict resolution when syncing
+- [x] Add sync status indicators
+- [x] Implement background sync scheduling
+- [x] Add "Sync on cellular" toggle functionality
 
 #### 1.3 Password Policies - Complete Implementation
 - [ ] **Connect Password Policies to actual vault storage** - Currently shows preview-only messages

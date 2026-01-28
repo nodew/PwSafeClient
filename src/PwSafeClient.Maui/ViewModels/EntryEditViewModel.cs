@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using PwSafeClient.AppCore.CloudSync;
 using PwSafeClient.AppCore.Vault;
 using PwSafeClient.AppCore.Vault.Editing;
 
@@ -9,13 +10,15 @@ namespace PwSafeClient.Maui.ViewModels;
 public sealed partial class EntryEditViewModel : ObservableObject
 {
     private readonly IVaultSession _vaultSession;
+    private readonly ICloudSyncService _cloudSyncService;
 
     private int? _editIndex;
     private string? _defaultGroup;
 
-    public EntryEditViewModel(IVaultSession vaultSession)
+    public EntryEditViewModel(IVaultSession vaultSession, ICloudSyncService cloudSyncService)
     {
         _vaultSession = vaultSession;
+        _cloudSyncService = cloudSyncService;
     }
 
     public void SetEditIndex(int index)
@@ -173,6 +176,7 @@ public sealed partial class EntryEditViewModel : ObservableObject
             }
 
             await _vaultSession.SaveAsync();
+            await TriggerCloudSyncIfEnabledAsync();
 
             // After create, go to details; after edit, go back.
             if (_editIndex.HasValue)
@@ -193,6 +197,9 @@ public sealed partial class EntryEditViewModel : ObservableObject
             IsBusy = false;
         }
     }
+
+    private Task TriggerCloudSyncIfEnabledAsync()
+        => _cloudSyncService.TriggerSyncIfEnabledAsync(CloudSyncTrigger.Save);
 
     private void LoadFromVault()
     {

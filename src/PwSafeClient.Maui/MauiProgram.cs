@@ -2,6 +2,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Maui.LifecycleEvents;
 
 using PwSafeClient.AppCore.Configuration;
+using PwSafeClient.AppCore.CloudSync;
 using PwSafeClient.AppCore.Databases;
 using PwSafeClient.AppCore.Vault;
 using PwSafeClient.AppCore.Vault.Creation;
@@ -81,6 +82,7 @@ public static class MauiProgram
 		builder.Services.AddSingleton<IAppConfigurationStore, FileAppConfigurationStore>();
 		builder.Services.AddSingleton<IDatabaseRegistry, DatabaseRegistry>();
 		builder.Services.AddSingleton<IVaultCreator, VaultCreator>();
+		builder.Services.AddSingleton<ICloudSyncService, FileCloudSyncService>();
 		builder.Services.AddSingleton<IFilePickerService, FilePickerService>();
 		builder.Services.AddSingleton<ISaveFileService, NoopSaveFileService>();
 		builder.Services.AddSingleton<AutoLockService>();
