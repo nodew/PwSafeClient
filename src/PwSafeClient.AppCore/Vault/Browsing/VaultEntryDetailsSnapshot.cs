@@ -8,4 +8,5 @@ public sealed class VaultEntryDetailsSnapshot
     public string? Url { get; init; }
     public string? Notes { get; init; }
     public string? GroupPath { get; init; }
+    public string? PasswordPolicyName { get; init; }
 }

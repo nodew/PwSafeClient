@@ -17,6 +17,27 @@ public sealed class FilePickerService : IFilePickerService
         return result?.FullPath;
     }
 
+    public async Task<string?> PickPolicyFileAsync(CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var result = await FilePicker.Default.PickAsync(new PickOptions
+        {
+            PickerTitle = "Select a password policy file",
+            FileTypes = new FilePickerFileType(new Dictionary<DevicePlatform, IEnumerable<string>>
+            {
+                { DevicePlatform.iOS, new[] { "public.json" } },
+                { DevicePlatform.macOS, new[] { "public.json" } },
+                { DevicePlatform.Android, new[] { "application/json" } },
+                { DevicePlatform.WinUI, new[] { ".json" } },
+            })
+        });
+
+        cancellationToken.ThrowIfCancellationRequested();
+
+        return result?.FullPath;
+    }
+
     private static FilePickerFileType GetDatabaseFileTypes()
     {
         return new FilePickerFileType(new Dictionary<DevicePlatform, IEnumerable<string>>
