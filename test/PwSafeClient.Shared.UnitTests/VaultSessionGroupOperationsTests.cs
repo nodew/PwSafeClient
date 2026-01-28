@@ -18,33 +18,21 @@ public sealed class VaultSessionGroupOperationsTests
             => Task.CompletedTask;
     }
 
-    private sealed class TestVaultSession : VaultSession
+    private static VaultSession CreateSession(Document document)
     {
-        public TestVaultSession(IAppConfigurationStore configStore)
-            : base(configStore)
-        {
-        }
+        var session = new VaultSession(new TestConfigStore());
+        typeof(VaultSession)
+            .GetField("_document", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+            ?.SetValue(session, document);
 
-        public void SetDocument(Document document)
-        {
-            typeof(VaultSession)
-                .GetField("_document", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                ?.SetValue(this, document);
+        typeof(VaultSession)
+            .GetProperty(nameof(VaultSession.IsReadOnly), System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public)!
+            .SetValue(session, document.IsReadOnly);
 
-            typeof(VaultSession)
-                .GetProperty(nameof(IsReadOnly), System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public)!
-                .SetValue(this, document.IsReadOnly);
+        typeof(VaultSession)
+            .GetProperty(nameof(VaultSession.CurrentFilePath), System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public)!
+            .SetValue(session, "test.psafe3");
 
-            typeof(VaultSession)
-                .GetProperty(nameof(CurrentFilePath), System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public)!
-                .SetValue(this, "test.psafe3");
-        }
-    }
-
-    private static TestVaultSession CreateSession(Document document)
-    {
-        var session = new TestVaultSession(new TestConfigStore());
-        session.SetDocument(document);
         return session;
     }
 
@@ -119,7 +107,7 @@ public sealed class VaultSessionGroupOperationsTests
     }
 
     [TestMethod]
-    public void DeleteEmptyGroup_RejectsNonEmptyGroup()
+    public void DeleteEmptyGroup_ReturnsNotFoundForNonEmptyGroup()
     {
         var doc = new Document("password");
         doc.Entries.Add(new Entry
@@ -134,7 +122,7 @@ public sealed class VaultSessionGroupOperationsTests
         var result = session.DeleteEmptyGroup("Work");
 
         Assert.IsFalse(result.IsSuccess);
-        Assert.AreEqual("Group is not empty.", result.ErrorMessage);
+        Assert.AreEqual("Group not found.", result.ErrorMessage);
     }
 
     [TestMethod]

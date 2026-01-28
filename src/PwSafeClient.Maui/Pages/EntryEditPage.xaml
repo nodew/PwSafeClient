@@ -73,6 +73,18 @@
             </VerticalStackLayout>
 
             <VerticalStackLayout Spacing="8">
+                <Label Text="Password Policy" FontSize="13" TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}" FontAttributes="Bold" />
+                <Border Padding="12" BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceLight}, Dark={StaticResource SurfaceDark}}"
+                        Stroke="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}" StrokeThickness="1"
+                        StrokeShape="RoundRectangle 10">
+                    <Picker ItemsSource="{Binding PasswordPolicyNames}"
+                            SelectedItem="{Binding PasswordPolicyName}"
+                            Title="Select policy"
+                            BackgroundColor="Transparent" />
+                </Border>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="8">
                 <Label Text="URL" FontSize="13" TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}" FontAttributes="Bold" />
                 <Border Padding="12" BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceLight}, Dark={StaticResource SurfaceDark}}"
                         Stroke="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}" StrokeThickness="1"

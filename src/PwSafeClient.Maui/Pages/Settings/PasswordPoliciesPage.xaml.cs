@@ -3,20 +3,23 @@ using PwSafeClient.Maui.ViewModels;
 
 namespace PwSafeClient.Maui.Pages.Settings;
 
-public partial class PasswordPoliciesPage : ContentPage
-{
-    private readonly AutoLockService _autoLock;
-
-    public PasswordPoliciesPage(PasswordPoliciesViewModel viewModel, AutoLockService autoLock)
+    public partial class PasswordPoliciesPage : ContentPage
     {
-        InitializeComponent();
-        BindingContext = viewModel;
-        _autoLock = autoLock;
-    }
+        private readonly AutoLockService _autoLock;
+        private readonly PasswordPoliciesViewModel _viewModel;
 
-    protected override void OnAppearing()
-    {
-        base.OnAppearing();
-        _autoLock.NotifyActivity();
+        public PasswordPoliciesPage(PasswordPoliciesViewModel viewModel, AutoLockService autoLock)
+        {
+            InitializeComponent();
+            BindingContext = viewModel;
+            _autoLock = autoLock;
+            _viewModel = viewModel;
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            _autoLock.NotifyActivity();
+            _viewModel.Refresh();
+        }
     }
-}

@@ -72,7 +72,8 @@ public sealed class VaultSession : IVaultSession
             Password = includePassword ? e.Password : null,
             Url = e.Url,
             Notes = e.Notes,
-            GroupPath = e.Group?.ToString()
+            GroupPath = e.Group?.ToString(),
+            PasswordPolicyName = e.PasswordPolicyName
         };
     }
 
@@ -98,6 +99,11 @@ public sealed class VaultSession : IVaultSession
             return VaultEntryUpsertResult.Fail("Password is required.");
         }
 
+        if (!TryApplyPasswordPolicy(request, out var policyError))
+        {
+            return VaultEntryUpsertResult.Fail(policyError ?? "Password does not meet the policy requirements.");
+        }
+
         var entry = new Entry
         {
             Title = request.Title.Trim(),
@@ -107,6 +113,8 @@ public sealed class VaultSession : IVaultSession
             Notes = request.Notes ?? string.Empty,
             Group = ToGroupPath(request.GroupPath)
         };
+
+        ApplyPasswordPolicyToEntry(entry, request.PasswordPolicyName ?? GetDefaultPasswordPolicyName());
 
         var entries = _document.Entries;
         if (entries == null)
@@ -147,6 +155,11 @@ public sealed class VaultSession : IVaultSession
             return VaultEntryUpsertResult.Fail("Password is required.");
         }
 
+        if (!TryApplyPasswordPolicy(request, out var policyError))
+        {
+            return VaultEntryUpsertResult.Fail(policyError ?? "Password does not meet the policy requirements.");
+        }
+
         var entry = entries[entryIndex];
         entry.Title = request.Title.Trim();
         entry.UserName = request.UserName ?? string.Empty;
@@ -154,9 +167,313 @@ public sealed class VaultSession : IVaultSession
         entry.Url = request.Url ?? string.Empty;
         entry.Notes = request.Notes ?? string.Empty;
         entry.Group = ToGroupPath(request.GroupPath);
+
+        ApplyPasswordPolicyToEntry(entry, request.PasswordPolicyName ?? GetDefaultPasswordPolicyName());
+
         RemoveEmptyGroupHeader(request.GroupPath);
 
         return VaultEntryUpsertResult.Success(entryIndex);
+    }
+
+    public IReadOnlyList<VaultPasswordPolicySnapshot> GetPasswordPoliciesSnapshot()
+    {
+        if (_document == null)
+        {
+            return Array.Empty<VaultPasswordPolicySnapshot>();
+        }
+
+        return _document.NamedPasswordPolicies
+            .Select(policy =>
+            {
+                var symbols = policy.GetSpecialSymbolSet();
+                var symbolSet = symbols.Length == 0 ? string.Empty : string.Join("", symbols);
+
+                return new VaultPasswordPolicySnapshot
+                {
+                    Name = policy.Name,
+                    TotalPasswordLength = policy.TotalPasswordLength,
+                    MinimumLowercaseCount = policy.MinimumLowercaseCount,
+                    MinimumUppercaseCount = policy.MinimumUppercaseCount,
+                    MinimumDigitCount = policy.MinimumDigitCount,
+                    MinimumSymbolCount = policy.MinimumSymbolCount,
+                    Style = policy.Style,
+                    SymbolSet = symbolSet
+                };
+            })
+            .OrderBy(policy => policy.Name, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+    }
+
+    public VaultEntryUpsertResult SavePasswordPolicy(VaultPasswordPolicySnapshot policy, string? originalName = null)
+    {
+        if (_document == null)
+        {
+            return VaultEntryUpsertResult.Fail("Vault is locked.");
+        }
+
+        if (IsReadOnly)
+        {
+            return VaultEntryUpsertResult.Fail("Vault is read-only.");
+        }
+
+        if (string.IsNullOrWhiteSpace(policy.Name))
+        {
+            return VaultEntryUpsertResult.Fail("Policy name is required.");
+        }
+
+        var policies = _document.NamedPasswordPolicies;
+        var existing = policies.FirstOrDefault(p => string.Equals(p.Name, originalName ?? policy.Name, StringComparison.OrdinalIgnoreCase));
+        if (existing == null)
+        {
+            if (policies.Any(p => string.Equals(p.Name, policy.Name, StringComparison.OrdinalIgnoreCase)))
+            {
+                return VaultEntryUpsertResult.Fail("A policy with this name already exists.");
+            }
+
+            existing = new NamedPasswordPolicy(policy.Name, policy.TotalPasswordLength);
+            policies.Add(existing);
+        }
+        else if (!string.Equals(existing.Name, policy.Name, StringComparison.OrdinalIgnoreCase))
+        {
+            if (policies.Any(p => string.Equals(p.Name, policy.Name, StringComparison.OrdinalIgnoreCase)))
+            {
+                return VaultEntryUpsertResult.Fail("A policy with this name already exists.");
+            }
+
+            existing.Name = policy.Name;
+        }
+
+        existing.TotalPasswordLength = policy.TotalPasswordLength;
+        existing.MinimumLowercaseCount = policy.MinimumLowercaseCount;
+        existing.MinimumUppercaseCount = policy.MinimumUppercaseCount;
+        existing.MinimumDigitCount = policy.MinimumDigitCount;
+        existing.MinimumSymbolCount = policy.MinimumSymbolCount;
+        existing.Style = policy.Style;
+
+        var symbolChars = policy.SymbolSet.Length == 0
+            ? Array.Empty<char>()
+            : policy.SymbolSet.ToCharArray();
+        existing.SetSpecialSymbolSet(symbolChars);
+
+        return VaultEntryUpsertResult.Success(0);
+    }
+
+    public VaultEntryUpsertResult DeletePasswordPolicy(string name)
+    {
+        if (_document == null)
+        {
+            return VaultEntryUpsertResult.Fail("Vault is locked.");
+        }
+
+        if (IsReadOnly)
+        {
+            return VaultEntryUpsertResult.Fail("Vault is read-only.");
+        }
+
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return VaultEntryUpsertResult.Fail("Policy name is required.");
+        }
+
+        var policies = _document.NamedPasswordPolicies;
+        var policy = policies.FirstOrDefault(p => string.Equals(p.Name, name, StringComparison.OrdinalIgnoreCase));
+        if (policy == null)
+        {
+            return VaultEntryUpsertResult.Fail("Policy not found.");
+        }
+
+        policies.Remove(policy);
+        return VaultEntryUpsertResult.Success(0);
+    }
+
+    public VaultEntryUpsertResult SetDefaultPasswordPolicy(string name)
+    {
+        if (_document == null)
+        {
+            return VaultEntryUpsertResult.Fail("Vault is locked.");
+        }
+
+        if (IsReadOnly)
+        {
+            return VaultEntryUpsertResult.Fail("Vault is read-only.");
+        }
+
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return VaultEntryUpsertResult.Fail("Policy name is required.");
+        }
+
+        var policy = _document.NamedPasswordPolicies.FirstOrDefault(p => string.Equals(p.Name, name, StringComparison.OrdinalIgnoreCase));
+        if (policy == null)
+        {
+            return VaultEntryUpsertResult.Fail("Policy not found.");
+        }
+
+        var headers = _document.Headers
+            .Where(header => header.HeaderType == HeaderType.NamedPasswordPolicies)
+            .ToList();
+
+        var header = headers.FirstOrDefault() ?? new Header(HeaderType.NamedPasswordPolicies);
+        if (!headers.Contains(header))
+        {
+            _document.Headers.Add(header);
+        }
+
+        header.Text = name;
+        return VaultEntryUpsertResult.Success(0);
+    }
+
+    public string? GetDefaultPasswordPolicyName()
+    {
+        if (_document == null)
+        {
+            return null;
+        }
+
+        var header = _document.Headers.FirstOrDefault(h => h.HeaderType == HeaderType.NamedPasswordPolicies);
+        if (header == null)
+        {
+            return null;
+        }
+
+        if (!string.IsNullOrWhiteSpace(header.Text))
+        {
+            return header.Text;
+        }
+
+        return header.Uuid != Guid.Empty ? header.Uuid.ToString() : null;
+    }
+
+    private bool TryApplyPasswordPolicy(VaultEntryEditRequest request, out string? errorMessage)
+    {
+        errorMessage = null;
+
+        if (_document == null)
+        {
+            return true;
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Password))
+        {
+            return true;
+        }
+
+        var policyName = request.PasswordPolicyName;
+        if (string.IsNullOrWhiteSpace(policyName))
+        {
+            policyName = GetDefaultPasswordPolicyName();
+        }
+
+        if (string.IsNullOrWhiteSpace(policyName))
+        {
+            return true;
+        }
+
+        var policy = _document.NamedPasswordPolicies.FirstOrDefault(p => string.Equals(p.Name, policyName, StringComparison.OrdinalIgnoreCase));
+        if (policy == null)
+        {
+            errorMessage = "Password policy not found.";
+            return false;
+        }
+
+        if (!DoesPasswordMeetPolicy(request.Password, policy, out var validationError))
+        {
+            errorMessage = validationError;
+            return false;
+        }
+
+        return true;
+    }
+
+    private void ApplyPasswordPolicyToEntry(Entry entry, string? policyName)
+    {
+        if (_document == null || string.IsNullOrWhiteSpace(policyName))
+        {
+            return;
+        }
+
+        var policy = _document.NamedPasswordPolicies.FirstOrDefault(p => string.Equals(p.Name, policyName, StringComparison.OrdinalIgnoreCase));
+        if (policy == null)
+        {
+            return;
+        }
+
+        entry.PasswordPolicy.TotalPasswordLength = policy.TotalPasswordLength;
+        entry.PasswordPolicy.MinimumLowercaseCount = policy.MinimumLowercaseCount;
+        entry.PasswordPolicy.MinimumUppercaseCount = policy.MinimumUppercaseCount;
+        entry.PasswordPolicy.MinimumDigitCount = policy.MinimumDigitCount;
+        entry.PasswordPolicy.MinimumSymbolCount = policy.MinimumSymbolCount;
+        entry.PasswordPolicy.Style = policy.Style;
+        entry.PasswordPolicy.SetSpecialSymbolSet(policy.GetSpecialSymbolSet());
+        entry.PasswordPolicyName = policy.Name;
+    }
+
+    private static bool DoesPasswordMeetPolicy(string password, NamedPasswordPolicy policy, out string? errorMessage)
+    {
+        errorMessage = null;
+
+        if (policy.TotalPasswordLength > 0 && password.Length < policy.TotalPasswordLength)
+        {
+            errorMessage = $"Password must be at least {policy.TotalPasswordLength} characters.";
+            return false;
+        }
+
+        if (policy.Style.HasFlag(PasswordPolicyStyle.UseHexDigits))
+        {
+            var invalidHex = password.Any(ch => !Uri.IsHexDigit(ch));
+            if (invalidHex)
+            {
+                errorMessage = "Password must contain only hexadecimal characters.";
+                return false;
+            }
+
+            return true;
+        }
+
+        var lowercaseCount = password.Count(char.IsLower);
+        var uppercaseCount = password.Count(char.IsUpper);
+        var digitCount = password.Count(char.IsDigit);
+        var symbolSet = policy.GetSpecialSymbolSet();
+
+        var symbolCount = symbolSet.Length == 0
+            ? password.Count(ch => !char.IsLetterOrDigit(ch))
+            : password.Count(ch => symbolSet.Contains(ch));
+
+        if (policy.Style.HasFlag(PasswordPolicyStyle.UseLowercase) && lowercaseCount < policy.MinimumLowercaseCount)
+        {
+            errorMessage = $"Password must include at least {policy.MinimumLowercaseCount} lowercase characters.";
+            return false;
+        }
+
+        if (policy.Style.HasFlag(PasswordPolicyStyle.UseUppercase) && uppercaseCount < policy.MinimumUppercaseCount)
+        {
+            errorMessage = $"Password must include at least {policy.MinimumUppercaseCount} uppercase characters.";
+            return false;
+        }
+
+        if (policy.Style.HasFlag(PasswordPolicyStyle.UseDigits) && digitCount < policy.MinimumDigitCount)
+        {
+            errorMessage = $"Password must include at least {policy.MinimumDigitCount} digits.";
+            return false;
+        }
+
+        if (policy.Style.HasFlag(PasswordPolicyStyle.UseSymbols) && symbolCount < policy.MinimumSymbolCount)
+        {
+            errorMessage = $"Password must include at least {policy.MinimumSymbolCount} symbols.";
+            return false;
+        }
+
+        if (policy.Style.HasFlag(PasswordPolicyStyle.UseSymbols))
+        {
+            var invalidSymbols = password.Any(ch => !char.IsLetterOrDigit(ch) && symbolSet.Length > 0 && !symbolSet.Contains(ch));
+            if (invalidSymbols)
+            {
+                errorMessage = "Password contains symbols outside the allowed symbol set.";
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public VaultEntryDeleteResult DeleteEntry(int entryIndex)

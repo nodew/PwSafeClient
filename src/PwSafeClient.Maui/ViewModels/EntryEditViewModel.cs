@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using PwSafeClient.AppCore.CloudSync;
 using PwSafeClient.AppCore.Vault;
 using PwSafeClient.AppCore.Vault.Editing;
+using PwSafeClient.Shared;
 
 namespace PwSafeClient.Maui.ViewModels;
 
@@ -102,6 +103,15 @@ public sealed partial class EntryEditViewModel : ObservableObject
         set => SetProperty(ref _errorMessage, value);
     }
 
+    private string? _passwordPolicyName;
+    public string? PasswordPolicyName
+    {
+        get => _passwordPolicyName;
+        set => SetProperty(ref _passwordPolicyName, value);
+    }
+
+    public IReadOnlyList<string> PasswordPolicyNames { get; private set; } = Array.Empty<string>();
+
     private bool _isBusy;
     public bool IsBusy
     {
@@ -154,6 +164,7 @@ public sealed partial class EntryEditViewModel : ObservableObject
                 Title = Title.Trim(),
                 UserName = string.IsNullOrWhiteSpace(Username) ? null : Username,
                 Password = Password,
+                PasswordPolicyName = string.IsNullOrWhiteSpace(PasswordPolicyName) ? null : PasswordPolicyName,
                 Url = string.IsNullOrWhiteSpace(Url) ? null : Url,
                 Notes = string.IsNullOrWhiteSpace(Notes) ? null : Notes,
                 GroupPath = string.IsNullOrWhiteSpace(GroupPath) ? _defaultGroup : GroupPath
@@ -207,6 +218,7 @@ public sealed partial class EntryEditViewModel : ObservableObject
 
         if (!_editIndex.HasValue)
         {
+            LoadPolicyNames();
             return;
         }
 
@@ -223,5 +235,32 @@ public sealed partial class EntryEditViewModel : ObservableObject
         Url = details.Url ?? string.Empty;
         Notes = details.Notes ?? string.Empty;
         GroupPath = details.GroupPath;
+        PasswordPolicyName = string.IsNullOrWhiteSpace(details.PasswordPolicyName)
+            ? _vaultSession.GetDefaultPasswordPolicyName()
+            : details.PasswordPolicyName;
+        LoadPolicyNames();
+    }
+
+    private void LoadPolicyNames()
+    {
+        var policies = _vaultSession.GetPasswordPoliciesSnapshot();
+        var names = policies
+            .Select(policy => policy.Name)
+            .OrderBy(name => name, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        var defaultPolicy = _vaultSession.GetDefaultPasswordPolicyName();
+        if (!string.IsNullOrWhiteSpace(defaultPolicy) && names.Remove(defaultPolicy))
+        {
+            names.Insert(0, defaultPolicy);
+        }
+
+        PasswordPolicyNames = names;
+        OnPropertyChanged(nameof(PasswordPolicyNames));
+
+        if (string.IsNullOrWhiteSpace(PasswordPolicyName))
+        {
+            PasswordPolicyName = defaultPolicy ?? names.FirstOrDefault();
+        }
     }
 }

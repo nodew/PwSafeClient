@@ -27,6 +27,11 @@ public class PasswordGenerator
         var useHexDigits = passwordPolicy.Style.HasFlag(PasswordPolicyStyle.UseHexDigits);
         var makePronounceable = passwordPolicy.Style.HasFlag(PasswordPolicyStyle.MakePronounceable);
 
+        if (passwordPolicy.TotalPasswordLength <= 0)
+        {
+            return string.Empty;
+        }
+
         if (useHexDigits)
         {
             return GenerateHexDigitsOnlyPassword();

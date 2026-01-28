@@ -20,6 +20,12 @@ public interface IVaultSession
     VaultEntryUpsertResult UpdateEntry(int entryIndex, VaultEntryEditRequest request);
     VaultEntryDeleteResult DeleteEntry(int entryIndex);
 
+    IReadOnlyList<VaultPasswordPolicySnapshot> GetPasswordPoliciesSnapshot();
+    VaultEntryUpsertResult SavePasswordPolicy(VaultPasswordPolicySnapshot policy, string? originalName = null);
+    VaultEntryUpsertResult DeletePasswordPolicy(string name);
+    VaultEntryUpsertResult SetDefaultPasswordPolicy(string name);
+    string? GetDefaultPasswordPolicyName();
+
     VaultGroupOperationResult CreateGroup(string groupPath);
     VaultGroupOperationResult RenameGroup(string groupPath, string newGroupPath);
     VaultGroupOperationResult DeleteEmptyGroup(string groupPath);

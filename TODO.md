@@ -29,11 +29,11 @@ This document outlines areas for improvement and features to be implemented for 
 - [x] Add "Sync on cellular" toggle functionality
 
 #### 1.3 Password Policies - Complete Implementation
-- [ ] **Connect Password Policies to actual vault storage** - Currently shows preview-only messages
-- [ ] Persist custom password policies in the `.psafe3` file
-- [ ] Allow selecting policy when generating passwords
-- [ ] Add policy validation during entry creation/editing
-- [ ] Import/export password policies
+- [x] **Connect Password Policies to actual vault storage** - Currently shows preview-only messages
+- [x] Persist custom password policies in the `.psafe3` file
+- [x] Allow selecting policy when generating passwords
+- [x] Add policy validation during entry creation/editing
+- [x] Import/export password policies
 
 ### 2. Entry Management Improvements
 
